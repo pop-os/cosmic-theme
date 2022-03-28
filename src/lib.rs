@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 pub use color_picker::*;
+pub use config::*;
 pub use hex_color::*;
 pub use model::*;
 
 mod color_picker;
+mod config;
 mod hex_color;
 mod model;
 

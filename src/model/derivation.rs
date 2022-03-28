@@ -1,0 +1,373 @@
+use crate::Hex;
+use anyhow;
+use palette::Srgba;
+use std::fmt;
+
+#[derive(Copy, Clone, Debug, Default)]
+pub struct Container<C>
+where
+    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+{
+    pub prefix: ContainerType,
+    pub container: C,
+    pub container_component: Widget<C>,
+    pub container_divider: C,
+    pub container_text: C,
+    pub container_text_opacity_80: C,
+}
+
+// TODO special styling for switches in gtk4
+pub trait AsGtkCss<C>
+where
+    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+{
+    fn as_css(&self) -> String;
+}
+
+impl<C> AsGtkCss<C> for Container<C>
+where
+    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+{
+    fn as_css(&self) -> String {
+        let Self {
+            prefix,
+            container,
+            container_component,
+            container_divider,
+            container_text,
+            container_text_opacity_80,
+        } = self;
+        let Widget {
+            default,
+            hover,
+            pressed,
+            focused,
+            divider,
+            text,
+            // XXX this should ideally maintain AAA contrast, and failing that, color chooser should raise warnings
+            text_opacity_80,
+            // these are transparent but are not required to maintain contrast
+            disabled,
+            disabled_text,
+        } = container_component;
+
+        let prefix_lower = match prefix {
+            ContainerType::Background => "background",
+            ContainerType::Primary => "primary-container",
+            ContainerType::Secondary => "secondary-container",
+        };
+
+        let mut header_style = String::new();
+        let mut top_level_border_radius = "";
+        if prefix != &ContainerType::Background {
+            top_level_border_radius = "border-radius: 8px;"
+        } else {
+            let transparent_bg: &mut Srgba = &mut container.clone().into();
+            transparent_bg.alpha = 0.2;
+            header_style = format!(
+                r#"/* Window Headerbar CSS */
+.headerbar {{
+  background-color: linear-gradient({container}, transparent_bg);
+}}
+"#
+            );
+        };
+
+        format!(
+            r#"{header_style}
+/* {prefix_lower} CSS */
+*.{prefix_lower} {{
+  background-color: {container};
+  color: {container_text};
+  {top_level_border_radius}
+}}
+
+*.{prefix_lower}-component {{
+  background-color: {default};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.{prefix_lower}-component:hover {{
+  background-color: {hover};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.{prefix_lower}-component:selected {{
+  background-color: {focused};
+  outline-color: {default};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+/* slider and switch are examples of widgets which likely want sass */
+*.{prefix_lower}-component:checked {{
+  background-color: {pressed};
+  outline-color: {default};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.{prefix_lower}-component slider {{
+  background-color: {text};
+  outline-color: {default};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.{prefix_lower}-component:active {{
+  background-color: {pressed};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.{prefix_lower}-component:disabled {{
+  background-color: {disabled};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.{prefix_lower}-divider {{
+  background-color: {container_divider};
+}}
+
+*.{prefix_lower}-component-divider {{
+  background-color: {divider};
+}}
+"#
+        )
+    }
+}
+
+#[derive(Copy, Clone, PartialEq, Debug)]
+pub enum ContainerType {
+    Background,
+    Primary,
+    Secondary,
+}
+
+impl Default for ContainerType {
+    fn default() -> Self {
+        Self::Background
+    }
+}
+
+impl fmt::Display for ContainerType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            ContainerType::Background => write!(f, "Background"),
+            ContainerType::Primary => write!(f, "Primary Container"),
+            ContainerType::Secondary => write!(f, "Secondary Container"),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct ContainerDerivation<C>
+where
+    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+{
+    pub container: Container<C>,
+    pub errors: Vec<anyhow::Error>,
+}
+
+#[derive(Copy, Clone, Debug, Default)]
+pub struct Accent<C>
+where
+    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+{
+    pub accent: C,
+    pub accent_text: C,
+    pub accent_nav_handle_text: C,
+    pub suggested: Widget<C>,
+}
+
+#[derive(Debug)]
+pub struct AccentDerivation<C>
+where
+    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+{
+    pub accent: Accent<C>,
+    pub errors: Vec<anyhow::Error>,
+}
+
+impl<C> AsGtkCss<C> for Accent<C>
+where
+    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+{
+    fn as_css(&self) -> String {
+        let Accent {
+            accent,
+            accent_text,
+            accent_nav_handle_text,
+            suggested,
+        } = self;
+
+        let Widget {
+            default,
+            hover,
+            pressed,
+            focused,
+            divider,
+            text,
+            // XXX this should ideally maintain AAA contrast, and failing that, color chooser should raise warnings
+            text_opacity_80,
+            // these are transparent but are not required to maintain contrast
+            disabled,
+            disabled_text,
+        } = suggested;
+
+        format!(
+            r#"/* Suggested CSS */
+*.suggested-action {{
+  background-color: {default};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.suggested-action:hover {{
+  background-color: {hover};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.suggested-action:selected {{
+  background-color: {focused};
+  outline-color: {default};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.suggested-action:active {{
+  background-color: {pressed};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.suggested-action:disabled {{
+  background-color: {disabled};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+"#
+        )
+    }
+}
+
+#[derive(Copy, Clone, PartialEq, Debug, Default)]
+pub struct Destructive<C>
+where
+    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+{
+    pub destructive: Widget<C>,
+}
+
+#[derive(Debug)]
+pub struct DestructiveDerivation<C>
+where
+    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+{
+    pub destructive: Destructive<C>,
+    pub errors: Vec<anyhow::Error>,
+}
+
+impl<C> AsGtkCss<C> for Destructive<C>
+where
+    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+{
+    fn as_css(&self) -> String {
+        let Destructive { destructive } = &self;
+        let Widget {
+            default,
+            hover,
+            pressed,
+            focused,
+            divider,
+            text,
+            text_opacity_80,
+            disabled,
+            disabled_text,
+        } = destructive;
+
+        format!(
+            r#"/* Destructive CSS */
+*.destructive-action {{
+  background-color: {default};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.destructive-action:hover {{
+  background-color: {hover};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.destructive-action:seleceted {{
+  background-color: {focused};
+  outline-color: {default};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.destructive-action:active {{
+  background-color: {pressed};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+*.destructive-action:disabled {{
+  background-color: {disabled};
+  color: {text};
+  border-radius: 8px;
+  border-color: {default};
+}}
+
+"#
+        )
+    }
+}
+
+#[derive(Copy, Clone, PartialEq, Debug, Default)]
+pub struct Widget<C>
+where
+    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+{
+    pub default: C,
+    pub hover: C,
+    pub pressed: C,
+    pub focused: C,
+    pub divider: C,
+    pub text: C,
+    // XXX this should ideally maintain AAA contrast, and failing that, color chooser should raise warnings
+    pub text_opacity_80: C,
+    // these are transparent but are not required to maintain contrast
+    pub disabled: C,
+    pub disabled_text: C,
+}
+
+pub struct WidgetDerivation<C>
+where
+    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+{
+    pub widget: Widget<C>,
+    pub errors: Vec<anyhow::Error>,
+}

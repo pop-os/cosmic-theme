@@ -5,13 +5,22 @@ use crate::{
 };
 use anyhow::{anyhow, Result};
 use palette::{IntoColor, Lcha, Shade, Srgba};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt;
 
 pub use exact::*;
 mod exact;
 
 pub trait ColorPicker<
-    C: Into<Srgba> + From<Srgba> + Copy + Clone + fmt::Debug + Default + fmt::Display,
+    C: Into<Srgba>
+        + From<Srgba>
+        + Copy
+        + Clone
+        + fmt::Debug
+        + Default
+        + fmt::Display
+        + Serialize
+        + DeserializeOwned,
 >
 {
     fn pick_color(

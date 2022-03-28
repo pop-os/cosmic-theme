@@ -4,11 +4,13 @@ pub use color_picker::*;
 pub use config::*;
 pub use hex_color::*;
 pub use model::*;
+pub use output::*;
 
 mod color_picker;
 mod config;
 mod hex_color;
 mod model;
+mod output;
 
 use gdk_pixbuf::prelude::FileExt;
 use gdk_pixbuf::{Colorspace, Pixbuf};
@@ -18,6 +20,8 @@ use kmeans_colors::{get_kmeans_hamerly, Kmeans, Sort};
 use palette::{rgb::Srgba, Pixel};
 use palette::{IntoColor, Lab, Srgb};
 use std::path::Path;
+
+const NAME: &'static str = "cosmic-theme";
 
 pub fn hex_from_rgba(rgba: &Srgba) -> String {
     let hex = encode::<[u8; 4]>(Srgba::into_raw(rgba.into_format()));

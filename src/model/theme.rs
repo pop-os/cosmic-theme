@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::{Accent, AsGtkCss, Container, Destructive, Hex};
+use crate::{Accent, AsGtkCss, Container, Destructive};
 use palette::Srgba;
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt;
 
-#[derive(Copy, Clone, Debug, Default)]
-pub struct Theme<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
-{
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct Theme<C> {
+    pub name: String,
     background: Container<C>,
     primary: Container<C>,
     secondary: Container<C>,
@@ -22,7 +21,15 @@ where
 
 impl<C> Theme<C>
 where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+    C: Copy
+        + Clone
+        + fmt::Debug
+        + Default
+        + Into<Srgba>
+        + From<Srgba>
+        + fmt::Display
+        + Serialize
+        + DeserializeOwned,
 {
     pub fn new(
         background: Container<C>,
@@ -41,15 +48,11 @@ where
             destructive,
             window_header_background,
             text_button_text,
+            ..Default::default()
         }
     }
-}
 
-impl<C> Theme<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
-{
-    pub fn as_css(&self) -> String {
+    pub fn preview_gtk_css(&self) -> String {
         let Self {
             background,
             primary,
@@ -79,10 +82,8 @@ where
     }
 }
 
-pub struct ThemeDerivation<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
-{
+#[derive(Debug, Default)]
+pub struct ThemeDerivation<C> {
     pub theme: Theme<C>,
     pub errors: Vec<anyhow::Error>,
 }

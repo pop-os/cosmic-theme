@@ -1,13 +1,9 @@
-use crate::Hex;
-use anyhow;
 use palette::Srgba;
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt;
 
-#[derive(Copy, Clone, Debug, Default)]
-pub struct Container<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
-{
+#[derive(Copy, Clone, Debug, Default, Deserialize, Serialize)]
+pub struct Container<C> {
     pub prefix: ContainerType,
     pub container: C,
     pub container_component: Widget<C>,
@@ -19,14 +15,14 @@ where
 // TODO special styling for switches in gtk4
 pub trait AsGtkCss<C>
 where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+    C: Copy + Into<Srgba> + From<Srgba>,
 {
     fn as_css(&self) -> String;
 }
 
 impl<C> AsGtkCss<C> for Container<C>
 where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+    C: Copy + Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + fmt::Display,
 {
     fn as_css(&self) -> String {
         let Self {
@@ -147,7 +143,7 @@ where
     }
 }
 
-#[derive(Copy, Clone, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialEq, Debug, Deserialize, Serialize)]
 pub enum ContainerType {
     Background,
     Primary,
@@ -171,19 +167,13 @@ impl fmt::Display for ContainerType {
 }
 
 #[derive(Debug)]
-pub struct ContainerDerivation<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
-{
+pub struct ContainerDerivation<C> {
     pub container: Container<C>,
     pub errors: Vec<anyhow::Error>,
 }
 
-#[derive(Copy, Clone, Debug, Default)]
-pub struct Accent<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
-{
+#[derive(Copy, Clone, Debug, Default, Deserialize, Serialize)]
+pub struct Accent<C> {
     pub accent: C,
     pub accent_text: C,
     pub accent_nav_handle_text: C,
@@ -191,17 +181,22 @@ where
 }
 
 #[derive(Debug)]
-pub struct AccentDerivation<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
-{
+pub struct AccentDerivation<C> {
     pub accent: Accent<C>,
     pub errors: Vec<anyhow::Error>,
 }
 
 impl<C> AsGtkCss<C> for Accent<C>
 where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+    C: Copy
+        + Clone
+        + fmt::Debug
+        + Default
+        + Into<Srgba>
+        + From<Srgba>
+        + fmt::Display
+        + Serialize
+        + DeserializeOwned,
 {
     fn as_css(&self) -> String {
         let Accent {
@@ -268,26 +263,28 @@ where
     }
 }
 
-#[derive(Copy, Clone, PartialEq, Debug, Default)]
-pub struct Destructive<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
-{
+#[derive(Copy, Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
+pub struct Destructive<C> {
     pub destructive: Widget<C>,
 }
 
 #[derive(Debug)]
-pub struct DestructiveDerivation<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
-{
+pub struct DestructiveDerivation<C> {
     pub destructive: Destructive<C>,
     pub errors: Vec<anyhow::Error>,
 }
 
 impl<C> AsGtkCss<C> for Destructive<C>
 where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
+    C: Copy
+        + Clone
+        + fmt::Debug
+        + Default
+        + Into<Srgba>
+        + From<Srgba>
+        + fmt::Display
+        + Serialize
+        + DeserializeOwned,
 {
     fn as_css(&self) -> String {
         let Destructive { destructive } = &self;
@@ -346,11 +343,8 @@ where
     }
 }
 
-#[derive(Copy, Clone, PartialEq, Debug, Default)]
-pub struct Widget<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
-{
+#[derive(Copy, Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
+pub struct Widget<C> {
     pub default: C,
     pub hover: C,
     pub pressed: C,
@@ -364,10 +358,7 @@ where
     pub disabled_text: C,
 }
 
-pub struct WidgetDerivation<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Hex> + Into<Srgba> + From<Srgba> + fmt::Display,
-{
+pub struct WidgetDerivation<C> {
     pub widget: Widget<C>,
     pub errors: Vec<anyhow::Error>,
 }

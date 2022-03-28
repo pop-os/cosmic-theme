@@ -4,10 +4,7 @@ use palette::{named, IntoColor, Lch, Srgba};
 use std::{convert::TryFrom, fmt};
 
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Selection<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Srgba>,
-{
+pub struct Selection<C> {
     pub background: C,
     pub primary_container: C,
     pub secondary_container: C,

@@ -3,20 +3,26 @@ use crate::{Selection, ThemeConstraints};
 use anyhow::{anyhow, bail, Result};
 use float_cmp::approx_eq;
 use palette::{Clamp, IntoColor, Lch, RelativeContrast, Srgba};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt;
 
 #[derive(Debug, Default, Copy, Clone)]
-pub struct Exact<C>
-where
-    C: Copy + Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + fmt::Display,
-{
+pub struct Exact<C> {
     selection: Selection<C>,
     constraints: ThemeConstraints,
 }
 
 impl<C> Exact<C>
 where
-    C: Copy + Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + fmt::Display,
+    C: Copy
+        + Clone
+        + fmt::Debug
+        + Default
+        + Into<Srgba>
+        + From<Srgba>
+        + fmt::Display
+        + Serialize
+        + DeserializeOwned,
 {
     pub fn new(selection: Selection<C>, constraints: ThemeConstraints) -> Self {
         Self {
@@ -28,7 +34,15 @@ where
 
 impl<C> ColorPicker<C> for Exact<C>
 where
-    C: Copy + Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + fmt::Display,
+    C: Copy
+        + Clone
+        + fmt::Debug
+        + Default
+        + Into<Srgba>
+        + From<Srgba>
+        + fmt::Display
+        + Serialize
+        + DeserializeOwned,
 {
     fn get_constraints(&self) -> ThemeConstraints {
         self.constraints

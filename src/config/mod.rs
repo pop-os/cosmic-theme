@@ -11,41 +11,53 @@ use std::{
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
-    light: String,
-    dark: String,
+    pub light: String,
+    pub dark: String,
+    pub is_light: bool, // is light theme if true
 }
 
-const CONFIG_NAME: &'static str = "config.ron";
+pub const CONFIG_NAME: &'static str = "config.ron";
 
 impl Config {
     pub fn new(light: String, dark: String) -> Self {
-        Self { light, dark }
-    }
-
-    pub fn save(&self) -> Result<()> {
-        let xdg_dirs = xdg::BaseDirectories::with_prefix(NAME)?;
-        let relative_path = PathBuf::from(CONFIG_NAME);
-        if let Ok(p) = xdg_dirs.place_config_file(relative_path) {
-            create_dir_all(&p)?;
-            let mut f = File::create(p)?;
-            let toml = toml::ser::to_string_pretty(&self)?;
-            f.write_all(toml.as_bytes())?;
-            Ok(())
-        } else {
-            bail!("No home directory.")
+        Self {
+            light,
+            dark,
+            is_light: false,
         }
     }
 
-    pub fn load<P: AsRef<Path>>() -> Result<Self> {
+    pub fn save(&self) -> Result<()> {
+        let p = Self::config_path()?;
+        create_dir_all(&p)?;
+        let mut f = File::create(p)?;
+        let toml = toml::ser::to_string_pretty(&self)?;
+        f.write_all(toml.as_bytes())?;
+        Ok(())
+    }
+
+    pub fn load() -> Result<Self> {
+        let p = Self::config_path()?;
+        let mut f = File::open(p)?;
+        let mut s = String::new();
+        f.read_to_string(&mut s)?;
+        Ok(toml::from_str(s.as_str())?)
+    }
+
+    pub fn config_path() -> Result<PathBuf> {
         let xdg_dirs = xdg::BaseDirectories::with_prefix(NAME)?;
-        let relative_path = PathBuf::from(CONFIG_NAME);
-        if let Some(p) = xdg_dirs.find_config_file(relative_path) {
-            let mut f = File::open(p)?;
-            let mut s = String::new();
-            f.read_to_string(&mut s)?;
-            Ok(toml::from_str(s.as_str())?)
+        if let Some(path) = xdg_dirs.find_config_file(PathBuf::from(CONFIG_NAME)) {
+            Ok(path)
         } else {
-            bail!("No home directory.")
+            bail!("no theme config");
+        }
+    }
+
+    pub fn active_name(&self) -> String {
+        if self.is_light {
+            self.light.clone()
+        } else {
+            self.dark.clone()
         }
     }
 }
@@ -67,6 +79,7 @@ where
         Self {
             light: light.name,
             dark: dark.name,
+            is_light: false,
         }
     }
 }
@@ -88,6 +101,7 @@ where
         Self {
             light: t.clone().name,
             dark: t.name,
+            is_light: false,
         }
     }
 }

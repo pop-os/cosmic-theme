@@ -5,12 +5,14 @@ pub use config::*;
 pub use hex_color::*;
 pub use model::*;
 pub use output::*;
+pub use theme_provider::*;
 
 mod color_picker;
 mod config;
 mod hex_color;
 mod model;
 mod output;
+mod theme_provider;
 
 use gdk_pixbuf::prelude::FileExt;
 use gdk_pixbuf::{Colorspace, Pixbuf};

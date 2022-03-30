@@ -3,16 +3,11 @@ use crate::{Hex, Theme, NAME};
 use anyhow::{bail, Result};
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Serialize};
-use std::{
-    fmt,
-    fs::{create_dir_all, File},
-    io::prelude::*,
-    path::PathBuf,
-};
+use std::{fmt, fs::File, io::prelude::*, path::PathBuf};
 
-const CSS_DIR: &'static str = "css";
-const SASS_DIR: &'static str = "sass";
-const THEME_DIR: &'static str = "themes";
+pub const CSS_DIR: &'static str = "css";
+pub const SASS_DIR: &'static str = "sass";
+pub const THEME_DIR: &'static str = "themes";
 
 pub trait GtkOutput {
     fn as_sass(&self) -> String;

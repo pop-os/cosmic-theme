@@ -28,12 +28,15 @@ impl Config {
     }
 
     pub fn save(&self) -> Result<()> {
-        let p = Self::config_path()?;
-        create_dir_all(&p)?;
-        let mut f = File::create(p)?;
-        let toml = toml::ser::to_string_pretty(&self)?;
-        f.write_all(toml.as_bytes())?;
-        Ok(())
+        let xdg_dirs = xdg::BaseDirectories::with_prefix(NAME)?;
+        if let Ok(path) = xdg_dirs.place_config_file(PathBuf::from(CONFIG_NAME)) {
+            let mut f = File::create(path)?;
+            let toml = toml::ser::to_string_pretty(&self)?;
+            f.write_all(toml.as_bytes())?;
+            Ok(())
+        } else {
+            bail!("failed to save theme config")
+        }
     }
 
     pub fn load() -> Result<Self> {

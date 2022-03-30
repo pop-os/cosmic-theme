@@ -20,6 +20,6 @@ ron = "0.7"
 toml = "0.5.8"
 dirs = "4.0.0"
 xdg = "2.4.1"
-gtk4 = "0.4.7"
+gtk4 = { version = "^0.4.4" }
 futures = "0.3.21"
 

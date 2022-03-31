@@ -23,17 +23,10 @@ fn async_watcher() -> notify::Result<(INotifyWatcher, Receiver<notify::Result<Ev
     Ok((watcher, rx))
 }
 
-pub async fn load_cosmic_gtk_theme() -> Result<()> {
+pub async fn load_cosmic_gtk_theme(provider: CssProvider) -> Result<()> {
     if !gtk4::is_initialized() {
         bail!("gtk is not initialized.");
     }
-
-    let provider = CssProvider::new();
-    StyleContext::add_provider_for_display(
-        &Display::default().expect("Error initializing GTK CSS provider."),
-        &provider,
-        gtk4::STYLE_PROVIDER_PRIORITY_APPLICATION,
-    );
 
     let config_path = Config::config_path()?;
     let mut config = Config::load()?;

@@ -69,13 +69,72 @@ where
         css.push_str(&accent.as_css());
         css.push_str(&destructive.as_css());
         let accent = accent.accent;
+        let background_color = background.container;
         css.push_str(&format!(
             r#"/* Accent CSS */
+popover {{
+  background-color: transparent;
+  background-image: none;
+}}
+
+popover contents {{
+  border-width: 0px;
+  border-radius: 12px;
+  padding: 12px;
+  background: {background_color};
+}}
+
+popover arrow {{
+  border-width: 0px;
+  border-radius: 12px;
+  padding: 12px;
+  background: {background_color};
+}}
+
 * {{
   background-image: none;
   outline-color: {accent};
 }}
 
+*.padding-x-small {{
+  padding: 4px;
+}}
+
+*.padding-small {{
+  padding: 8px;
+}}
+
+*.padding-medium {{
+  padding: 12px;
+}}
+
+*.padding-large {{
+  padding: 16px;
+}}
+
+*.padding-x-large {{
+  padding: 20px;
+}}
+
+*.border-radius-x-small {{
+  border-radius: 4px;
+}}
+
+*.border-radius-small {{
+  border-radius: 8px;
+}}
+
+*.border-radius-medium {{
+  border-radius: 12px;
+}}
+
+*.border-radius-large {{
+  border-radius: 16px;
+}}
+
+*.border-radius-x-large {{
+  border-radius: 20px;
+}}
 "#
         ));
         css

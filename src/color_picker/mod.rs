@@ -286,7 +286,6 @@ pub trait ColorPicker<
     }
 
     fn accent_derivation(&self) -> AccentDerivation<C> {
-        let constraints = self.get_constraints();
         let Selection {
             accent,
             accent_text,

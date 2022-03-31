@@ -53,81 +53,65 @@ where
             ContainerType::Secondary => "secondary-container",
         };
 
-        let mut header_style = String::new();
-        let mut top_level_border_radius = "";
-        if prefix != &ContainerType::Background {
-            top_level_border_radius = "border-radius: 8px;"
-        } else {
-            let transparent_bg: &mut Srgba = &mut container.clone().into();
-            transparent_bg.alpha = 0.2;
-            header_style = format!(
-                r#"/* Window Headerbar CSS */
-.headerbar {{
-  background-color: linear-gradient({container}, transparent_bg);
-}}
-"#
-            );
-        };
-
         format!(
-            r#"{header_style}
+            r#"
 /* {prefix_lower} CSS */
 *.{prefix_lower} {{
   background-color: {container};
   color: {container_text};
-  {top_level_border_radius}
 }}
 
 *.{prefix_lower}-component {{
+  transition-duration: 50ms;
   background-color: {default};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
 *.{prefix_lower}-component:hover {{
+  transition-duration: 50ms;
   background-color: {hover};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
 *.{prefix_lower}-component:selected {{
+  transition-duration: 50ms;
   background-color: {focused};
+  transition-duration: 50ms;
   outline-color: {default};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
 /* slider and switch are examples of widgets which likely want sass */
 *.{prefix_lower}-component:checked {{
+  transition-duration: 50ms;
   background-color: {pressed};
   outline-color: {default};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
 *.{prefix_lower}-component slider {{
+  transition-duration: 50ms;
   background-color: {text};
   outline-color: {default};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
 *.{prefix_lower}-component:active {{
+  transition-duration: 50ms;
   background-color: {pressed};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
 *.{prefix_lower}-component:disabled {{
+  transition-duration: 50ms;
   background-color: {disabled};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
@@ -225,14 +209,12 @@ where
 *.suggested-action {{
   background-color: {default};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
 *.suggested-action:hover {{
   background-color: {hover};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
@@ -240,21 +222,18 @@ where
   background-color: {focused};
   outline-color: {default};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
 *.suggested-action:active {{
   background-color: {pressed};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
 *.suggested-action:disabled {{
   background-color: {disabled};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
@@ -305,36 +284,31 @@ where
 *.destructive-action {{
   background-color: {default};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
 *.destructive-action:hover {{
   background-color: {hover};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
-*.destructive-action:seleceted {{
+*.destructive-action:selected {{
   background-color: {focused};
   outline-color: {default};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
 *.destructive-action:active {{
   background-color: {pressed};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 
 *.destructive-action:disabled {{
   background-color: {disabled};
   color: {text};
-  border-radius: 8px;
   border-color: {default};
 }}
 

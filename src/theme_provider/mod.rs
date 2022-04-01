@@ -43,6 +43,8 @@ pub async fn load_cosmic_gtk_theme(provider: CssProvider) -> Result<()> {
 
             p
         } else {
+            dbg!(css_dirs.get_data_home());
+            dbg!(css_dirs.get_data_dirs());
             PathBuf::new()
         };
 

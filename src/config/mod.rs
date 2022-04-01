@@ -52,6 +52,8 @@ impl Config {
         if let Some(path) = xdg_dirs.find_config_file(PathBuf::from(CONFIG_NAME)) {
             Ok(path)
         } else {
+            dbg!(xdg_dirs.get_config_home());
+            dbg!(xdg_dirs.get_config_dirs());
             bail!("no theme config");
         }
     }

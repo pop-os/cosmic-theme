@@ -31,9 +31,8 @@ pub fn hex_from_rgba(rgba: &Srgba) -> String {
 }
 
 pub fn palette_from_image<P: AsRef<Path>>(path: P) -> Option<Vec<Srgba>> {
-    let f = File::for_path(path);
     // calculate kmeans colors from file
-    if let Some(Ok(img)) = f.path().map(|p| Pixbuf::from_file(p)) {
+    if let Ok(img) = Pixbuf::from_file(path) {
         if img.bits_per_sample() == 8 && img.colorspace() == Colorspace::Rgb {
             let pixels = unsafe { img.pixels() };
             let lab: Vec<Lab> = if img.has_alpha() {

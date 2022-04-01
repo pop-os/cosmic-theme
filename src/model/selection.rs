@@ -17,7 +17,7 @@ pub struct Selection<C> {
 // vector should be in order of most common
 impl<C> TryFrom<Vec<C>> for Selection<C>
 where
-    C: Copy + Clone + fmt::Debug + Default + Into<Srgba>,
+    C: Clone + Into<Srgba>,
 {
     type Error = anyhow::Error;
 
@@ -48,12 +48,12 @@ where
             let red = colors.remove(reddest_i);
 
             Ok(Self {
-                background: colors[0],
-                primary_container: colors[1],
-                secondary_container: colors[3],
-                accent: colors[2],
-                accent_text: Some(colors[2]),
-                accent_nav_handle_text: Some(colors[2]),
+                background: colors[0].clone(),
+                primary_container: colors[1].clone(),
+                secondary_container: colors[3].clone(),
+                accent: colors[2].clone(),
+                accent_text: Some(colors[2].clone()),
+                accent_nav_handle_text: Some(colors[2].clone()),
                 destructive: red,
             })
         }

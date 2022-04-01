@@ -22,4 +22,5 @@ dirs = "4.0.0"
 xdg = "2.4.1"
 gtk4 = { version = "^0.4.4" }
 futures = "0.3.21"
+image = "0.24.1"
 

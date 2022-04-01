@@ -18,6 +18,7 @@ use gdk_pixbuf::prelude::FileExt;
 use gdk_pixbuf::{Colorspace, Pixbuf};
 use gio::File;
 use hex::encode;
+use image::{EncodableLayout, GenericImage, GenericImageView, RgbImage, SubImage};
 use kmeans_colors::{get_kmeans_hamerly, Kmeans, Sort};
 use palette::{rgb::Srgba, Pixel};
 use palette::{IntoColor, Lab, Srgb};
@@ -32,20 +33,14 @@ pub fn hex_from_rgba(rgba: &Srgba) -> String {
 
 pub fn palette_from_image<P: AsRef<Path>>(path: P) -> Option<Vec<Srgba>> {
     // calculate kmeans colors from file
-    if let Ok(img) = Pixbuf::from_file(path) {
-        if img.bits_per_sample() == 8 && img.colorspace() == Colorspace::Rgb {
-            let pixels = unsafe { img.pixels() };
-            let lab: Vec<Lab> = if img.has_alpha() {
-                Srgba::from_raw_slice(pixels)
-                    .iter()
-                    .map(|x| x.color.into_format().into_color())
-                    .collect()
-            } else {
-                Srgb::from_raw_slice(pixels)
-                    .iter()
-                    .map(|x| x.into_format().into_color())
-                    .collect()
-            };
+    // let pixbuf = Pixbuf::from_file(path);
+    let img = image::open(path);
+    match img {
+        Ok(img) => {
+            let lab: Vec<Lab> = Srgba::from_raw_slice(img.to_rgba8().into_raw().as_bytes())
+                .iter()
+                .map(|x| x.color.into_format().into_color())
+                .collect();
 
             let mut result = Kmeans::new();
 
@@ -60,12 +55,10 @@ pub fn palette_from_image<P: AsRef<Path>>(path: P) -> Option<Vec<Srgba>> {
             res.sort_unstable_by(|a, b| (b.percentage).partial_cmp(&a.percentage).unwrap());
             let colors: Vec<Srgba> = res.iter().map(|x| x.centroid.into_color()).collect();
             Some(colors)
-        } else {
-            eprintln!("unsupported color format");
-            // TODO error dialog msg
+        }
+        Err(err) => {
+            eprintln!("{}", err);
             None
         }
-    } else {
-        None
     }
 }

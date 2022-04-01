@@ -15,13 +15,13 @@ pub struct Selection<C> {
 }
 
 // vector should be in order of most common
-impl<C> TryFrom<Vec<C>> for Selection<C>
+impl<C> TryFrom<Vec<Srgba>> for Selection<C>
 where
-    C: Clone + Into<Srgba>,
+    C: Clone + From<Srgba>,
 {
     type Error = anyhow::Error;
 
-    fn try_from(mut colors: Vec<C>) -> Result<Self, Self::Error> {
+    fn try_from(mut colors: Vec<Srgba>) -> Result<Self, Self::Error> {
         if colors.len() < 5 {
             anyhow::bail!("length of inputted vector must be at least 5.")
         } else {
@@ -48,13 +48,13 @@ where
             let red = colors.remove(reddest_i);
 
             Ok(Self {
-                background: colors[0].clone(),
-                primary_container: colors[1].clone(),
-                secondary_container: colors[3].clone(),
-                accent: colors[2].clone(),
-                accent_text: Some(colors[2].clone()),
-                accent_nav_handle_text: Some(colors[2].clone()),
-                destructive: red,
+                background: colors[0].into(),
+                primary_container: colors[1].into(),
+                secondary_container: colors[3].into(),
+                accent: colors[2].into(),
+                accent_text: Some(colors[2].into()),
+                accent_nav_handle_text: Some(colors[2].into()),
+                destructive: red.into(),
             })
         }
     }

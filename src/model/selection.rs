@@ -3,14 +3,22 @@
 use palette::{named, IntoColor, Lch, Srgba};
 use std::convert::TryFrom;
 
+/// A Selection is a group of colors from which all cosmic theme colors are derived
 #[derive(Copy, Clone, Debug, Default)]
 pub struct Selection<C> {
+    /// base background container color
     pub background: C,
+    /// base primary container color
     pub primary_container: C,
+    /// base secondary container color
     pub secondary_container: C,
+    /// base accent color
     pub accent: C,
+    /// custom accent color (overrides base)
     pub accent_text: Option<C>,
+    /// custom accent nav handle text color (overrides base)
     pub accent_nav_handle_text: Option<C>,
+    /// base destructive element color
     pub destructive: C,
 }
 

@@ -1,11 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+/// Cosmic theme custom constraints which are used to pick colors
 #[derive(Copy, Clone, Debug)]
 pub struct ThemeConstraints {
+    /// requested contrast ratio for elevated surfaces
     pub elevated_contrast_ratio: f32,
+    /// requested contrast ratio for dividers
     pub divider_contrast_ratio: f32,
+    /// requested contrast ratio for text
     pub text_contrast_ratio: f32,
+    /// gray scale or color for dividers
     pub divider_gray_scale: bool,
+    /// elevated surfaces are lightened or darkened
     pub lighten: bool,
 }
 

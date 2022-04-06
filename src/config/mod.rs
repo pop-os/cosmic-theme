@@ -4,16 +4,21 @@ use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::{fmt, fs::File, io::prelude::*, path::PathBuf};
 
+/// Cosmic Theme config
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
+    /// Selected light theme name
     pub light: String,
+    /// Selected dark theme name
     pub dark: String,
+    /// Selected dark or light theme
     pub is_light: bool, // is light theme if true
 }
 
-pub const CONFIG_NAME: &'static str = "config.ron";
+pub(crate) const CONFIG_NAME: &'static str = "config.ron";
 
 impl Config {
+    /// create a new cosmic theme config
     pub fn new(light: String, dark: String) -> Self {
         Self {
             light,
@@ -22,6 +27,7 @@ impl Config {
         }
     }
 
+    /// save the cosmic theme config
     pub fn save(&self) -> Result<()> {
         let xdg_dirs = xdg::BaseDirectories::with_prefix(NAME)?;
         if let Ok(path) = xdg_dirs.place_config_file(PathBuf::from(CONFIG_NAME)) {
@@ -34,6 +40,7 @@ impl Config {
         }
     }
 
+    /// load the cosmic theme config
     pub fn load() -> Result<Self> {
         let p = Self::config_path()?;
         let mut f = File::open(p)?;
@@ -42,6 +49,7 @@ impl Config {
         Ok(toml::from_str(s.as_str())?)
     }
 
+    /// get the path of the cosmic theme config
     pub fn config_path() -> Result<PathBuf> {
         let xdg_dirs = xdg::BaseDirectories::with_prefix(NAME)?;
         if let Some(path) = xdg_dirs.find_config_file(PathBuf::from(CONFIG_NAME)) {
@@ -53,6 +61,7 @@ impl Config {
         }
     }
 
+    /// get the name of the active theme
     pub fn active_name(&self) -> String {
         if self.is_light {
             self.light.clone()

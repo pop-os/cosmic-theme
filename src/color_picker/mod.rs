@@ -1,7 +1,6 @@
 use crate::{
-    Accent, AccentDerivation, Container, ContainerDerivation, ContainerType, Destructive,
-    DestructiveDerivation, Selection, Theme, ThemeConstraints, ThemeDerivation, Widget,
-    WidgetDerivation,
+    Accent, Container, ContainerType, Derivation, Destructive, Selection, Theme, ThemeConstraints,
+    Widget,
 };
 use anyhow::{anyhow, Result};
 use palette::{IntoColor, Lcha, Shade, Srgba};
@@ -11,6 +10,7 @@ use std::fmt;
 pub use exact::*;
 mod exact;
 
+/// Color picker derives colors and theme elements
 pub trait ColorPicker<
     C: Into<Srgba>
         + From<Srgba>
@@ -23,6 +23,7 @@ pub trait ColorPicker<
         + DeserializeOwned,
 >
 {
+    /// try to derive a color with a given contrast, grayscale setting, and lightness direction
     fn pick_color(
         &self,
         color: C,
@@ -31,6 +32,7 @@ pub trait ColorPicker<
         lighten: Option<bool>,
     ) -> Result<C>;
 
+    /// try to derive a text color with a given grayscale setting, and lightness direction
     fn pick_color_text(
         &self,
         color: C,
@@ -38,6 +40,7 @@ pub trait ColorPicker<
         lighten: Option<bool>,
     ) -> (C, Option<anyhow::Error>);
 
+    /// try to derive a graphic color with a given contrast, grayscale setting, and lightness direction
     fn pick_color_graphic(
         &self,
         color: C,
@@ -46,11 +49,14 @@ pub trait ColorPicker<
         lighten: Option<bool>,
     ) -> (C, Option<anyhow::Error>);
 
+    /// get the selection for this color picker
     fn get_selection(&self) -> Selection<C>;
 
+    /// get the constraints for this color picker
     fn get_constraints(&self) -> ThemeConstraints;
 
-    fn theme_derivation(&self) -> ThemeDerivation<C> {
+    /// derive a theme from the selection and constraints
+    fn theme_derivation(&self) -> Derivation<Theme<C>> {
         let selection = self.get_selection();
         let mut theme_errors = Vec::new();
         let window_header_background = selection.background;
@@ -58,35 +64,38 @@ pub trait ColorPicker<
         if let Some(err) = err {
             theme_errors.push(err)
         };
-        let ContainerDerivation {
-            container: background,
+        let Derivation {
+            derived: background,
             errors: mut errs,
         } = self.container_derivation(ContainerType::Background);
         theme_errors.append(&mut errs);
 
-        let ContainerDerivation {
-            container: primary,
+        let Derivation {
+            derived: primary,
             errors: mut errs,
         } = self.container_derivation(ContainerType::Primary);
         theme_errors.append(&mut errs);
 
-        let ContainerDerivation {
-            container: secondary,
+        let Derivation {
+            derived: secondary,
             mut errors,
         } = self.container_derivation(ContainerType::Secondary);
         theme_errors.append(&mut errors);
 
-        let AccentDerivation { accent, mut errors } = self.accent_derivation();
+        let Derivation {
+            derived: accent,
+            mut errors,
+        } = self.accent_derivation();
         theme_errors.append(&mut errors);
 
-        let DestructiveDerivation {
-            destructive,
+        let Derivation {
+            derived: destructive,
             mut errors,
         } = self.destructive_derivation();
         theme_errors.append(&mut errors);
 
-        ThemeDerivation {
-            theme: Theme::new(
+        Derivation {
+            derived: Theme::new(
                 background,
                 primary,
                 secondary,
@@ -99,7 +108,8 @@ pub trait ColorPicker<
         }
     }
 
-    fn container_derivation(&self, container_type: ContainerType) -> ContainerDerivation<C> {
+    /// derive a container element
+    fn container_derivation(&self, container_type: ContainerType) -> Derivation<Container<C>> {
         let selection = self.get_selection();
         let constraints = self.get_constraints();
 
@@ -156,8 +166,8 @@ pub trait ColorPicker<
             errors.push(err);
         };
 
-        let WidgetDerivation {
-            widget: container_component,
+        let Derivation {
+            derived: container_component,
             errors: errs,
         } = self.widget_derivation(component_default);
         for e in errs {
@@ -169,8 +179,8 @@ pub trait ColorPicker<
             errors.push(err);
         }
 
-        ContainerDerivation {
-            container: Container {
+        Derivation {
+            derived: Container {
                 prefix: container_type,
                 container,
                 container_divider,
@@ -182,13 +192,14 @@ pub trait ColorPicker<
         }
     }
 
-    fn destructive_derivation(&self) -> DestructiveDerivation<C> {
+    /// derive a destructive element
+    fn destructive_derivation(&self) -> Derivation<Destructive<C>> {
         let selection = self.get_selection();
 
         let mut errors = Vec::<anyhow::Error>::new();
 
-        let WidgetDerivation {
-            widget: destructive,
+        let Derivation {
+            derived: destructive,
             errors: errs,
         } = self.widget_derivation(selection.destructive);
         for e in errs {
@@ -197,13 +208,14 @@ pub trait ColorPicker<
                 e
             ));
         }
-        DestructiveDerivation {
-            destructive: Destructive { destructive },
+        Derivation {
+            derived: Destructive { destructive },
             errors,
         }
     }
 
-    fn widget_derivation(&self, default: C) -> WidgetDerivation<C> {
+    /// derive a widget
+    fn widget_derivation(&self, default: C) -> Derivation<Widget<C>> {
         let ThemeConstraints {
             divider_contrast_ratio,
             divider_gray_scale,
@@ -264,9 +276,9 @@ pub trait ColorPicker<
         let mut disabled_text = text.into();
         disabled_text.alpha = 0.5;
 
-        WidgetDerivation {
-            widget: Widget {
-                default,
+        Derivation {
+            derived: Widget {
+                base: default,
                 hover: C::from(Srgba {
                     color: hover.color.into_color(),
                     alpha: hover.alpha,
@@ -283,7 +295,8 @@ pub trait ColorPicker<
         }
     }
 
-    fn accent_derivation(&self) -> AccentDerivation<C> {
+    /// derive an accent
+    fn accent_derivation(&self) -> Derivation<Accent<C>> {
         let Selection {
             accent,
             accent_text,
@@ -292,8 +305,8 @@ pub trait ColorPicker<
         } = self.get_selection();
         let mut errors = Vec::<anyhow::Error>::new();
 
-        let WidgetDerivation {
-            widget: suggested,
+        let Derivation {
+            derived: suggested,
             errors: errs,
         } = self.widget_derivation(accent);
         for e in errs {
@@ -302,8 +315,8 @@ pub trait ColorPicker<
         let accent_text = accent_text.unwrap_or(accent);
         let accent_nav_handle_text = accent_nav_handle_text.unwrap_or(accent);
 
-        AccentDerivation {
-            accent: Accent {
+        Derivation {
+            derived: Accent {
                 accent,
                 accent_text,
                 accent_nav_handle_text,

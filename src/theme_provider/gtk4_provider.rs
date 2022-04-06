@@ -9,7 +9,8 @@ use notify::{
 };
 use std::path::PathBuf;
 
-pub async fn load_cosmic_gtk_theme(provider: CssProvider) -> Result<()> {
+/// Function for loading and watching the cosmic gtk theme
+pub async fn load_cosmic_gtk4_theme(provider: CssProvider) -> Result<()> {
     if !gtk4::is_initialized() {
         bail!("gtk is not initialized.");
     }
@@ -20,13 +21,18 @@ pub async fn load_cosmic_gtk_theme(provider: CssProvider) -> Result<()> {
     let css_path: PathBuf = [NAME, CSS_DIR].iter().collect();
     let css_dirs = xdg::BaseDirectories::with_prefix(css_path)?;
 
+    let base_theme = if let Some(path) = css_dirs.find_data_file("base_theme.css") {
+        std::fs::read_to_string(path)?
+    } else {
+        bail!("Failed to find base theme")
+    };
+
     let (mut watcher, mut rx) = async_watcher()?;
     let mut theme_css_path =
         if let Some(p) = css_dirs.find_data_file(format!("{}.css", config.active_name())) {
             let _ = watcher.watch(&p, RecursiveMode::NonRecursive);
-            provider.load_from_path(&p);
-            // Add the provider to the default screen
-
+            let theme_colors = std::fs::read_to_string(&p).unwrap_or_default();
+            provider.load_from_data(&format!("{base_theme}\n{theme_colors}\n").as_bytes());
             p
         } else {
             dbg!(css_dirs.get_data_home());
@@ -56,7 +62,8 @@ pub async fn load_cosmic_gtk_theme(provider: CssProvider) -> Result<()> {
                     && event.kind == EventKind::Access(AccessKind::Close(AccessMode::Write))
                     || event.kind == EventKind::Modify(ModifyKind::Any) =>
             {
-                provider.load_from_path(&theme_css_path);
+                let theme_colors = std::fs::read_to_string(&theme_css_path).unwrap_or_default();
+                provider.load_from_data(&format!("{base_theme}\n{theme_colors}\n").as_bytes());
             }
 
             Err(e) => {

@@ -17,6 +17,7 @@ fn async_watcher() -> notify::Result<(INotifyWatcher, Receiver<notify::Result<Ev
 }
 
 #[cfg(feature = "gtk4-theme")]
+/// Module for loading and watching the Cosmic gtk4 theme
 pub mod gtk4_provider;
 #[cfg(feature = "gtk4-theme")]
 pub use gtk4_provider::*;

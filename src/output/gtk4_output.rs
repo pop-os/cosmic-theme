@@ -1,22 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-only
-use crate::{Hex, Theme, NAME, model::{Container, Accent, Widget, ContainerType, Destructive}};
+use crate::{
+    model::{Accent, Container, ContainerType, Destructive, Widget},
+    Hex, Theme, NAME,
+};
 use anyhow::{bail, Result};
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Serialize};
 use std::{fmt, fs::File, io::prelude::*, path::PathBuf};
 
-pub const CSS_DIR: &'static str = "css";
-pub const SASS_DIR: &'static str = "sass";
-pub const THEME_DIR: &'static str = "themes";
+pub(crate) const CSS_DIR: &'static str = "css";
+pub(crate) const THEME_DIR: &'static str = "themes";
 
-pub trait GtkOutput {
-    fn as_sass(&self) -> String;
-    fn as_css(&self) -> Result<String>;
-    fn get_name(&self) -> String;
+/// Trait for outputting the Theme as Gtk4CSS
+pub trait Gtk4Output {
+    /// turn the theme into css
+    fn as_css(&self) -> String;
+    /// Serialize the theme as RON and write the CSS to the appropriate directories
+    /// Should be written in the XDG data directory for cosmic-theme
     fn write(&self) -> Result<()>;
 }
 
-impl<C> GtkOutput for Theme<C>
+impl<C> Gtk4Output for Theme<C>
 where
     C: Copy
         + Clone
@@ -29,24 +33,30 @@ where
         + Serialize
         + DeserializeOwned,
 {
-    fn as_css(&self) -> Result<String> {
-        todo!()
-    }
+    fn as_css(&self) -> String {
+        let Self {
+            background,
+            primary,
+            secondary,
+            accent,
+            destructive,
+            ..
+        } = self;
+        let mut css = String::new();
 
-    fn as_sass(&self) -> String {
-        todo!()
-    }
+        css.push_str(&background.as_css());
+        css.push_str(&primary.as_css());
+        css.push_str(&secondary.as_css());
+        css.push_str(&accent.as_css());
+        css.push_str(&destructive.as_css());
 
-    fn get_name(&self) -> String {
-        self.name.clone()
+        css
     }
 
     fn write(&self) -> Result<()> {
         // TODO sass -> css
         let ron_str = ron::ser::to_string_pretty(self, Default::default())?;
-        // let sass_str = self.as_sass();
-        // let css_str = self.as_css()?;
-        let css_str = self.preview_gtk_css();
+        let css_str = self.as_css();
 
         let ron_path: PathBuf = [NAME, THEME_DIR].iter().collect();
         let css_path: PathBuf = [NAME, CSS_DIR].iter().collect();
@@ -54,8 +64,8 @@ where
         let ron_dirs = xdg::BaseDirectories::with_prefix(ron_path)?;
         let css_dirs = xdg::BaseDirectories::with_prefix(css_path)?;
 
-        let ron_name = format!("{}.ron", self.get_name());
-        let css_name = format!("{}.css", self.get_name());
+        let ron_name = format!("{}.ron", &self.name);
+        let css_name = format!("{}.css", &self.name);
 
         if let Ok(p) = ron_dirs.place_data_file(ron_name) {
             let mut f = File::create(p)?;
@@ -75,14 +85,16 @@ where
     }
 }
 
-pub trait AsGtkCss<C>
+/// Trait for converting theme data into gtk4 CSS
+pub trait AsGtk4Css<C>
 where
     C: Copy + Into<Srgba> + From<Srgba>,
 {
+    /// function for converting theme data into gtk4 CSS
     fn as_css(&self) -> String;
 }
 
-impl<C> AsGtkCss<C> for Container<C>
+impl<C> AsGtk4Css<C> for Container<C>
 where
     C: Copy + Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + fmt::Display,
 {
@@ -95,101 +107,26 @@ where
             container_text,
             ..
         } = self;
-        let Widget {
-            default,
-            hover,
-            pressed,
-            focused,
-            divider,
-            text,
-            // XXX this should ideally maintain AAA contrast, and failing that, color chooser should raise warnings
-            text_opacity_80,
-            // these are transparent but are not required to maintain contrast
-            disabled,
-            disabled_text,
-        } = container_component;
 
         let prefix_lower = match prefix {
             ContainerType::Background => "background",
-            ContainerType::Primary => "primary-container",
-            ContainerType::Secondary => "secondary-container",
+            ContainerType::Primary => "primary",
+            ContainerType::Secondary => "secondary",
         };
+        let component = widget_gtk4_css(prefix_lower, container_component);
 
         format!(
             r#"
-/* {prefix_lower} CSS */
-*.{prefix_lower} {{
-  background-color: {container};
-  color: {container_text};
-}}
-
-*.{prefix_lower}-component {{
-  transition-duration: 50ms;
-  background-color: {default};
-  color: {text};
-  border-color: {default};
-}}
-
-*.{prefix_lower}-component:hover {{
-  transition-duration: 50ms;
-  background-color: {hover};
-  color: {text};
-  border-color: {default};
-}}
-
-*.{prefix_lower}-component:selected {{
-  transition-duration: 50ms;
-  background-color: {focused};
-  transition-duration: 50ms;
-  outline-color: {default};
-  color: {text};
-  border-color: {default};
-}}
-
-/* slider and switch are examples of widgets which likely want sass */
-*.{prefix_lower}-component:checked {{
-  transition-duration: 50ms;
-  background-color: {pressed};
-  outline-color: {default};
-  color: {text};
-  border-color: {default};
-}}
-
-*.{prefix_lower}-component slider {{
-  transition-duration: 50ms;
-  background-color: {text};
-  outline-color: {default};
-  color: {text};
-  border-color: {default};
-}}
-
-*.{prefix_lower}-component:active {{
-  transition-duration: 50ms;
-  background-color: {pressed};
-  color: {text};
-  border-color: {default};
-}}
-
-*.{prefix_lower}-component:disabled {{
-  transition-duration: 50ms;
-  background-color: {disabled};
-  color: {text};
-  border-color: {default};
-}}
-
-*.{prefix_lower}-divider {{
-  background-color: {container_divider};
-}}
-
-*.{prefix_lower}-component-divider {{
-  background-color: {divider};
-}}
+@define-color {prefix_lower}_container #{{{container}}};
+@define-color {prefix_lower}_container_divider #{{{container_divider}}};
+@define-color {prefix_lower}_container_text #{{{container_text}}};
+{component}
 "#
         )
     }
 }
 
-impl<C> AsGtkCss<C> for Accent<C>
+impl<C> AsGtk4Css<C> for Accent<C>
 where
     C: Copy
         + Clone
@@ -208,60 +145,20 @@ where
             accent_nav_handle_text,
             suggested,
         } = self;
-
-        let Widget {
-            default,
-            hover,
-            pressed,
-            focused,
-            divider,
-            text,
-            // XXX this should ideally maintain AAA contrast, and failing that, color chooser should raise warnings
-            text_opacity_80,
-            // these are transparent but are not required to maintain contrast
-            disabled,
-            disabled_text,
-        } = suggested;
+        let suggested = widget_gtk4_css("suggested", suggested);
 
         format!(
-            r#"/* Suggested CSS */
-*.suggested-action {{
-  background-color: {default};
-  color: {text};
-  border-color: {default};
-}}
-
-*.suggested-action:hover {{
-  background-color: {hover};
-  color: {text};
-  border-color: {default};
-}}
-
-*.suggested-action:selected {{
-  background-color: {focused};
-  outline-color: {default};
-  color: {text};
-  border-color: {default};
-}}
-
-*.suggested-action:active {{
-  background-color: {pressed};
-  color: {text};
-  border-color: {default};
-}}
-
-*.suggested-action:disabled {{
-  background-color: {disabled};
-  color: {text};
-  border-color: {default};
-}}
-
+            r#"
+@define-color accent #{{{accent}}};
+@define-color accent_text #{{{accent_text}}};
+@define-color accent_nav_handle_text #{{{accent_nav_handle_text}}};
+{suggested}
 "#
         )
     }
 }
 
-impl<C> AsGtkCss<C> for Destructive<C>
+impl<C> AsGtk4Css<C> for Destructive<C>
 where
     C: Copy
         + Clone
@@ -275,52 +172,35 @@ where
 {
     fn as_css(&self) -> String {
         let Destructive { destructive } = &self;
-        let Widget {
-            default,
-            hover,
-            pressed,
-            focused,
-            divider,
-            text,
-            text_opacity_80,
-            disabled,
-            disabled_text,
-        } = destructive;
-
-        format!(
-            r#"/* Destructive CSS */
-*.destructive-action {{
-  background-color: {default};
-  color: {text};
-  border-color: {default};
-}}
-
-*.destructive-action:hover {{
-  background-color: {hover};
-  color: {text};
-  border-color: {default};
-}}
-
-*.destructive-action:selected {{
-  background-color: {focused};
-  outline-color: {default};
-  color: {text};
-  border-color: {default};
-}}
-
-*.destructive-action:active {{
-  background-color: {pressed};
-  color: {text};
-  border-color: {default};
-}}
-
-*.destructive-action:disabled {{
-  background-color: {disabled};
-  color: {text};
-  border-color: {default};
-}}
-
-"#
-        )
+        widget_gtk4_css("destructive", destructive)
     }
+}
+
+fn widget_gtk4_css<C: fmt::Display>(
+    prefix: &str,
+    Widget {
+        base,
+        hover,
+        pressed,
+        focused,
+        divider,
+        text,
+        text_opacity_80,
+        disabled,
+        disabled_text,
+    }: &Widget<C>,
+) -> String {
+    format!(
+        r#"
+@define-color {prefix}_widget_base #{{{base}}};
+@define-color {prefix}_widget_hover #{{{hover}}};
+@define-color {prefix}_widget_pressed #{{{pressed}}};
+@define-color {prefix}_widget_focused #{{{focused}}};
+@define-color {prefix}_widget_divider #{{{divider}}};
+@define-color {prefix}_widget_text #{{{text}}};
+@define-color {prefix}_widget_text_opacity_80 #{{{text_opacity_80}}};
+@define-color {prefix}_widget_disabled #{{{disabled}}};
+@define-color {prefix}_widget_disabled_text #{{{disabled_text}}};
+"#
+    )
 }

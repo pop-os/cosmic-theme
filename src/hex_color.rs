@@ -4,6 +4,7 @@ use hex::encode;
 use palette::{Pixel, Srgba};
 use std::fmt;
 
+/// Wrapper type for Hex color strings
 #[derive(Debug, Clone)]
 pub struct Hex {
     hex_string: String,
@@ -24,7 +25,7 @@ impl Into<String> for Hex {
 }
 
 impl fmt::Display for Hex {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "#{}", self)
     }
 }

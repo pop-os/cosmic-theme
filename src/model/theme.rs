@@ -5,18 +5,27 @@ use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt;
 
+/// Cosmic Theme data structure with all colors and its name
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Theme<C> {
+    /// name of the theme
     pub name: String,
-    background: Container<C>,
-    primary: Container<C>,
-    secondary: Container<C>,
-    accent: Accent<C>,
-    destructive: Destructive<C>,
+    /// background element colors
+    pub background: Container<C>,
+    /// primary element colors
+    pub primary: Container<C>,
+    /// secondary element colors
+    pub secondary: Container<C>,
+    /// accent element colors
+    pub accent: Accent<C>,
+    /// destructive element colors
+    pub destructive: Destructive<C>,
 
     // TODO derived surface colors which don't fit neatly in a category
-    window_header_background: C,
-    text_button_text: C,
+    /// window header background color
+    pub window_header_background: C,
+    /// text button text color
+    pub text_button_text: C,
 }
 
 impl<C> Theme<C>
@@ -31,6 +40,7 @@ where
         + Serialize
         + DeserializeOwned,
 {
+    /// create a new theme from its elements
     pub fn new(
         background: Container<C>,
         primary: Container<C>,
@@ -51,100 +61,4 @@ where
             ..Default::default()
         }
     }
-
-    #[cfg(feature = "gtk4-theme")]
-    pub fn preview_gtk_css(&self) -> String {
-        use crate::AsGtkCss;
-        let Self {
-            background,
-            primary,
-            secondary,
-            accent,
-            destructive,
-            ..
-        } = self;
-        let mut css = String::new();
-
-        css.push_str(&background.as_css());
-        css.push_str(&primary.as_css());
-        css.push_str(&secondary.as_css());
-        css.push_str(&accent.as_css());
-        css.push_str(&destructive.as_css());
-        let accent = accent.accent;
-        let background_color = background.container;
-        css.push_str(&format!(
-            r#"/* Accent CSS */
-popover {{
-  background-color: transparent;
-  background-image: none;
-}}
-
-popover contents {{
-  border-width: 0px;
-  border-radius: 12px;
-  padding: 12px;
-  background: {background_color};
-}}
-
-popover arrow {{
-  border-width: 0px;
-  border-radius: 12px;
-  padding: 12px;
-  background: {background_color};
-}}
-
-* {{
-  background-image: none;
-  outline-color: {accent};
-}}
-
-*.padding-x-small {{
-  padding: 4px;
-}}
-
-*.padding-small {{
-  padding: 8px;
-}}
-
-*.padding-medium {{
-  padding: 12px;
-}}
-
-*.padding-large {{
-  padding: 16px;
-}}
-
-*.padding-x-large {{
-  padding: 20px;
-}}
-
-*.border-radius-x-small {{
-  border-radius: 4px;
-}}
-
-*.border-radius-small {{
-  border-radius: 8px;
-}}
-
-*.border-radius-medium {{
-  border-radius: 12px;
-}}
-
-*.border-radius-large {{
-  border-radius: 16px;
-}}
-
-*.border-radius-x-large {{
-  border-radius: 20px;
-}}
-"#
-        ));
-        css
-    }
-}
-
-#[derive(Debug, Default)]
-pub struct ThemeDerivation<C> {
-    pub theme: Theme<C>,
-    pub errors: Vec<anyhow::Error>,
 }

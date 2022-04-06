@@ -3,6 +3,11 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![warn(missing_docs, missing_debug_implementations, rust_2018_idioms)]
 
+//! Cosmic theme library.
+//!
+//! Provides utilities for creating custom cosmic themes.
+//!
+
 pub use color_picker::*;
 pub use config::*;
 pub use hex_color::*;
@@ -26,11 +31,14 @@ use std::path::Path;
 
 const NAME: &'static str = "cosmic-theme";
 
+/// Create a hex String from an Srgba
 pub fn hex_from_rgba(rgba: &Srgba) -> String {
     let hex = encode::<[u8; 4]>(Srgba::into_raw(rgba.into_format()));
     format!("#{hex}")
 }
 
+/// Create a palette from an image
+/// The palette is sorted by how often a color occurs in the image, most often first
 pub fn palette_from_image<P: AsRef<Path>>(path: P) -> Option<Vec<Srgba>> {
     // calculate kmeans colors from file
     // let pixbuf = Pixbuf::from_file(path);

@@ -6,6 +6,7 @@ use palette::{Clamp, IntoColor, Lch, RelativeContrast, Srgba};
 use serde::{de::DeserializeOwned, Serialize};
 use std::fmt;
 
+/// Implementation of a Cosmic color chooser which exactly meets constraints
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Exact<C> {
     selection: Selection<C>,
@@ -24,6 +25,7 @@ where
         + Serialize
         + DeserializeOwned,
 {
+    /// create a new Exact color picker
     pub fn new(selection: Selection<C>, constraints: ThemeConstraints) -> Self {
         Self {
             selection,

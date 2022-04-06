@@ -3,7 +3,7 @@ use crate::{Selection, ThemeConstraints};
 use anyhow::{anyhow, bail, Result};
 use float_cmp::approx_eq;
 use palette::{Clamp, IntoColor, Lch, RelativeContrast, Srgba};
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{de::DeserializeOwned, Serialize};
 use std::fmt;
 
 #[derive(Debug, Default, Copy, Clone)]

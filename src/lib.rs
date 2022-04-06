@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![warn(missing_docs, missing_debug_implementations, rust_2018_idioms)]
+
 pub use color_picker::*;
 pub use config::*;
 pub use hex_color::*;
@@ -14,14 +17,11 @@ mod model;
 mod output;
 mod theme_provider;
 
-use gdk_pixbuf::prelude::FileExt;
-use gdk_pixbuf::{Colorspace, Pixbuf};
-use gio::File;
 use hex::encode;
-use image::{EncodableLayout, GenericImage, GenericImageView, RgbImage, SubImage};
+use image::EncodableLayout;
 use kmeans_colors::{get_kmeans_hamerly, Kmeans, Sort};
 use palette::{rgb::Srgba, Pixel};
-use palette::{IntoColor, Lab, Srgb};
+use palette::{IntoColor, Lab};
 use std::path::Path;
 
 const NAME: &'static str = "cosmic-theme";

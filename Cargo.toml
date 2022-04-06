@@ -5,22 +5,27 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[package.metadata.docs.rs]
+features = ["test_all_features"]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[features]
+default = ["gtk4-theme"]
+no-default = []
+gtk4-theme = ["gtk4"]
+
 [dependencies]
 palette = "0.6"
 anyhow = "1.0"
 hex = "0.4.3"
 kmeans_colors = { git = "https://github.com/okaneco/kmeans-colors", features = ["palette_color"], default-features = false }
-gdk-pixbuf = "0.15.10"
-gio = "0.15.10"
 float-cmp = "0.9.0"
-grass = { git = "https://github.com/connorskees/grass" }
 notify = "5.0.0-pre.14" 
-serde = { version = "1.0.136", features = ["derive"] }
+serde = { version = "1.0.129", features = ["derive"] }
 ron = "0.7"
 toml = "0.5.8"
 dirs = "4.0.0"
 xdg = "2.4.1"
-gtk4 = { version = "^0.4.4" }
 futures = "0.3.21"
 image = "0.24.1"
-
+gtk4 = { version = "^0.4.4", optional = true }

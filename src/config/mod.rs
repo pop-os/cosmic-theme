@@ -2,12 +2,7 @@ use crate::{Hex, Theme, NAME};
 use anyhow::{bail, Result};
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
-use std::{
-    fmt,
-    fs::{create_dir_all, File},
-    io::prelude::*,
-    path::{Path, PathBuf},
-};
+use std::{fmt, fs::File, io::prelude::*, path::PathBuf};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {

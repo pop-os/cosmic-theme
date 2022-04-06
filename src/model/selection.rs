@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use palette::{named, IntoColor, Lch, Srgba};
-use std::{convert::TryFrom, fmt};
+use std::convert::TryFrom;
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct Selection<C> {

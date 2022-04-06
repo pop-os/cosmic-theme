@@ -5,7 +5,7 @@ use crate::{
 };
 use anyhow::{anyhow, Result};
 use palette::{IntoColor, Lcha, Shade, Srgba};
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{de::DeserializeOwned, Serialize};
 use std::fmt;
 
 pub use exact::*;
@@ -184,7 +184,6 @@ pub trait ColorPicker<
 
     fn destructive_derivation(&self) -> DestructiveDerivation<C> {
         let selection = self.get_selection();
-        let constraints = self.get_constraints();
 
         let mut errors = Vec::<anyhow::Error>::new();
 
@@ -207,7 +206,6 @@ pub trait ColorPicker<
     fn widget_derivation(&self, default: C) -> WidgetDerivation<C> {
         let ThemeConstraints {
             divider_contrast_ratio,
-            text_contrast_ratio,
             divider_gray_scale,
             lighten,
             ..

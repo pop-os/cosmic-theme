@@ -4,7 +4,7 @@ use hex::encode;
 use palette::{Pixel, Srgba};
 use std::fmt;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Hex {
     hex_string: String,
 }

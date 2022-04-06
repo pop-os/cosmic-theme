@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::{Accent, AsGtkCss, Container, Destructive};
+use crate::{Accent, Container, Destructive};
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt;
@@ -52,7 +52,9 @@ where
         }
     }
 
+    #[cfg(feature = "gtk4-theme")]
     pub fn preview_gtk_css(&self) -> String {
+        use crate::AsGtkCss;
         let Self {
             background,
             primary,

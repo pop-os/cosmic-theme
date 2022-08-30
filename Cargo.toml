@@ -10,9 +10,10 @@ features = ["test_all_features"]
 rustdoc-args = ["--cfg", "docsrs"]
 
 [features]
-default = ["gtk4-theme"]
+default = ["gtk4-theme", "ron-serialization"]
 no-default = []
 gtk4-theme = ["gtk4"]
+ron-serialization = []
 
 [dependencies]
 palette = "0.6"

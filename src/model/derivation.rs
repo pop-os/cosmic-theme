@@ -13,9 +13,9 @@ pub struct Container<C> {
     /// the color of dividers in the container
     pub container_divider: C,
     /// the color of text in the container
-    pub container_text: C,
+    pub container_fg: C,
     /// the color of text with opacity 80 in the container
-    pub container_text_opacity_80: C,
+    pub container_fg_opacity_80: C,
 }
 
 /// The type of the container
@@ -51,9 +51,9 @@ pub struct Accent<C> {
     /// Base accent color
     pub accent: C,
     /// Accent text color
-    pub accent_text: C,
+    pub accent_fg: C,
     /// Accent nav handle text color
-    pub accent_nav_handle_text: C,
+    pub accent_nav_handle_fg: C,
     /// Accent Widget colors
     pub suggested: Widget<C>,
 }
@@ -85,7 +85,7 @@ pub struct Widget<C> {
     /// the color of the widget when it is disabled
     pub disabled: C,
     /// the color of text in the widget when it is disabled
-    pub disabled_text: C,
+    pub disabled_fg: C,
 }
 
 /// Derived theme element from a palette and constraints

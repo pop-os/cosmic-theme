@@ -104,7 +104,7 @@ where
             container,
             container_component,
             container_divider,
-            container_text,
+            container_fg,
             ..
         } = self;
 
@@ -119,7 +119,7 @@ where
             r#"
 @define-color {prefix_lower}_container #{{{container}}};
 @define-color {prefix_lower}_container_divider #{{{container_divider}}};
-@define-color {prefix_lower}_container_text #{{{container_text}}};
+@define-color {prefix_lower}_container_fg #{{{container_fg}}};
 {component}
 "#
         )
@@ -141,8 +141,8 @@ where
     fn as_css(&self) -> String {
         let Accent {
             accent,
-            accent_text,
-            accent_nav_handle_text,
+            accent_fg,
+            accent_nav_handle_fg,
             suggested,
         } = self;
         let suggested = widget_gtk4_css("suggested", suggested);
@@ -150,8 +150,8 @@ where
         format!(
             r#"
 @define-color accent #{{{accent}}};
-@define-color accent_text #{{{accent_text}}};
-@define-color accent_nav_handle_text #{{{accent_nav_handle_text}}};
+@define-color accent_fg #{{{accent_fg}}};
+@define-color accent_nav_handle_fg #{{{accent_nav_handle_fg}}};
 {suggested}
 "#
         )
@@ -187,7 +187,7 @@ fn widget_gtk4_css<C: fmt::Display>(
         text,
         text_opacity_80,
         disabled,
-        disabled_text,
+        disabled_fg,
     }: &Widget<C>,
 ) -> String {
     format!(
@@ -197,10 +197,10 @@ fn widget_gtk4_css<C: fmt::Display>(
 @define-color {prefix}_widget_pressed #{{{pressed}}};
 @define-color {prefix}_widget_focused #{{{focused}}};
 @define-color {prefix}_widget_divider #{{{divider}}};
-@define-color {prefix}_widget_text #{{{text}}};
-@define-color {prefix}_widget_text_opacity_80 #{{{text_opacity_80}}};
+@define-color {prefix}_widget_fg #{{{text}}};
+@define-color {prefix}_widget_fg_opacity_80 #{{{text_opacity_80}}};
 @define-color {prefix}_widget_disabled #{{{disabled}}};
-@define-color {prefix}_widget_disabled_text #{{{disabled_text}}};
+@define-color {prefix}_widget_disabled_fg #{{{disabled_fg}}};
 "#
     )
 }

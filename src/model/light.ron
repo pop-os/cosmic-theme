@@ -1,0 +1,93 @@
+(
+    name: "",
+    blue: (
+        c: "#000000",
+    ),
+    red: (
+        c: "#000000",
+    ),
+    green: (
+        c: "#000000",
+    ),
+    yellow: (
+        c: "#000000",
+    ),
+    gray_1: (
+        c: "#000000",
+    ),
+    gray_2: (
+        c: "#000000",
+    ),
+    gray_3: (
+        c: "#000000",
+    ),
+    neutral_1: (
+        c: "#000000",
+    ),
+    neutral_2: (
+        c: "#000000",
+    ),
+    neutral_3: (
+        c: "#000000",
+    ),
+    neutral_4: (
+        c: "#000000",
+    ),
+    neutral_5: (
+        c: "#000000",
+    ),
+    neutral_6: (
+        c: "#000000",
+    ),
+    neutral_7: (
+        c: "#000000",
+    ),
+    neutral_8: (
+        c: "#000000",
+    ),
+    neutral_9: (
+        c: "#000000",
+    ),
+    neutral_10: (
+        c: "#000000",
+    ),
+    ext_warm_grey: (
+        c: "#000000",
+    ),
+    ext_orange: (
+        c: "#000000",
+    ),
+    ext_yellow: (
+        c: "#000000",
+    ),
+    ext_blue: (
+        c: "#000000",
+    ),
+    ext_purple: (
+        c: "#000000",
+    ),
+    ext_pink: (
+        c: "#000000",
+    ),
+    ext_indigo: (
+        c: "#000000",
+    ),
+    accent_warm_grey: (
+        c: "#000000",
+    ),
+    accent_orange: (
+        c: "#000000",
+    ),
+    accent_yellow: (
+        c: "#000000",
+    ),
+    accent_purple: (
+        c: "#000000",
+    ),
+    accent_pink: (
+        c: "#000000",
+    ),
+    accent_indigo: (
+        c: "#000000",
+    ),
+)

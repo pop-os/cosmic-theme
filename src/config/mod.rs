@@ -158,8 +158,7 @@ impl Config {
 
 impl<C> From<(Theme<C>, Theme<C>)> for Config
 where
-    C: Copy
-        + Clone
+    C: Clone
         + fmt::Debug
         + Default
         + Into<Hex>
@@ -180,8 +179,7 @@ where
 
 impl<C> From<Theme<C>> for Config
 where
-    C: Copy
-        + Clone
+    C: Clone
         + fmt::Debug
         + Default
         + Into<Hex>

@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::{Accent, Container, NAME, THEME_DIR, CosmicPalette, Widget};
+use crate::{Accent, Container, CosmicPalette, Widget, NAME, THEME_DIR};
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
-use std::{fmt, path::{PathBuf, Path}, fs::File, io::Write};
+use std::{
+    fmt,
+    fs::File,
+    io::Write,
+    path::{Path, PathBuf},
+};
 
 /// Cosmic Theme data structure with all colors and its name
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
@@ -43,14 +48,7 @@ impl<C> PartialEq for Theme<C> {
 
 impl<C> Theme<C>
 where
-    C: Copy
-        + Clone
-        + fmt::Debug
-        + Default
-        + Into<Srgba>
-        + From<Srgba>
-        + Serialize
-        + DeserializeOwned,
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
     /// create a new theme from its elements
     pub fn new(
@@ -89,9 +87,9 @@ where
         let ron_dirs = xdg::BaseDirectories::with_prefix(ron_path)?;
         let ron_name = format!("{}.ron", &self.name);
 
-        if let Ok(p) = ron_dirs.place_data_file(ron_name) {
+        if let Ok(p) = ron_dirs.place_config_file(ron_name) {
             let mut f = File::create(p)?;
-            f.write_all(ron::ser::to_string(self)?.as_bytes())?;
+            f.write_all(ron::ser::to_string_pretty(self, Default::default())?.as_bytes())?;
         } else {
             anyhow::bail!("Failed to write RON theme.");
         }
@@ -102,7 +100,7 @@ where
     pub fn init() -> anyhow::Result<PathBuf> {
         let ron_path: PathBuf = [NAME, THEME_DIR].iter().collect();
         let base_dirs = xdg::BaseDirectories::new()?;
-        Ok(base_dirs.create_data_directory(ron_path)?)
+        Ok(base_dirs.create_config_directory(ron_path)?)
     }
 
     /// load a theme by name
@@ -111,7 +109,7 @@ where
         let ron_dirs = xdg::BaseDirectories::with_prefix(ron_path)?;
 
         let ron_name = format!("{}.ron", name);
-        if let Some(p) = ron_dirs.find_data_file(ron_name) {
+        if let Some(p) = ron_dirs.find_config_file(ron_name) {
             let f = File::open(p)?;
             Ok(ron::de::from_reader(f)?)
         } else {

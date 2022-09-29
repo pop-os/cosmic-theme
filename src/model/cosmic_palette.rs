@@ -1,17 +1,28 @@
-use std::fmt;
+use std::{
+    fmt,
+    fs::File,
+    io::Write,
+    path::{Path, PathBuf},
+};
 
+use lazy_static::lazy_static;
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
-use lazy_static::lazy_static;
+
+use crate::{NAME, PALETTE_DIR};
 
 lazy_static! {
-    static ref LIGHT_PALETTE: CosmicPalette<Srgba> = ron::from_str(include_str!("light.ron")).unwrap();
-    static ref DARK_PALETTE: CosmicPalette<Srgba> = ron::from_str(include_str!("dark.ron")).unwrap();
+    static ref LIGHT_PALETTE: CosmicPalette<Srgba> =
+        ron::from_str(include_str!("light.ron")).unwrap();
+    static ref DARK_PALETTE: CosmicPalette<Srgba> =
+        ron::from_str(include_str!("dark.ron")).unwrap();
 }
 
 /// The palette for Cosmic Theme, from which all color properties are derived
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct CosmicPalette<C> {
+    /// name of the palette
+    pub name: String,
     /// basic palette
     /// blue: colors used for various points of emphasis in the UI
     pub blue: C,
@@ -84,16 +95,49 @@ pub struct CosmicPalette<C> {
 
 impl<C> CosmicPalette<C>
 where
-    C: Copy
-        + Clone
-        + fmt::Debug
-        + Default
-        + Into<Srgba>
-        + From<Srgba>
-        + Serialize
-        + DeserializeOwned,
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
-    // TODO
+    /// save the theme to the theme directory
+    pub fn save(&self) -> anyhow::Result<()> {
+        let ron_path: PathBuf = [NAME, PALETTE_DIR].iter().collect();
+        let ron_dirs = xdg::BaseDirectories::with_prefix(ron_path)?;
+        let ron_name = format!("{}.ron", &self.name);
+
+        if let Ok(p) = ron_dirs.place_config_file(ron_name) {
+            let mut f = File::create(p)?;
+            f.write_all(ron::ser::to_string_pretty(self, Default::default())?.as_bytes())?;
+        } else {
+            anyhow::bail!("Failed to write RON theme.");
+        }
+        Ok(())
+    }
+
+    /// init the theme directory
+    pub fn init() -> anyhow::Result<PathBuf> {
+        let ron_path: PathBuf = [NAME, PALETTE_DIR].iter().collect();
+        let base_dirs = xdg::BaseDirectories::new()?;
+        Ok(base_dirs.create_config_directory(ron_path)?)
+    }
+
+    /// load a theme by name
+    pub fn load_from_name(name: &str) -> anyhow::Result<Self> {
+        let ron_path: PathBuf = [NAME, PALETTE_DIR].iter().collect();
+        let ron_dirs = xdg::BaseDirectories::with_prefix(ron_path)?;
+
+        let ron_name = format!("{}.ron", name);
+        if let Some(p) = ron_dirs.find_config_file(ron_name) {
+            let f = File::open(p)?;
+            Ok(ron::de::from_reader(f)?)
+        } else {
+            anyhow::bail!("Failed to write RON theme.");
+        }
+    }
+
+    /// load a theme by path
+    pub fn load(p: &dyn AsRef<Path>) -> anyhow::Result<Self> {
+        let f = File::open(p)?;
+        Ok(ron::de::from_reader(f)?)
+    }
 }
 
 // TODO derive Theme from palette

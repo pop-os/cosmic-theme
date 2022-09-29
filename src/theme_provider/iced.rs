@@ -131,7 +131,7 @@ impl ThemeWatcher {
                 }
             });
 
-        let bg = theme.background;
+        let bg = theme.background.clone();
         palette.background = Color::from_rgba(
             bg.container.red as f32,
             bg.container.green as f32,
@@ -145,7 +145,7 @@ impl ThemeWatcher {
             bg.container_fg.alpha as f32,
         );
 
-        let accent = theme.accent;
+        let accent = theme.accent.clone();
         palette.primary = Color::from_rgba(
             accent.accent.red as f32,
             accent.accent.green as f32,
@@ -153,7 +153,7 @@ impl ThemeWatcher {
             accent.accent.alpha as f32,
         );
 
-        let success = theme.success;
+        let success = theme.success.clone();
         palette.success = Color::from_rgba(
             success.base.red as f32,
             success.base.green as f32,
@@ -161,7 +161,7 @@ impl ThemeWatcher {
             success.base.alpha as f32,
         );
 
-        let destructive = theme.destructive;
+        let destructive = theme.destructive.clone();
         palette.danger = Color::from_rgba(
             destructive.base.red as f32,
             destructive.base.green as f32,

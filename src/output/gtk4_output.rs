@@ -22,8 +22,7 @@ pub trait Gtk4Output {
 
 impl<C> Gtk4Output for Theme<C>
 where
-    C: Copy
-        + Clone
+    C: Clone
         + fmt::Debug
         + Default
         + Into<Hex>

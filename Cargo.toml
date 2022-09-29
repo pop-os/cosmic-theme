@@ -31,3 +31,4 @@ futures = "0.3.21"
 image = "0.24.1"
 iced = { git = "https://github.com/wash2/iced", optional = true, branch = "fix_window_resize" }
 lazy_static = "1.4.0"
+csscolorparser = {version = "0.6.2", features = ["serde"]}

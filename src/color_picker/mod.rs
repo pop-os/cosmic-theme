@@ -1,6 +1,5 @@
 use crate::{
-    Accent, Container, ContainerType, Derivation, Selection, Theme, ThemeConstraints,
-    Widget,
+    Accent, Container, ContainerType, Derivation, Selection, Theme, ThemeConstraints, Widget,
 };
 use anyhow::{anyhow, Result};
 use palette::{IntoColor, Lcha, Shade, Srgba};
@@ -13,7 +12,7 @@ mod exact;
 // TODO derive palette from Selection?
 /// Color picker derives colors and theme elements
 pub trait ColorPicker<
-    C: Into<Srgba> + From<Srgba> + Copy + Clone + fmt::Debug + Default + Serialize + DeserializeOwned,
+    C: Into<Srgba> + From<Srgba> + Clone + fmt::Debug + Default + Serialize + DeserializeOwned,
 >
 {
     /// try to derive a color with a given contrast, grayscale setting, and lightness direction
@@ -52,8 +51,9 @@ pub trait ColorPicker<
     fn theme_derivation(&self) -> Derivation<Theme<C>> {
         let selection = self.get_selection();
         let mut theme_errors = Vec::new();
-        let window_header_background = selection.background;
-        let (text_button_text, err) = self.pick_color_text(selection.background, true, None);
+        let window_header_background = selection.background.clone();
+        let (text_button_text, err) =
+            self.pick_color_text(selection.background.clone(), true, None);
         if let Some(err) = err {
             theme_errors.push(err)
         };
@@ -143,7 +143,7 @@ pub trait ColorPicker<
             ContainerType::Secondary => secondary_container,
         };
         let (container_divider, err) = self.pick_color_graphic(
-            container,
+            container.clone(),
             divider_contrast_ratio,
             divider_gray_scale,
             Some(lighten),
@@ -152,18 +152,22 @@ pub trait ColorPicker<
             errors.push(e);
         };
 
-        let (container_fg, err) = self.pick_color_text(container, true, None);
+        let (container_fg, err) = self.pick_color_text(container.clone(), true, None);
         if let Some(err) = err {
             let err = anyhow!("{} => \"container text\" failed: {}", container_type, err);
             errors.push(err);
         };
 
         // TODO revisit this and adjust constraints for transparency
-        let mut container_fg_opacity_80: Srgba = container_fg.into();
+        let mut container_fg_opacity_80: Srgba = container_fg.clone().into();
         container_fg_opacity_80.alpha *= 0.8;
 
-        let (component_default, err) =
-            self.pick_color_graphic(container, elevated_contrast_ratio, false, Some(lighten));
+        let (component_default, err) = self.pick_color_graphic(
+            container.clone(),
+            elevated_contrast_ratio,
+            false,
+            Some(lighten),
+        );
         if let Some(e) = err {
             let err = anyhow!(
                 "{} => \"container component\" failed: {}",
@@ -210,7 +214,7 @@ pub trait ColorPicker<
 
         let mut errors = Vec::new();
 
-        let rgba: Srgba = default.into();
+        let rgba: Srgba = default.clone().into();
         let lch = Lcha {
             color: rgba.color.into_color(),
             alpha: rgba.alpha,
@@ -235,13 +239,13 @@ pub trait ColorPicker<
         });
 
         // TODO is this actually a different color? or just outlined?
-        let focused = default;
+        let focused = default.clone();
 
-        let mut disabled: Srgba = default.into();
+        let mut disabled: Srgba = default.clone().into();
         disabled.alpha = 0.5;
 
         let (divider, error) = self.pick_color_graphic(
-            pressed,
+            pressed.clone(),
             divider_contrast_ratio,
             divider_gray_scale,
             Some(lighten),
@@ -250,15 +254,15 @@ pub trait ColorPicker<
             errors.push(error);
         }
 
-        let (text, error) = self.pick_color_text(pressed, true, None);
+        let (text, error) = self.pick_color_text(pressed.clone(), true, None);
         if let Some(error) = error {
             errors.push(error);
         }
 
-        let mut text_opacity_80: Srgba = text.into();
+        let mut text_opacity_80: Srgba = text.clone().into();
         text_opacity_80.alpha = 0.8;
 
-        let mut disabled_fg = text.into();
+        let mut disabled_fg = text.clone().into();
         disabled_fg.alpha = 0.5;
 
         Derivation {
@@ -293,12 +297,12 @@ pub trait ColorPicker<
         let Derivation {
             derived: suggested,
             errors: errs,
-        } = self.widget_derivation(accent);
+        } = self.widget_derivation(accent.clone());
         for e in errs {
             errors.push(anyhow!("\"Accent component derivation\" failed: {}", e));
         }
-        let accent_fg = accent_fg.unwrap_or(accent);
-        let accent_nav_handle_fg = accent_nav_handle_fg.unwrap_or(accent);
+        let accent_fg = accent_fg.unwrap_or(accent.clone());
+        let accent_nav_handle_fg = accent_nav_handle_fg.unwrap_or(accent.clone());
 
         Derivation {
             derived: Accent {

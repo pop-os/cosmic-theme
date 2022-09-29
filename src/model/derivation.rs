@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Theme Container colors of a theme, can be a theme background container, primary container, or secondary container
-#[derive(Copy, Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Container<C> {
     /// type of the container, background, primary, or secondary
     pub prefix: ContainerType,
@@ -46,7 +46,7 @@ impl fmt::Display for ContainerType {
 }
 
 /// The accent colors of a theme
-#[derive(Copy, Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Accent<C> {
     /// Base accent color
     pub accent: C,
@@ -80,7 +80,7 @@ pub struct Accent<C> {
 // }
 
 /// The colors for a widget of the Cosmic theme
-#[derive(Copy, Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
 pub struct Widget<C> {
     /// The base color of the widget
     pub base: C,

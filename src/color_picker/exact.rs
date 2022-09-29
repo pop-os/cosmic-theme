@@ -7,7 +7,7 @@ use serde::{de::DeserializeOwned, Serialize};
 use std::fmt;
 
 /// Implementation of a Cosmic color chooser which exactly meets constraints
-#[derive(Debug, Default, Copy, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct Exact<C> {
     selection: Selection<C>,
     constraints: ThemeConstraints,
@@ -15,14 +15,7 @@ pub struct Exact<C> {
 
 impl<C> Exact<C>
 where
-    C: Copy
-        + Clone
-        + fmt::Debug
-        + Default
-        + Into<Srgba>
-        + From<Srgba>
-        + Serialize
-        + DeserializeOwned,
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
     /// create a new Exact color picker
     pub fn new(selection: Selection<C>, constraints: ThemeConstraints) -> Self {
@@ -35,21 +28,14 @@ where
 
 impl<C> ColorPicker<C> for Exact<C>
 where
-    C: Copy
-        + Clone
-        + fmt::Debug
-        + Default
-        + Into<Srgba>
-        + From<Srgba>
-        + Serialize
-        + DeserializeOwned,
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
     fn get_constraints(&self) -> ThemeConstraints {
         self.constraints
     }
 
     fn get_selection(&self) -> Selection<C> {
-        self.selection
+        self.selection.clone()
     }
 
     fn pick_color_graphic(
@@ -61,14 +47,14 @@ where
     ) -> (C, Option<anyhow::Error>) {
         let mut err = None;
 
-        let res = self.pick_color(color, Some(contrast), grayscale, lighten);
+        let res = self.pick_color(color.clone(), Some(contrast), grayscale, lighten);
         if let Ok(c) = res {
             return (c, err);
         } else if let Err(e) = res {
             err = Some(anyhow!("Graphic contrast {} failed: {}", contrast, e));
         }
 
-        let res = self.pick_color(color, None, grayscale, lighten);
+        let res = self.pick_color(color.clone(), None, grayscale, lighten);
         if let Ok(c) = res {
             return (c, err);
         } else if let Err(e) = res {
@@ -88,7 +74,7 @@ where
         let mut err = None;
 
         // AAA
-        let res = self.pick_color(color, Some(7.0), grayscale, lighten);
+        let res = self.pick_color(color.clone(), Some(7.0), grayscale, lighten);
         if let Ok(c) = res {
             return (c, err);
         } else if let Err(e) = res {
@@ -96,14 +82,14 @@ where
         }
 
         // AA
-        let res = self.pick_color(color, Some(4.5), grayscale, lighten);
+        let res = self.pick_color(color.clone(), Some(4.5), grayscale, lighten);
         if let Ok(c) = res {
             return (c, err);
         } else if let Err(e) = res {
             err = Some(anyhow!("AA text contrast failed: {}", e));
         }
 
-        let res = self.pick_color(color, None, grayscale, lighten);
+        let res = self.pick_color(color.clone(), None, grayscale, lighten);
         if let Ok(c) = res {
             return (c, err);
         } else if let Err(e) = res {
@@ -120,7 +106,7 @@ where
         grayscale: bool,
         lighten: Option<bool>,
     ) -> Result<C> {
-        let srgba: Srgba = color.into();
+        let srgba: Srgba = color.clone().into();
         let mut lch_color: Lch = srgba.into_color();
 
         // set to grayscale
@@ -141,7 +127,6 @@ where
             let (mut l, mut r) = (min, max);
 
             for _ in 0..100 {
-                dbg!((l, r));
                 let cur_guess_lightness = (l + r) / 2.0;
                 let mut cur_guess = lch_color;
                 cur_guess.l = cur_guess_lightness;

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::{Accent, Container, CosmicPalette, Widget, NAME, THEME_DIR};
+use crate::{Accent, Container, Destructive, Success, Warning, NAME, THEME_DIR, CosmicPalette};
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::{
@@ -15,8 +15,6 @@ use std::{
 pub struct Theme<C> {
     /// name of the theme
     pub name: String,
-    /// palette of the theme
-    pub palette: CosmicPalette<C>,
     /// background element colors
     pub background: Container<C>,
     /// primary element colors
@@ -26,11 +24,11 @@ pub struct Theme<C> {
     /// accent element colors
     pub accent: Accent<C>,
     /// suggested element colors
-    pub success: Widget<C>,
+    pub success: Success<C>,
     /// destructive element colors
-    pub destructive: Widget<C>,
+    pub destructive: Destructive<C>,
     /// warning element colors
-    pub warning: Widget<C>,
+    pub warning: Warning<C>,
 
     // TODO derived surface colors which don't fit neatly in a category
     /// window header background color
@@ -56,9 +54,9 @@ where
         primary: Container<C>,
         secondary: Container<C>,
         accent: Accent<C>,
-        destructive: Widget<C>,
-        warning: Widget<C>,
-        success: Widget<C>,
+        destructive: Destructive<C>,
+        warning: Warning<C>,
+        success: Success<C>,
         window_header_background: C,
         text_button_text: C,
     ) -> Self {
@@ -130,4 +128,30 @@ where
     // pub fn dark_default() -> Self {
     //     ron::de::from_bytes(include_bytes!("dark_default.ron")).unwrap()
     // }
+}
+
+impl<C> From<CosmicPalette<C>> for Theme<C> 
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
+{
+    fn from(p: CosmicPalette<C>) -> Self {
+        Self {
+            name: p.name().to_string(),
+            background: match &p {
+                CosmicPalette::Dark(p) =>  {
+                    Container::<C> { prefix: todo!(), container: todo!(), container_component: todo!(), container_divider: todo!(), container_fg: todo!(), container_fg_opacity_80: todo!() }
+                },
+                CosmicPalette::Light(p) => todo!(),
+                CosmicPalette::HighContrastLight(_) | CosmicPalette::HighContrastDark(_) => todo!(),
+            },
+            primary: todo!(),
+            secondary: todo!(),
+            accent: todo!(),
+            success: todo!(),
+            destructive: todo!(),
+            warning: todo!(),
+            window_header_background: todo!(),
+            text_button_text: todo!(),
+        }
+    }
 }

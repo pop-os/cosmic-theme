@@ -1,5 +1,5 @@
 use crate::{
-    Accent, Container, ContainerType, Derivation, Selection, Theme, ThemeConstraints, Widget,
+    Accent, Container, ContainerType, Derivation, Selection, Theme, ThemeConstraints, Widget, Destructive, Warning, Success,
 };
 use anyhow::{anyhow, Result};
 use palette::{IntoColor, Lcha, Shade, Srgba};
@@ -105,9 +105,9 @@ pub trait ColorPicker<
                 primary,
                 secondary,
                 accent,
-                destructive,
-                warning,
-                success,
+                Destructive::<C> { destructive },
+                Warning::<C> { warning },
+                Success::<C> { success },
                 window_header_background,
                 text_button_text,
             ),
@@ -273,7 +273,7 @@ pub trait ColorPicker<
                     alpha: hover.alpha,
                 }),
                 pressed,
-                focused,
+                selected: focused,
                 divider,
                 text,
                 text_opacity_80: text_opacity_80.into(),

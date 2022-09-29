@@ -9,7 +9,7 @@ use lazy_static::lazy_static;
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
-use crate::{NAME, PALETTE_DIR, util::CssColor};
+use crate::{util::CssColor, NAME, PALETTE_DIR};
 
 lazy_static! {
     /// built in light palette
@@ -20,11 +20,34 @@ lazy_static! {
         ron::from_str(include_str!("dark.ron")).unwrap();
 }
 
+/// Palette type
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub enum CosmicPalette<C> {
+    /// Dark mode
+    Dark(CosmicPaletteInner<C>),
+    /// Light mode
+    Light(CosmicPaletteInner<C>),
+    /// High contrast light mode
+    HighContrastLight(CosmicPaletteInner<C>),
+    /// High contrast dark mode
+    HighContrastDark(CosmicPaletteInner<C>),
+}
+
+impl<C> Default for CosmicPalette<C> 
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
+{
+    fn default() -> Self {
+        CosmicPalette::Dark(Default::default())
+    }
+}
+
 /// The palette for Cosmic Theme, from which all color properties are derived
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct CosmicPalette<C> {
+pub struct CosmicPaletteInner<C> {
     /// name of the palette
     pub name: String,
+
     /// basic palette
     /// blue: colors used for various points of emphasis in the UI
     pub blue: C,
@@ -99,11 +122,21 @@ impl<C> CosmicPalette<C>
 where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
+
+    /// name of the palette
+    pub fn name(&self) -> &str {
+        match &self {
+            CosmicPalette::Dark(p) => &p.name,
+            CosmicPalette::Light(p) => &p.name,
+            CosmicPalette::HighContrastLight(p) => &p.name,
+            CosmicPalette::HighContrastDark(p) => &p.name,
+        }
+    }
     /// save the theme to the theme directory
     pub fn save(&self) -> anyhow::Result<()> {
         let ron_path: PathBuf = [NAME, PALETTE_DIR].iter().collect();
         let ron_dirs = xdg::BaseDirectories::with_prefix(ron_path)?;
-        let ron_name = format!("{}.ron", &self.name);
+        let ron_name = format!("{}.ron", self.name());
 
         if let Ok(p) = ron_dirs.place_config_file(ron_name) {
             let mut f = File::create(p)?;
@@ -141,5 +174,3 @@ where
         Ok(ron::de::from_reader(f)?)
     }
 }
-
-// TODO derive Theme from palette

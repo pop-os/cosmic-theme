@@ -1,5 +1,8 @@
-use serde::{Deserialize, Serialize};
+use palette::Srgba;
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use std::fmt;
+
+use crate::CosmicPaletteInner;
 
 /// Theme Container colors of a theme, can be a theme background container, primary container, or secondary container
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
@@ -58,26 +61,26 @@ pub struct Accent<C> {
     pub suggested: Widget<C>,
 }
 
-// /// The destructive colors of a theme
-// #[derive(Copy, Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
-// pub struct Destructive<C> {
-//     /// The destructive colors of a theme
-//     pub destructive: Widget<C>,
-// }
+/// The destructive colors of a theme
+#[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
+pub struct Destructive<C> {
+    /// The destructive colors of a theme
+    pub destructive: Widget<C>,
+}
 
-// /// The suggested colors of a theme
-// #[derive(Copy, Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
-// pub struct Suggested<C> {
-//     /// The destructive colors of a theme
-//     pub suggested: Widget<C>,
-// }
+/// The suggested colors of a theme
+#[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
+pub struct Success<C> {
+    /// The destructive colors of a theme
+    pub success: Widget<C>,
+}
 
-// /// The suggested colors of a theme
-// #[derive(Copy, Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
-// pub struct Warning<C> {
-//     /// The destructive colors of a theme
-//     pub warning: Widget<C>,
-// }
+/// The suggested colors of a theme
+#[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
+pub struct Warning<C> {
+    /// The destructive colors of a theme
+    pub warning: Widget<C>,
+}
 
 /// The colors for a widget of the Cosmic theme
 #[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
@@ -88,8 +91,8 @@ pub struct Widget<C> {
     pub hover: C,
     /// the color of the widget when it is pressed
     pub pressed: C,
-    /// the color of the widget when it is focused
-    pub focused: C,
+    /// the color of the widget when it is selected
+    pub selected: C,
     /// the color of dividers for this widget
     pub divider: C,
     /// the color of text for this widget
@@ -109,4 +112,12 @@ pub struct Derivation<E> {
     pub derived: E,
     /// Derivation errors (Failed constraints)
     pub errors: Vec<anyhow::Error>,
+}
+
+impl<C> From<(CosmicPaletteInner<C>, C)> for Widget<C> where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned
+{
+    fn from(_: (CosmicPaletteInner<C>, C)) -> Self {
+        todo!()
+    }
 }

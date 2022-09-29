@@ -155,18 +155,18 @@ impl ThemeWatcher {
 
         let success = theme.success.clone();
         palette.success = Color::from_rgba(
-            success.base.red as f32,
-            success.base.green as f32,
-            success.base.blue as f32,
-            success.base.alpha as f32,
+            success.success.base.red as f32,
+            success.success.base.green as f32,
+            success.success.base.blue as f32,
+            success.success.base.alpha as f32,
         );
 
         let destructive = theme.destructive.clone();
         palette.danger = Color::from_rgba(
-            destructive.base.red as f32,
-            destructive.base.green as f32,
-            destructive.base.blue as f32,
-            destructive.base.alpha as f32,
+            destructive.destructive.base.red as f32,
+            destructive.destructive.base.green as f32,
+            destructive.destructive.base.blue as f32,
+            destructive.destructive.base.alpha as f32,
         );
 
         (palette, theme)

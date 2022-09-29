@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use crate::{
-    util::CssColor, Accent, Container, CosmicPalette, DARK_PALETTE,
-    LIGHT_PALETTE, NAME, THEME_DIR, ContainerType, Widget, ComponentType,
+    util::CssColor, Accent, ComponentType, Container, ContainerType, CosmicPalette, Widget,
+    DARK_PALETTE, LIGHT_PALETTE, NAME, THEME_DIR,
 };
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -158,7 +158,7 @@ where
             accent: p.clone().into(),
             success: (p.clone(), ComponentType::Success).into(),
             destructive: (p.clone(), ComponentType::Destructive).into(),
-            warning:  (p.clone(), ComponentType::Warning).into(),
+            warning: (p.clone(), ComponentType::Warning).into(),
         }
     }
 }

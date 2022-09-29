@@ -33,16 +33,15 @@ where
             (CosmicPalette::Light(p), ContainerType::Background) => todo!(),
             (CosmicPalette::Light(p), ContainerType::Primary) => todo!(),
             (CosmicPalette::Light(p), ContainerType::Secondary) => todo!(),
-            (CosmicPalette::HighContrastLight(_), ContainerType::Background) |
-            (CosmicPalette::HighContrastLight(_), ContainerType::Primary) |
-            (CosmicPalette::HighContrastLight(_), ContainerType::Secondary) |
-            (CosmicPalette::HighContrastDark(_), ContainerType::Background) |
-            (CosmicPalette::HighContrastDark(_), ContainerType::Primary) |
-            (CosmicPalette::HighContrastDark(_), ContainerType::Secondary) => todo!(),
+            (CosmicPalette::HighContrastLight(_), ContainerType::Background)
+            | (CosmicPalette::HighContrastLight(_), ContainerType::Primary)
+            | (CosmicPalette::HighContrastLight(_), ContainerType::Secondary)
+            | (CosmicPalette::HighContrastDark(_), ContainerType::Background)
+            | (CosmicPalette::HighContrastDark(_), ContainerType::Primary)
+            | (CosmicPalette::HighContrastDark(_), ContainerType::Secondary) => todo!(),
         }
     }
 }
-
 
 /// The type of the container
 #[derive(Copy, Clone, PartialEq, Debug, Deserialize, Serialize)]
@@ -92,8 +91,7 @@ where
         match p {
             CosmicPalette::Dark(_) => todo!(),
             CosmicPalette::Light(_) => todo!(),
-            CosmicPalette::HighContrastLight(_) |
-            CosmicPalette::HighContrastDark(_) => todo!(),
+            CosmicPalette::HighContrastLight(_) | CosmicPalette::HighContrastDark(_) => todo!(),
         }
     }
 }
@@ -157,18 +155,18 @@ where
             (CosmicPalette::Light(p), ComponentType::Destructive) => todo!(),
             (CosmicPalette::Light(p), ComponentType::Warning) => todo!(),
             (CosmicPalette::Light(p), ComponentType::Success) => todo!(),
-            (CosmicPalette::HighContrastLight(_), ComponentType::Background) |
-            (CosmicPalette::HighContrastLight(_), ComponentType::Primary) |
-            (CosmicPalette::HighContrastLight(_), ComponentType::Secondary) |
-            (CosmicPalette::HighContrastLight(_), ComponentType::Destructive) |
-            (CosmicPalette::HighContrastLight(_), ComponentType::Warning) |
-            (CosmicPalette::HighContrastLight(_), ComponentType::Success) |
-            (CosmicPalette::HighContrastDark(_), ComponentType::Background) |
-            (CosmicPalette::HighContrastDark(_), ComponentType::Primary) |
-            (CosmicPalette::HighContrastDark(_), ComponentType::Secondary) |
-            (CosmicPalette::HighContrastDark(_), ComponentType::Destructive) |
-            (CosmicPalette::HighContrastDark(_), ComponentType::Warning) |
-            (CosmicPalette::HighContrastDark(_), ComponentType::Success) => todo!(),
+            (CosmicPalette::HighContrastLight(_), ComponentType::Background)
+            | (CosmicPalette::HighContrastLight(_), ComponentType::Primary)
+            | (CosmicPalette::HighContrastLight(_), ComponentType::Secondary)
+            | (CosmicPalette::HighContrastLight(_), ComponentType::Destructive)
+            | (CosmicPalette::HighContrastLight(_), ComponentType::Warning)
+            | (CosmicPalette::HighContrastLight(_), ComponentType::Success)
+            | (CosmicPalette::HighContrastDark(_), ComponentType::Background)
+            | (CosmicPalette::HighContrastDark(_), ComponentType::Primary)
+            | (CosmicPalette::HighContrastDark(_), ComponentType::Secondary)
+            | (CosmicPalette::HighContrastDark(_), ComponentType::Destructive)
+            | (CosmicPalette::HighContrastDark(_), ComponentType::Warning)
+            | (CosmicPalette::HighContrastDark(_), ComponentType::Success) => todo!(),
         }
     }
 }

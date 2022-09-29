@@ -3,7 +3,7 @@
 use palette::{named, IntoColor, Lch, Srgba};
 use std::convert::TryFrom;
 
-/// A Selection is a group of colors from which all cosmic theme colors are derived
+/// A Selection is a group of colors from which a cosmic palette can be derived
 #[derive(Copy, Clone, Debug, Default)]
 pub struct Selection<C> {
     /// base background container color
@@ -20,6 +20,10 @@ pub struct Selection<C> {
     pub accent_nav_handle_fg: Option<C>,
     /// base destructive element color
     pub destructive: C,
+    /// base destructive element color
+    pub warning: C,
+    /// base destructive element color
+    pub success: C,
 }
 
 // vector should be in order of most common
@@ -30,8 +34,8 @@ where
     type Error = anyhow::Error;
 
     fn try_from(mut colors: Vec<Srgba>) -> Result<Self, Self::Error> {
-        if colors.len() < 5 {
-            anyhow::bail!("length of inputted vector must be at least 5.")
+        if colors.len() < 8 {
+            anyhow::bail!("length of inputted vector must be at least 8.")
         } else {
             let lch_colors: Vec<Lch> = colors
                 .iter()
@@ -53,7 +57,33 @@ where
                 }
             }
 
+            let yellow_lch: Lch = named::YELLOW.into_format().into_color();
+            let mut yellow_i = 1;
+            for (i, c) in lch_colors[1..].iter().enumerate() {
+                let d_cur = (c.hue.to_degrees() - yellow_lch.hue.to_degrees()).abs();
+                let reddest_d = (lch_colors[yellow_i].hue.to_degrees().abs()
+                    - yellow_lch.hue.to_degrees().abs())
+                .abs();
+                if d_cur < reddest_d {
+                    yellow_i = i;
+                }
+            }
+
+            let green_lch: Lch = named::GREEN.into_format().into_color();
+            let mut green_i = 1;
+            for (i, c) in lch_colors[1..].iter().enumerate() {
+                let d_cur = (c.hue.to_degrees() - green_lch.hue.to_degrees()).abs();
+                let reddest_d = (lch_colors[green_i].hue.to_degrees().abs()
+                    - green_lch.hue.to_degrees().abs())
+                .abs();
+                if d_cur < reddest_d {
+                    green_i = i;
+                }
+            }
+
             let red = colors.remove(reddest_i);
+            let green = colors.remove(green_i);
+            let yellow = colors.remove(yellow_i);
 
             Ok(Self {
                 background: colors[0].into(),
@@ -63,6 +93,8 @@ where
                 accent_fg: Some(colors[2].into()),
                 accent_nav_handle_fg: Some(colors[2].into()),
                 destructive: red.into(),
+                warning: yellow.into(),
+                success: green.into(),
             })
         }
     }

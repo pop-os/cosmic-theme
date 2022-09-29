@@ -1,5 +1,5 @@
 use crate::{
-    Accent, Container, ContainerType, Derivation, Destructive, Selection, Theme, ThemeConstraints,
+    Accent, Container, ContainerType, Derivation, Selection, Theme, ThemeConstraints,
     Widget,
 };
 use anyhow::{anyhow, Result};
@@ -10,6 +10,7 @@ use std::fmt;
 pub use exact::*;
 mod exact;
 
+// TODO derive palette from Selection?
 /// Color picker derives colors and theme elements
 pub trait ColorPicker<
     C: Into<Srgba> + From<Srgba> + Copy + Clone + fmt::Debug + Default + Serialize + DeserializeOwned,
@@ -83,7 +84,19 @@ pub trait ColorPicker<
         let Derivation {
             derived: destructive,
             mut errors,
-        } = self.destructive_derivation();
+        } = self.widget_derivation(self.get_selection().destructive);
+        theme_errors.append(&mut errors);
+
+        let Derivation {
+            derived: warning,
+            mut errors,
+        } = self.widget_derivation(self.get_selection().warning);
+        theme_errors.append(&mut errors);
+
+        let Derivation {
+            derived: success,
+            mut errors,
+        } = self.widget_derivation(self.get_selection().success);
         theme_errors.append(&mut errors);
 
         Derivation {
@@ -93,6 +106,8 @@ pub trait ColorPicker<
                 secondary,
                 accent,
                 destructive,
+                warning,
+                success,
                 window_header_background,
                 text_button_text,
             ),
@@ -180,28 +195,6 @@ pub trait ColorPicker<
                 container_fg_opacity_80: container_fg_opacity_80.into(),
                 container_component,
             },
-            errors,
-        }
-    }
-
-    /// derive a destructive element
-    fn destructive_derivation(&self) -> Derivation<Destructive<C>> {
-        let selection = self.get_selection();
-
-        let mut errors = Vec::<anyhow::Error>::new();
-
-        let Derivation {
-            derived: destructive,
-            errors: errs,
-        } = self.widget_derivation(selection.destructive);
-        for e in errs {
-            errors.push(anyhow!(
-                "\"Destructive component derivation\" failed: {}",
-                e
-            ));
-        }
-        Derivation {
-            derived: Destructive { destructive },
             errors,
         }
     }

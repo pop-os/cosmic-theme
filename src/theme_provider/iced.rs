@@ -153,20 +153,20 @@ impl ThemeWatcher {
             accent.accent.alpha as f32,
         );
 
-        let success = theme.suggested;
+        let success = theme.success;
         palette.success = Color::from_rgba(
-            success.suggested.base.red as f32,
-            success.suggested.base.green as f32,
-            success.suggested.base.blue as f32,
-            success.suggested.base.alpha as f32,
+            success.base.red as f32,
+            success.base.green as f32,
+            success.base.blue as f32,
+            success.base.alpha as f32,
         );
 
         let destructive = theme.destructive;
         palette.danger = Color::from_rgba(
-            destructive.destructive.base.red as f32,
-            destructive.destructive.base.green as f32,
-            destructive.destructive.base.blue as f32,
-            destructive.destructive.base.alpha as f32,
+            destructive.base.red as f32,
+            destructive.base.green as f32,
+            destructive.base.blue as f32,
+            destructive.base.alpha as f32,
         );
 
         (palette, theme)

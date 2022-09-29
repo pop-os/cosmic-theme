@@ -1,183 +1,93 @@
 (
-    name: "",
-    blue: {
-        "red": 0.035,
-        "green": 0.306,
-        "blue": 0.745,
-        "alpha": 1.0,
-    },
-    red: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    green: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    yellow: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    gray_1: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    gray_2: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    gray_3: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    neutral_1: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    neutral_2: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    neutral_3: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    neutral_4: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    neutral_5: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    neutral_6: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    neutral_7: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    neutral_8: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    neutral_9: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    neutral_10: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    ext_warm_grey: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    ext_orange: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    ext_yellow: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    ext_blue: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    ext_purple: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    ext_pink: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    ext_indigo: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    accent_warm_grey: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    accent_orange: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    accent_yellow: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    accent_purple: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    accent_pink: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
-    accent_indigo: {
-        "red": 0.0,
-        "green": 0.0,
-        "blue": 0.0,
-        "alpha": 1.0,
-    },
+    name: "Cosmic Dark",
+    blue: (
+        c: "#94EBEB",
+    ),
+    red: (
+        c: "#FFB5B5",
+    ),
+    green: (
+        c: "#ACF7D2",
+    ),
+    yellow: (
+        c: "#FFF19E",
+    ),
+    gray_1: (
+        c: "#1E1E1E",
+    ),
+    gray_2: (
+        c: "#272727",
+    ),
+    gray_3: (
+        c: "#2E2E2E",
+    ),
+    neutral_1: (
+        c: "#000",
+    ),
+    neutral_2: (
+        c: "#272727",
+    ),
+    neutral_3: (
+        c: "#424242",
+    ),
+    neutral_4: (
+        c: "#5D5D5D",
+    ),
+    neutral_5: (
+        c: "#787878",
+    ),
+    neutral_6: (
+        c: "#939393",
+    ),
+    neutral_7: (
+        c: "#AEAEAE",
+    ),
+    neutral_8: (
+        c: "#C9C9C9",
+    ),
+    neutral_9: (
+        c: "#E4E4E4",
+    ),
+    neutral_10: (
+        c: "#FFF",
+    ),
+    ext_warm_grey: (
+        c: "#9B8E8A",
+    ),
+    ext_orange: (
+        c: "#FFAD00",
+    ),
+    ext_yellow: (
+        c: "#FEDB40",
+    ),
+    ext_blue: (
+        c: "#48B9C7",
+    ),
+    ext_purple: (
+        c: "#CF7DFF",
+    ),
+    ext_pink: (
+        c: "#F93A83",
+    ),
+    ext_indigo: (
+        c: "#3E88FF",
+    ),
+    accent_warm_grey: (
+        c: "#554742",
+    ),
+    accent_orange: (
+        c: "#AF5C02",
+    ),
+    accent_yellow: (
+        c: "#966800",
+    ),
+    accent_purple: (
+        c: "#813",
+    ),
+    accent_pink: (
+        c: "#F93A83",
+    ),
+    accent_indigo: (
+        c: "#3E88FF",
+    ),
 )

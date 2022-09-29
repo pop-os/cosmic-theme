@@ -9,12 +9,14 @@ use lazy_static::lazy_static;
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
-use crate::{NAME, PALETTE_DIR};
+use crate::{NAME, PALETTE_DIR, util::CssColor};
 
 lazy_static! {
-    static ref LIGHT_PALETTE: CosmicPalette<Srgba> =
+    /// built in light palette
+    pub static ref LIGHT_PALETTE: CosmicPalette<CssColor> =
         ron::from_str(include_str!("light.ron")).unwrap();
-    static ref DARK_PALETTE: CosmicPalette<Srgba> =
+    /// built in dark palette
+    pub static ref DARK_PALETTE: CosmicPalette<CssColor> =
         ron::from_str(include_str!("dark.ron")).unwrap();
 }
 

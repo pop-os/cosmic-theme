@@ -1,93 +1,93 @@
 (
-    name: "",
+    name: "Cosmic Light",
     blue: (
-        c: "#000000",
+        c: "#00496D",
     ),
     red: (
-        c: "#000000",
+        c: "#A0252B",
     ),
     green: (
-        c: "#000000",
+        c: "#3B6E43",
     ),
     yellow: (
-        c: "#000000",
+        c: "#966800",
     ),
     gray_1: (
-        c: "#000000",
+        c: "#DEDEDE",
     ),
     gray_2: (
-        c: "#000000",
+        c: "#E9E9E9",
     ),
     gray_3: (
-        c: "#000000",
+        c: "#F4F4F4",
     ),
     neutral_1: (
-        c: "#000000",
+        c: "#FFF",
     ),
     neutral_2: (
-        c: "#000000",
+        c: "#E4E4E4",
     ),
     neutral_3: (
-        c: "#000000",
+        c: "#C9C9C9",
     ),
     neutral_4: (
-        c: "#000000",
+        c: "#AEAEAE",
     ),
     neutral_5: (
-        c: "#000000",
+        c: "#939393",
     ),
     neutral_6: (
-        c: "#000000",
+        c: "#787878",
     ),
     neutral_7: (
-        c: "#000000",
+        c: "#5D5D5D",
     ),
     neutral_8: (
-        c: "#000000",
+        c: "#424242",
     ),
     neutral_9: (
-        c: "#000000",
+        c: "#272727",
     ),
     neutral_10: (
-        c: "#000000",
+        c: "#000",
     ),
     ext_warm_grey: (
-        c: "#000000",
+        c: "#9B8E8A",
     ),
     ext_orange: (
-        c: "#000000",
+        c: "#FBB86C",
     ),
     ext_yellow: (
-        c: "#000000",
+        c: "#F7E062",
     ),
     ext_blue: (
-        c: "#000000",
+        c: "#6ACAD8",
     ),
     ext_purple: (
-        c: "#000000",
+        c: "#D58CFF",
     ),
     ext_pink: (
-        c: "#000000",
+        c: "#FF9CDD",
     ),
     ext_indigo: (
-        c: "#000000",
+        c: "#95C4FC",
     ),
     accent_warm_grey: (
-        c: "#000000",
+        c: "#ADA29E",
     ),
     accent_orange: (
-        c: "#000000",
+        c: "#FFD7A1",
     ),
     accent_yellow: (
-        c: "#000000",
+        c: "#FFF19E",
     ),
     accent_purple: (
-        c: "#000000",
+        c: "#D58CFF",
     ),
     accent_pink: (
-        c: "#000000",
+        c: "#FF9CDD",
     ),
     accent_indigo: (
-        c: "#000000",
+        c: "#95C4FC",
     ),
 )

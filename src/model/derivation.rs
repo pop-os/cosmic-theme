@@ -1,8 +1,8 @@
 use palette::Srgba;
-use serde::{Deserialize, Serialize, de::DeserializeOwned};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt;
 
-use crate::CosmicPaletteInner;
+use crate::CosmicPalette;
 
 /// Theme Container colors of a theme, can be a theme background container, primary container, or secondary container
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
@@ -20,6 +20,29 @@ pub struct Container<C> {
     /// the color of text with opacity 80 in the container
     pub container_fg_opacity_80: C,
 }
+
+impl<C> From<(CosmicPalette<C>, ContainerType)> for Container<C>
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
+{
+    fn from((p, t): (CosmicPalette<C>, ContainerType)) -> Self {
+        match (p, t) {
+            (CosmicPalette::Dark(p), ContainerType::Background) => todo!(),
+            (CosmicPalette::Dark(p), ContainerType::Primary) => todo!(),
+            (CosmicPalette::Dark(p), ContainerType::Secondary) => todo!(),
+            (CosmicPalette::Light(p), ContainerType::Background) => todo!(),
+            (CosmicPalette::Light(p), ContainerType::Primary) => todo!(),
+            (CosmicPalette::Light(p), ContainerType::Secondary) => todo!(),
+            (CosmicPalette::HighContrastLight(_), ContainerType::Background) |
+            (CosmicPalette::HighContrastLight(_), ContainerType::Primary) |
+            (CosmicPalette::HighContrastLight(_), ContainerType::Secondary) |
+            (CosmicPalette::HighContrastDark(_), ContainerType::Background) |
+            (CosmicPalette::HighContrastDark(_), ContainerType::Primary) |
+            (CosmicPalette::HighContrastDark(_), ContainerType::Secondary) => todo!(),
+        }
+    }
+}
+
 
 /// The type of the container
 #[derive(Copy, Clone, PartialEq, Debug, Deserialize, Serialize)]
@@ -61,25 +84,18 @@ pub struct Accent<C> {
     pub suggested: Widget<C>,
 }
 
-/// The destructive colors of a theme
-#[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
-pub struct Destructive<C> {
-    /// The destructive colors of a theme
-    pub destructive: Widget<C>,
-}
-
-/// The suggested colors of a theme
-#[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
-pub struct Success<C> {
-    /// The destructive colors of a theme
-    pub success: Widget<C>,
-}
-
-/// The suggested colors of a theme
-#[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
-pub struct Warning<C> {
-    /// The destructive colors of a theme
-    pub warning: Widget<C>,
+impl<C> From<CosmicPalette<C>> for Accent<C>
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
+{
+    fn from(p: CosmicPalette<C>) -> Self {
+        match p {
+            CosmicPalette::Dark(_) => todo!(),
+            CosmicPalette::Light(_) => todo!(),
+            CosmicPalette::HighContrastLight(_) |
+            CosmicPalette::HighContrastDark(_) => todo!(),
+        }
+    }
 }
 
 /// The colors for a widget of the Cosmic theme
@@ -114,10 +130,45 @@ pub struct Derivation<E> {
     pub errors: Vec<anyhow::Error>,
 }
 
-impl<C> From<(CosmicPaletteInner<C>, C)> for Widget<C> where
-    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned
+pub(crate) enum ComponentType {
+    Background,
+    Primary,
+    Secondary,
+    Destructive,
+    Warning,
+    Success,
+}
+
+impl<C> From<(CosmicPalette<C>, ComponentType)> for Widget<C>
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
-    fn from(_: (CosmicPaletteInner<C>, C)) -> Self {
-        todo!()
+    fn from((p, t): (CosmicPalette<C>, ComponentType)) -> Self {
+        match (p, t) {
+            (CosmicPalette::Dark(p), ComponentType::Background) => todo!(),
+            (CosmicPalette::Dark(p), ComponentType::Primary) => todo!(),
+            (CosmicPalette::Dark(p), ComponentType::Secondary) => todo!(),
+            (CosmicPalette::Dark(p), ComponentType::Destructive) => todo!(),
+            (CosmicPalette::Dark(p), ComponentType::Warning) => todo!(),
+            (CosmicPalette::Dark(p), ComponentType::Success) => todo!(),
+            (CosmicPalette::Light(p), ComponentType::Background) => todo!(),
+            (CosmicPalette::Light(p), ComponentType::Primary) => todo!(),
+            (CosmicPalette::Light(p), ComponentType::Secondary) => todo!(),
+            (CosmicPalette::Light(p), ComponentType::Destructive) => todo!(),
+            (CosmicPalette::Light(p), ComponentType::Warning) => todo!(),
+            (CosmicPalette::Light(p), ComponentType::Success) => todo!(),
+            (CosmicPalette::HighContrastLight(_), ComponentType::Background) |
+            (CosmicPalette::HighContrastLight(_), ComponentType::Primary) |
+            (CosmicPalette::HighContrastLight(_), ComponentType::Secondary) |
+            (CosmicPalette::HighContrastLight(_), ComponentType::Destructive) |
+            (CosmicPalette::HighContrastLight(_), ComponentType::Warning) |
+            (CosmicPalette::HighContrastLight(_), ComponentType::Success) |
+            (CosmicPalette::HighContrastDark(_), ComponentType::Background) |
+            (CosmicPalette::HighContrastDark(_), ComponentType::Primary) |
+            (CosmicPalette::HighContrastDark(_), ComponentType::Secondary) |
+            (CosmicPalette::HighContrastDark(_), ComponentType::Destructive) |
+            (CosmicPalette::HighContrastDark(_), ComponentType::Warning) |
+            (CosmicPalette::HighContrastDark(_), ComponentType::Success) => todo!(),
+        }
     }
 }

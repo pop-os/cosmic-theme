@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::{Accent, Container, Destructive, Success, Warning, NAME, THEME_DIR, CosmicPalette};
+use crate::{
+    util::CssColor, Accent, Container, CosmicPalette, DARK_PALETTE,
+    LIGHT_PALETTE, NAME, THEME_DIR, ContainerType, Widget, ComponentType,
+};
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::{
@@ -24,17 +27,11 @@ pub struct Theme<C> {
     /// accent element colors
     pub accent: Accent<C>,
     /// suggested element colors
-    pub success: Success<C>,
+    pub success: Widget<C>,
     /// destructive element colors
-    pub destructive: Destructive<C>,
+    pub destructive: Widget<C>,
     /// warning element colors
-    pub warning: Warning<C>,
-
-    // TODO derived surface colors which don't fit neatly in a category
-    /// window header background color
-    pub window_header_background: C,
-    /// text button text color
-    pub text_button_text: C,
+    pub warning: Widget<C>,
 }
 
 // TODO better eq check
@@ -54,11 +51,9 @@ where
         primary: Container<C>,
         secondary: Container<C>,
         accent: Accent<C>,
-        destructive: Destructive<C>,
-        warning: Warning<C>,
-        success: Success<C>,
-        window_header_background: C,
-        text_button_text: C,
+        destructive: Widget<C>,
+        warning: Widget<C>,
+        success: Widget<C>,
     ) -> Self {
         Self {
             background,
@@ -68,8 +63,6 @@ where
             destructive,
             warning,
             success,
-            window_header_background,
-            text_button_text,
             ..Default::default()
         }
     }
@@ -120,38 +113,52 @@ where
         let f = File::open(p)?;
         Ok(ron::de::from_reader(f)?)
     }
-
-    // pub fn light_default() -> Self {
-    //     ron::de::from_bytes(include_bytes!("light_default.ron")).unwrap()
-    // }
-
-    // pub fn dark_default() -> Self {
-    //     ron::de::from_bytes(include_bytes!("dark_default.ron")).unwrap()
-    // }
 }
 
-impl<C> From<CosmicPalette<C>> for Theme<C> 
+impl Theme<CssColor> {
+    /// get the built in light theme
+    pub fn light_default() -> Self {
+        LIGHT_PALETTE.clone().into()
+    }
+
+    /// get the built in dark theme
+    pub fn dark_default() -> Self {
+        DARK_PALETTE.clone().into()
+    }
+}
+
+impl<C> From<CosmicPalette<C>> for Theme<C>
 where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
     fn from(p: CosmicPalette<C>) -> Self {
         Self {
             name: p.name().to_string(),
-            background: match &p {
-                CosmicPalette::Dark(p) =>  {
-                    Container::<C> { prefix: todo!(), container: todo!(), container_component: todo!(), container_divider: todo!(), container_fg: todo!(), container_fg_opacity_80: todo!() }
-                },
-                CosmicPalette::Light(p) => todo!(),
-                CosmicPalette::HighContrastLight(_) | CosmicPalette::HighContrastDark(_) => todo!(),
-            },
-            primary: todo!(),
-            secondary: todo!(),
-            accent: todo!(),
-            success: todo!(),
-            destructive: todo!(),
-            warning: todo!(),
-            window_header_background: todo!(),
-            text_button_text: todo!(),
+            background: (p.clone(), ContainerType::Background).into(),
+            // background: match &p {
+            //     CosmicPalette::Dark(p) => {
+            //         let mut neutral_1_05: Srgba = p.neutral_1.into();
+            //         let mut gray_1: Srgba = p.gray_1.clone().into();
+            //         neutral_1_05.alpha = 0.05;
+            //         let container_component: Srgba = Srgba::from_linear(gray_1.into_linear() * neutral_1_05.into_linear());
+            //         Container::<C> {
+            //             prefix: ContainerType::Background,
+            //             container: p.gray_1.clone(),
+            //             container_component: container_component.into(),
+            //             container_divider: todo!(),
+            //             container_fg: todo!(),
+            //             container_fg_opacity_80: todo!(),
+            //         }
+            //     },
+            //     CosmicPalette::Light(p) => todo!(),
+            //     CosmicPalette::HighContrastLight(_) | CosmicPalette::HighContrastDark(_) => todo!(),
+            // },
+            primary: (p.clone(), ContainerType::Background).into(),
+            secondary: (p.clone(), ContainerType::Background).into(),
+            accent: p.clone().into(),
+            success: (p.clone(), ComponentType::Success).into(),
+            destructive: (p.clone(), ComponentType::Destructive).into(),
+            warning:  (p.clone(), ComponentType::Warning).into(),
         }
     }
 }

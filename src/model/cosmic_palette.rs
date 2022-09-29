@@ -33,7 +33,7 @@ pub enum CosmicPalette<C> {
     HighContrastDark(CosmicPaletteInner<C>),
 }
 
-impl<C> Default for CosmicPalette<C> 
+impl<C> Default for CosmicPalette<C>
 where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
@@ -122,7 +122,6 @@ impl<C> CosmicPalette<C>
 where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
-
     /// name of the palette
     pub fn name(&self) -> &str {
         match &self {

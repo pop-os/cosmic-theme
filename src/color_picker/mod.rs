@@ -1,5 +1,6 @@
 use crate::{
-    Accent, Container, ContainerType, Derivation, Selection, Theme, ThemeConstraints, Widget, Destructive, Warning, Success,
+    Accent, Container, ContainerType, Derivation, Selection, Theme,
+    ThemeConstraints, Widget,
 };
 use anyhow::{anyhow, Result};
 use palette::{IntoColor, Lcha, Shade, Srgba};
@@ -49,14 +50,8 @@ pub trait ColorPicker<
 
     /// derive a theme from the selection and constraints
     fn theme_derivation(&self) -> Derivation<Theme<C>> {
-        let selection = self.get_selection();
         let mut theme_errors = Vec::new();
-        let window_header_background = selection.background.clone();
-        let (text_button_text, err) =
-            self.pick_color_text(selection.background.clone(), true, None);
-        if let Some(err) = err {
-            theme_errors.push(err)
-        };
+        
         let Derivation {
             derived: background,
             errors: mut errs,
@@ -105,11 +100,9 @@ pub trait ColorPicker<
                 primary,
                 secondary,
                 accent,
-                Destructive::<C> { destructive },
-                Warning::<C> { warning },
-                Success::<C> { success },
-                window_header_background,
-                text_button_text,
+                 destructive ,
+                warning,
+                success,
             ),
             errors: theme_errors,
         }

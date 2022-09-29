@@ -21,7 +21,6 @@ where
         + Default
         + Into<Srgba>
         + From<Srgba>
-        + fmt::Display
         + Serialize
         + DeserializeOwned,
 {
@@ -42,7 +41,6 @@ where
         + Default
         + Into<Srgba>
         + From<Srgba>
-        + fmt::Display
         + Serialize
         + DeserializeOwned,
 {
@@ -168,7 +166,7 @@ where
             let actual_contrast = srgba.get_contrast_ratio(&lch_color.into_color());
             if !approx_eq!(f32, contrast, actual_contrast, ulps = 4) {
                 bail!(
-                    "Failed to derive color with contrast {} from {}",
+                    "Failed to derive color with contrast {} from {:?}",
                     contrast,
                     color
                 );

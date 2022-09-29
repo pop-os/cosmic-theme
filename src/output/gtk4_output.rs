@@ -29,7 +29,6 @@ where
         + Into<Hex>
         + Into<Srgba>
         + From<Srgba>
-        + fmt::Display
         + Serialize
         + DeserializeOwned,
 {
@@ -128,15 +127,7 @@ where
 
 impl<C> AsGtk4Css<C> for Accent<C>
 where
-    C: Copy
-        + Clone
-        + fmt::Debug
-        + Default
-        + Into<Srgba>
-        + From<Srgba>
-        + fmt::Display
-        + Serialize
-        + DeserializeOwned,
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
     fn as_css(&self) -> String {
         let Accent {
@@ -160,15 +151,7 @@ where
 
 impl<C> AsGtk4Css<C> for Destructive<C>
 where
-    C: Copy
-        + Clone
-        + fmt::Debug
-        + Default
-        + Into<Srgba>
-        + From<Srgba>
-        + fmt::Display
-        + Serialize
-        + DeserializeOwned,
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
     fn as_css(&self) -> String {
         let Destructive { destructive } = &self;

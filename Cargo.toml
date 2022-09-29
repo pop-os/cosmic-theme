@@ -10,23 +10,23 @@ features = ["test_all_features"]
 rustdoc-args = ["--cfg", "docsrs"]
 
 [features]
-default = ["gtk4-theme", "ron-serialization"]
+default = ["iced-theme", "ron-serialization"]
 no-default = []
-gtk4-theme = ["gtk4"]
+iced-theme = ["iced"]
 ron-serialization = []
 
 [dependencies]
-palette = "0.6"
+palette = {version = "0.6", features = ["serializing"] }
 anyhow = "1.0"
 hex = "0.4.3"
 kmeans_colors = { git = "https://github.com/okaneco/kmeans-colors", features = ["palette_color"], default-features = false }
 float-cmp = "0.9.0"
-notify = "5.0.0-pre.14" 
+notify = "5.0.0" 
 serde = { version = "1.0.129", features = ["derive"] }
-ron = "0.7"
+ron = "0.8"
 toml = "0.5.8"
 dirs = "4.0.0"
 xdg = "2.4.1"
 futures = "0.3.21"
 image = "0.24.1"
-gtk4 = { version = "^0.4.4", optional = true }
+iced = { git = "https://github.com/wash2/iced", optional = true, branch = "fix_window_resize" }

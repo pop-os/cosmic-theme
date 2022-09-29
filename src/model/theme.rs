@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::{Accent, Container, Destructive};
+use crate::{Accent, Container, Destructive, Suggested};
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt;
@@ -18,6 +18,8 @@ pub struct Theme<C> {
     pub secondary: Container<C>,
     /// accent element colors
     pub accent: Accent<C>,
+    /// suggested element colors
+    pub suggested: Suggested<C>,
     /// destructive element colors
     pub destructive: Destructive<C>,
 
@@ -28,6 +30,13 @@ pub struct Theme<C> {
     pub text_button_text: C,
 }
 
+// TODO better eq check
+impl<C> PartialEq for Theme<C> {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
+}
+
 impl<C> Theme<C>
 where
     C: Copy
@@ -36,7 +45,6 @@ where
         + Default
         + Into<Srgba>
         + From<Srgba>
-        + fmt::Display
         + Serialize
         + DeserializeOwned,
 {
@@ -60,5 +68,10 @@ where
             text_button_text,
             ..Default::default()
         }
+    }
+
+    /// Convert the theme to a high-contrast variant
+    pub fn to_high_contrast(&self) -> Self {
+        todo!();
     }
 }

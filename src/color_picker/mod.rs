@@ -12,15 +12,7 @@ mod exact;
 
 /// Color picker derives colors and theme elements
 pub trait ColorPicker<
-    C: Into<Srgba>
-        + From<Srgba>
-        + Copy
-        + Clone
-        + fmt::Debug
-        + Default
-        + fmt::Display
-        + Serialize
-        + DeserializeOwned,
+    C: Into<Srgba> + From<Srgba> + Copy + Clone + fmt::Debug + Default + Serialize + DeserializeOwned,
 >
 {
     /// try to derive a color with a given contrast, grayscale setting, and lightness direction
@@ -145,15 +137,15 @@ pub trait ColorPicker<
             errors.push(e);
         };
 
-        let (container_text, err) = self.pick_color_text(container, true, None);
+        let (container_fg, err) = self.pick_color_text(container, true, None);
         if let Some(err) = err {
             let err = anyhow!("{} => \"container text\" failed: {}", container_type, err);
             errors.push(err);
         };
 
         // TODO revisit this and adjust constraints for transparency
-        let mut container_text_opacity_80: Srgba = container_text.into();
-        container_text_opacity_80.alpha *= 0.8;
+        let mut container_fg_opacity_80: Srgba = container_fg.into();
+        container_fg_opacity_80.alpha *= 0.8;
 
         let (component_default, err) =
             self.pick_color_graphic(container, elevated_contrast_ratio, false, Some(lighten));
@@ -184,8 +176,8 @@ pub trait ColorPicker<
                 prefix: container_type,
                 container,
                 container_divider,
-                container_text,
-                container_text_opacity_80: container_text_opacity_80.into(),
+                container_fg,
+                container_fg_opacity_80: container_fg_opacity_80.into(),
                 container_component,
             },
             errors,
@@ -273,8 +265,8 @@ pub trait ColorPicker<
         let mut text_opacity_80: Srgba = text.into();
         text_opacity_80.alpha = 0.8;
 
-        let mut disabled_text = text.into();
-        disabled_text.alpha = 0.5;
+        let mut disabled_fg = text.into();
+        disabled_fg.alpha = 0.5;
 
         Derivation {
             derived: Widget {
@@ -289,7 +281,7 @@ pub trait ColorPicker<
                 text,
                 text_opacity_80: text_opacity_80.into(),
                 disabled: disabled.into(),
-                disabled_text: disabled_text.into(),
+                disabled_fg: disabled_fg.into(),
             },
             errors,
         }
@@ -299,8 +291,8 @@ pub trait ColorPicker<
     fn accent_derivation(&self) -> Derivation<Accent<C>> {
         let Selection {
             accent,
-            accent_text,
-            accent_nav_handle_text,
+            accent_fg,
+            accent_nav_handle_fg,
             ..
         } = self.get_selection();
         let mut errors = Vec::<anyhow::Error>::new();
@@ -312,14 +304,14 @@ pub trait ColorPicker<
         for e in errs {
             errors.push(anyhow!("\"Accent component derivation\" failed: {}", e));
         }
-        let accent_text = accent_text.unwrap_or(accent);
-        let accent_nav_handle_text = accent_nav_handle_text.unwrap_or(accent);
+        let accent_fg = accent_fg.unwrap_or(accent);
+        let accent_nav_handle_fg = accent_nav_handle_fg.unwrap_or(accent);
 
         Derivation {
             derived: Accent {
                 accent,
-                accent_text,
-                accent_nav_handle_text,
+                accent_fg,
+                accent_nav_handle_fg,
                 suggested,
             },
             errors,

@@ -65,6 +65,13 @@ pub struct Destructive<C> {
     pub destructive: Widget<C>,
 }
 
+/// The suggested colors of a theme
+#[derive(Copy, Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
+pub struct Suggested<C> {
+    /// The destructive colors of a theme
+    pub suggested: Widget<C>,
+}
+
 /// The colors for a widget of the Cosmic theme
 #[derive(Copy, Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
 pub struct Widget<C> {

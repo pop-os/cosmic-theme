@@ -29,7 +29,9 @@ use palette::{rgb::Srgba, Pixel};
 use palette::{IntoColor, Lab};
 use std::path::Path;
 
-const NAME: &'static str = "cosmic-theme";
+const NAME: &'static str = "com.system76.CosmicTheme";
+/// Name of the theme directory
+pub const THEME_DIR: &str = "color-overrides";
 
 /// Create a hex String from an Srgba
 pub fn hex_from_rgba(rgba: &Srgba) -> String {

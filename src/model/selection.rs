@@ -15,9 +15,9 @@ pub struct Selection<C> {
     /// base accent color
     pub accent: C,
     /// custom accent color (overrides base)
-    pub accent_text: Option<C>,
+    pub accent_fg: Option<C>,
     /// custom accent nav handle text color (overrides base)
-    pub accent_nav_handle_text: Option<C>,
+    pub accent_nav_handle_fg: Option<C>,
     /// base destructive element color
     pub destructive: C,
 }
@@ -60,8 +60,8 @@ where
                 primary_container: colors[1].into(),
                 secondary_container: colors[3].into(),
                 accent: colors[2].into(),
-                accent_text: Some(colors[2].into()),
-                accent_nav_handle_text: Some(colors[2].into()),
+                accent_fg: Some(colors[2].into()),
+                accent_nav_handle_fg: Some(colors[2].into()),
                 destructive: red.into(),
             })
         }

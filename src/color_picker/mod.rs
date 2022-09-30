@@ -227,7 +227,7 @@ pub trait ColorPicker<
         });
 
         // TODO is this actually a different color? or just outlined?
-        let focused = default.clone();
+        let selected = default.clone();
 
         let mut disabled: Srgba = default.clone().into();
         disabled.alpha = 0.5;
@@ -247,7 +247,7 @@ pub trait ColorPicker<
             errors.push(error);
         }
 
-        let (selected_text, error) = self.pick_color_text(focused.clone(), true, None);
+        let (selected_text, error) = self.pick_color_text(selected.clone(), true, None);
         if let Some(error) = error {
             errors.push(error);
         }
@@ -266,8 +266,9 @@ pub trait ColorPicker<
                     alpha: hover.alpha,
                 }),
                 pressed,
-                selected: focused,
+                selected: selected.clone(),
                 selected_text: selected_text,
+                focus: selected.clone(), // FIXME
                 divider,
                 on: text,
                 disabled: disabled.into(),

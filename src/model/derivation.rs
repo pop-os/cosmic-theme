@@ -1,4 +1,4 @@
-use palette::{Srgba, Blend};
+use palette::{Blend, Srgba};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt;
 
@@ -285,9 +285,6 @@ where
                 let mut base_50 = base.clone().into_linear();
                 base_50.alpha = 0.5;
 
-
-
-
                 let mut on_20 = p.neutral_7.clone().into().into_linear();
                 let mut on_50 = on_20.clone();
 
@@ -296,9 +293,12 @@ where
 
                 Component {
                     base: Srgba::from_linear(base.clone()).into(),
-                    hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_10)).into(),
-                    pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20)).into(),
-                    selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20)).into(),
+                    hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_10))
+                        .into(),
+                    pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20))
+                        .into(),
+                    selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20))
+                        .into(),
                     selected_text: p.blue.clone(),
                     focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),
@@ -408,9 +408,12 @@ where
 
                 Component {
                     base: base.clone().into(),
-                    hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_10)).into(),
-                    pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20)).into(),
-                    selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20)).into(),
+                    hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_10))
+                        .into(),
+                    pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20))
+                        .into(),
+                    selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20))
+                        .into(),
                     selected_text: p.blue.clone(),
                     focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),

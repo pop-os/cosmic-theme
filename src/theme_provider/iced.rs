@@ -77,6 +77,7 @@ pub struct ThemeWatcher {
 #[cfg(feature = "iced")]
 impl ThemeWatcher {
     pub(crate) fn new() -> anyhow::Result<Self> {
+        config::Config::init()?;
         let prev_palette = Self::palette();
         let (mut tx, rx) = mpsc::channel(20);
         let xdg_dirs = xdg::BaseDirectories::with_prefix(NAME)?;

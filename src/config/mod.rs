@@ -27,12 +27,11 @@ pub struct Config {
 
 impl Default for Config {
     fn default() -> Self {
-        // TODO load gsettings to determine if dark light or high contrast?
         Self {
             is_dark: true,
-            light: Default::default(),
-            dark: Default::default(),
-            is_high_contrast: Default::default(),
+            light: "cosmic-light".to_string(),
+            dark: "cosmic-dark".to_string(),
+            is_high_contrast: false,
         }
     }
 }
@@ -67,7 +66,15 @@ impl Config {
     /// init the config directory
     pub fn init() -> anyhow::Result<PathBuf> {
         let base_dirs = xdg::BaseDirectories::new()?;
-        Ok(base_dirs.create_config_directory(NAME)?)
+        let res = Ok(base_dirs.create_config_directory(NAME)?);
+        if Self::load().is_ok() {
+            res
+        } else {
+            Self::default().save()?;
+            Theme::dark_default().save()?;
+            Theme::light_default().save()?;
+            res
+        }
     }
 
     /// load the cosmic theme config

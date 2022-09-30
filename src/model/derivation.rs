@@ -17,7 +17,7 @@ pub struct Container<C> {
     pub on: C,
 }
 
-impl<C> Container<C> 
+impl<C> Container<C>
 where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {

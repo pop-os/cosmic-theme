@@ -240,17 +240,17 @@ where
         }
     }
 
-    pub(crate) fn dark_component(base: C, neutral: C, base_overlay: C, accent : C, on_component: C) -> Self {
-        let neutral_1 = neutral.clone().into();
-        let mut neutral_1_10 = neutral_1.clone();
-        let mut neutral_1_20 = neutral_1.clone();
-        neutral_1_10.alpha = 0.1;
-        neutral_1_20.alpha = 0.2;
-        let mut neutral_10_05 = base_overlay.clone().into();
-        neutral_10_05.alpha = 0.05;
+    pub(crate) fn dark_component(base: C, component_state_overlay: C, base_overlay: C, accent : C, on_component: C) -> Self {
+        let component_state_overlay = component_state_overlay.clone().into();
+        let mut component_state_overlay_10 = component_state_overlay.clone();
+        let mut component_state_overlay_20 = component_state_overlay.clone();
+        component_state_overlay_10.alpha = 0.1;
+        component_state_overlay_20.alpha = 0.2;
+        let mut base_overlay_05 = base_overlay.clone().into();
+        base_overlay_05.alpha = 0.05;
 
         let base = base.into();
-        let base = neutral_10_05.into_linear().over(base.clone().into_linear());
+        let base = base.clone().into_linear().overlay(base_overlay_05.into_linear());
         let mut base_50 = Srgba::from_linear(base.clone());
         base_50.alpha = 0.5;
 
@@ -262,11 +262,11 @@ where
 
         Component {
             base: Srgba::from_linear(base.clone()).into(),
-            hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_10.into_linear()))
+            hover: Srgba::from_linear(base.clone().into_linear().overlay(component_state_overlay_10.into_linear()))
                 .into(),
-            pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20.into_linear()))
+            pressed: Srgba::from_linear(base.clone().into_linear().overlay(component_state_overlay_20.into_linear()))
                 .into(),
-            selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20.into_linear()))
+            selected: Srgba::from_linear(base.clone().into_linear().overlay(component_state_overlay_20.into_linear()))
                 .into(),
             selected_text: accent.clone(),
             focus: accent.clone(),
@@ -277,16 +277,16 @@ where
         }
     }
 
-    pub(crate) fn light_component(base: C, neutral: C, accent : C, on_component: C)-> Self {
+    pub(crate) fn light_component(base: C, overlay: C, accent : C, on_component: C)-> Self {
         let base: Srgba = base.into();
         let mut base_50 = base.clone().into_linear();
         base_50.alpha = 0.5;
-        let neutral_1 = neutral.into().into_linear();
-        let mut neutral_1_10 = neutral_1.clone();
-        let mut neutral_1_20 = neutral_1.clone();
+        let overlay = overlay.into().into_linear();
+        let mut overlay_10 = overlay.clone();
+        let mut overlay_20 = overlay.clone();
 
-        neutral_1_10.alpha = 0.1;
-        neutral_1_20.alpha = 0.2;
+        overlay_10.alpha = 0.1;
+        overlay_20.alpha = 0.2;
 
         let mut on_20 = on_component.clone().into().into_linear();
         let mut on_50 = on_20.clone();
@@ -296,11 +296,11 @@ where
 
         Component {
             base: base.clone().into(),
-            hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_10))
+            hover: Srgba::from_linear(base.clone().into_linear().overlay(overlay_10))
                 .into(),
-            pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20))
+            pressed: Srgba::from_linear(base.clone().into_linear().overlay(overlay_20))
                 .into(),
-            selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20))
+            selected: Srgba::from_linear(base.clone().into_linear().overlay(overlay_20))
                 .into(),
             selected_text: accent.clone(),
             focus: accent.clone(),

@@ -207,22 +207,8 @@ where
             on_disabled: self.on_disabled.into(),
         }
     }
-}
 
-/// Derived theme element from a palette and constraints
-#[derive(Debug)]
-pub struct Derivation<E> {
-    /// Derived  theme element
-    pub derived: E,
-    /// Derivation errors (Failed constraints)
-    pub errors: Vec<anyhow::Error>,
-}
-
-impl<C> From<(C, C, C)> for Component<C>
-where
-    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
-{
-    fn from((base, neutral, accent): (C, C, C)) -> Self {
+    pub(crate) fn colored_component(base: C, neutral: C, accent: C) -> Self {
         let neutral = neutral.clone().into().into_linear();
         let mut neutral_05 = neutral.clone();
         let mut neutral_10 = neutral.clone();
@@ -253,6 +239,86 @@ where
             focus: accent,
         }
     }
+
+    pub(crate) fn dark_component(base: C, neutral: C, base_overlay: C, accent : C, on_component: C) -> Self {
+        let neutral_1 = neutral.clone().into();
+        let mut neutral_1_10 = neutral_1.clone();
+        let mut neutral_1_20 = neutral_1.clone();
+        neutral_1_10.alpha = 0.1;
+        neutral_1_20.alpha = 0.2;
+        let mut neutral_10_05 = base_overlay.clone().into();
+        neutral_10_05.alpha = 0.05;
+
+        let base = base.into();
+        let base = neutral_10_05.into_linear().over(base.clone().into_linear());
+        let mut base_50 = Srgba::from_linear(base.clone());
+        base_50.alpha = 0.5;
+
+        let mut on_20 = on_component.clone().into().into_linear();
+        let mut on_50 = on_20.clone();
+
+        on_20.alpha = 0.2;
+        on_50.alpha = 0.5;
+
+        Component {
+            base: Srgba::from_linear(base.clone()).into(),
+            hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_10.into_linear()))
+                .into(),
+            pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20.into_linear()))
+                .into(),
+            selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20.into_linear()))
+                .into(),
+            selected_text: accent.clone(),
+            focus: accent.clone(),
+            divider: Srgba::from_linear(on_20).into(),
+            on: on_component.clone(),
+            disabled: Srgba::from_linear(base_50.into_linear()).into(),
+            on_disabled: Srgba::from_linear(on_50).into(),
+        }
+    }
+
+    pub(crate) fn light_component(base: C, neutral: C, accent : C, on_component: C)-> Self {
+        let base: Srgba = base.into();
+        let mut base_50 = base.clone().into_linear();
+        base_50.alpha = 0.5;
+        let neutral_1 = neutral.into().into_linear();
+        let mut neutral_1_10 = neutral_1.clone();
+        let mut neutral_1_20 = neutral_1.clone();
+
+        neutral_1_10.alpha = 0.1;
+        neutral_1_20.alpha = 0.2;
+
+        let mut on_20 = on_component.clone().into().into_linear();
+        let mut on_50 = on_20.clone();
+
+        on_20.alpha = 0.2;
+        on_50.alpha = 0.5;
+
+        Component {
+            base: base.clone().into(),
+            hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_10))
+                .into(),
+            pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20))
+                .into(),
+            selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20))
+                .into(),
+            selected_text: accent.clone(),
+            focus: accent.clone(),
+            divider: Srgba::from_linear(on_20).into(),
+            on: on_component.clone(),
+            disabled: Srgba::from_linear(base_50).into(),
+            on_disabled: Srgba::from_linear(on_50).into(),
+        }
+    }
+}
+
+/// Derived theme element from a palette and constraints
+#[derive(Debug)]
+pub struct Derivation<E> {
+    /// Derived  theme element
+    pub derived: E,
+    /// Derivation errors (Failed constraints)
+    pub errors: Vec<anyhow::Error>,
 }
 
 pub(crate) enum ComponentType {
@@ -272,221 +338,38 @@ where
     fn from((p, t): (CosmicPalette<C>, ComponentType)) -> Self {
         match (p, t) {
             (CosmicPalette::Dark(p), ComponentType::Background) => {
-                let neutral_1 = p.neutral_1.clone().into().into_linear();
-                let mut neutral_1_10 = neutral_1.clone();
-                let mut neutral_1_20 = neutral_1.clone();
-                neutral_1_10.alpha = 0.1;
-                neutral_1_20.alpha = 0.2;
-                let mut neutral_10_05 = p.neutral_10.clone().into().into_linear();
-
-                neutral_10_05.alpha = 0.1;
-                let base: Srgba = p.gray_1.clone().into();
-                let base = base.clone().into_linear().overlay(neutral_10_05);
-                let mut base_50 = base.clone().into_linear();
-                base_50.alpha = 0.5;
-
-                let mut on_20 = p.neutral_7.clone().into().into_linear();
-                let mut on_50 = on_20.clone();
-
-                on_20.alpha = 0.2;
-                on_50.alpha = 0.5;
-
-                Component {
-                    base: Srgba::from_linear(base.clone()).into(),
-                    hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_10))
-                        .into(),
-                    pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20))
-                        .into(),
-                    selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20))
-                        .into(),
-                    selected_text: p.blue.clone(),
-                    focus: p.blue.clone(),
-                    divider: Srgba::from_linear(on_20).into(),
-                    on: p.neutral_7.clone(),
-                    disabled: Srgba::from_linear(base_50).into(),
-                    on_disabled: Srgba::from_linear(on_50).into(),
-                }
+                Self::dark_component(p.gray_1, p.neutral_1, p.neutral_10, p.blue, p.neutral_8)
             }
             (CosmicPalette::Dark(p), ComponentType::Primary) => {
-                let neutral_1 = p.neutral_1.clone().into().into_linear();
-                let mut neutral_1_10 = neutral_1.clone();
-                let mut neutral_1_20 = neutral_1.clone();
-                neutral_1_10.alpha = 0.1;
-                neutral_1_20.alpha = 0.2;
-                let mut neutral_10_05 = p.neutral_10.clone().into().into_linear();
-                neutral_10_05.alpha = 0.1;
-
-                let base: Srgba = p.gray_2.clone().into();
-                let base = base.clone().into_linear().overlay(neutral_10_05);
-                let mut base_50 = base.clone().into_linear();
-                base_50.alpha = 0.5;
-
-                let mut on_20 = p.neutral_8.clone().into().into_linear();
-                let mut on_50 = on_20.clone();
-
-                on_20.alpha = 0.2;
-                on_50.alpha = 0.5;
-
-                Component {
-                    base: Srgba::from_linear(base.clone()).into(),
-                    hover: Srgba::from_linear(base.clone().overlay(neutral_1_10)).into(),
-                    pressed: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
-                    selected: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
-                    selected_text: p.blue.clone(),
-                    focus: p.blue.clone(),
-                    divider: Srgba::from_linear(on_20).into(),
-                    on: p.neutral_8.clone(),
-                    disabled: Srgba::from_linear(base_50).into(),
-                    on_disabled: Srgba::from_linear(on_50).into(),
-                }
+                Self::dark_component(p.gray_2, p.neutral_1, p.neutral_10, p.blue, p.neutral_8)
             }
             (CosmicPalette::Dark(p), ComponentType::Secondary) => {
-                let neutral_1 = p.neutral_1.clone().into().into_linear();
-                let mut neutral_1_10 = neutral_1.clone();
-                let mut neutral_1_20 = neutral_1.clone();
-                neutral_1_10.alpha = 0.1;
-                neutral_1_20.alpha = 0.2;
-                let mut neutral_10_05 = p.neutral_10.clone().into().into_linear();
-                neutral_10_05.alpha = 0.1;
-
-                let base: Srgba = p.gray_3.clone().into();
-                let base = base.clone().into_linear().overlay(neutral_10_05);
-                let mut base_50 = base.clone().into_linear();
-                base_50.alpha = 0.5;
-
-                let mut on_20 = p.neutral_8.clone().into().into_linear();
-                let mut on_50 = on_20.clone();
-
-                on_20.alpha = 0.2;
-                on_50.alpha = 0.5;
-
-                Component {
-                    base: Srgba::from_linear(base.clone()).into(),
-                    hover: Srgba::from_linear(base.clone().overlay(neutral_1_10)).into(),
-                    pressed: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
-                    selected: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
-                    selected_text: p.blue.clone(),
-                    focus: p.blue.clone(),
-                    divider: Srgba::from_linear(on_20).into(),
-                    on: p.neutral_8.clone(),
-                    disabled: Srgba::from_linear(base_50).into(),
-                    on_disabled: Srgba::from_linear(on_50).into(),
-                }
+                Self::dark_component(p.gray_3, p.neutral_1, p.neutral_10, p.blue, p.neutral_9)
             }
             (CosmicPalette::Dark(p), ComponentType::Destructive)
             | (CosmicPalette::Light(p), ComponentType::Destructive) => {
-                (p.red.clone(), p.neutral_1.clone(), p.blue.clone()).into()
+                Component::colored_component(p.red.clone(), p.neutral_1.clone(), p.blue.clone())
             }
             (CosmicPalette::Dark(p), ComponentType::Warning)
             | (CosmicPalette::Light(p), ComponentType::Warning) => {
-                (p.yellow.clone(), p.neutral_1, p.blue.clone()).into()
+                Component::colored_component(p.yellow.clone(), p.neutral_1, p.blue.clone())
             }
             (CosmicPalette::Dark(p), ComponentType::Success)
             | (CosmicPalette::Light(p), ComponentType::Success) => {
-                (p.green.clone(), p.neutral_1, p.blue.clone()).into()
+                Component::colored_component(p.green.clone(), p.neutral_1, p.blue.clone())
             }
             (CosmicPalette::Dark(p), ComponentType::Accent)
             | (CosmicPalette::Light(p), ComponentType::Accent) => {
-                (p.blue.clone(), p.neutral_1, p.blue.clone()).into()
+                Component::colored_component(p.blue.clone(), p.neutral_1, p.blue.clone())
             }
             (CosmicPalette::Light(p), ComponentType::Background) => {
-                let base: Srgba = p.gray_1.clone().into();
-                let mut base_50 = base.clone().into_linear();
-                base_50.alpha = 0.5;
-                let neutral_1 = p.neutral_1.clone().into().into_linear();
-                let mut neutral_1_10 = neutral_1.clone();
-                let mut neutral_1_20 = neutral_1.clone();
-
-                neutral_1_10.alpha = 0.1;
-                neutral_1_20.alpha = 0.2;
-
-                let mut on_20 = p.neutral_8.clone().into().into_linear();
-                let mut on_50 = on_20.clone();
-
-                on_20.alpha = 0.2;
-                on_50.alpha = 0.5;
-
-                Component {
-                    base: base.clone().into(),
-                    hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_10))
-                        .into(),
-                    pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20))
-                        .into(),
-                    selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20))
-                        .into(),
-                    selected_text: p.blue.clone(),
-                    focus: p.blue.clone(),
-                    divider: Srgba::from_linear(on_20).into(),
-                    on: p.neutral_8.clone(),
-                    disabled: Srgba::from_linear(base_50).into(),
-                    on_disabled: Srgba::from_linear(on_50).into(),
-                }
+                Component::light_component(p.gray_1.clone(), p.neutral_1.clone(),  p.blue.clone(), p.neutral_8)
             }
             (CosmicPalette::Light(p), ComponentType::Primary) => {
-                let neutral_1 = p.neutral_1.clone().into().into_linear();
-                let mut neutral_1_75 = neutral_1.clone();
-                let mut neutral_1_10 = neutral_1.clone();
-                let mut neutral_1_20 = neutral_1.clone();
-                neutral_1_75.alpha = 0.75;
-                neutral_1_10.alpha = 0.1;
-                neutral_1_20.alpha = 0.2;
-
-                let base: Srgba = p.gray_1.clone().into();
-                let base = base.clone().into_linear().overlay(neutral_1_75);
-                let mut base_50 = base.clone().into_linear();
-                base_50.alpha = 0.5;
-
-                let mut on_20 = p.neutral_8.clone().into().into_linear();
-                let mut on_50 = on_20.clone();
-
-                on_20.alpha = 0.2;
-                on_50.alpha = 0.5;
-
-                Component {
-                    base: Srgba::from_linear(base.clone()).into(),
-                    hover: Srgba::from_linear(base.clone().overlay(neutral_1_10)).into(),
-                    pressed: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
-                    selected: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
-                    selected_text: p.blue.clone(),
-                    focus: p.blue.clone(),
-                    divider: Srgba::from_linear(on_20).into(),
-                    on: p.neutral_8.clone(),
-                    disabled: Srgba::from_linear(base_50).into(),
-                    on_disabled: Srgba::from_linear(on_50).into(),
-                }
+                Component::light_component(p.gray_2.clone(), p.neutral_1.clone(),  p.blue.clone(), p.neutral_8)
             }
             (CosmicPalette::Light(p), ComponentType::Secondary) => {
-                let neutral_1 = p.neutral_1.clone().into().into_linear();
-                let mut neutral_1_90 = neutral_1.clone();
-                let mut neutral_1_10 = neutral_1.clone();
-                let mut neutral_1_20 = neutral_1.clone();
-                neutral_1_90.alpha = 0.9;
-                neutral_1_10.alpha = 0.1;
-                neutral_1_20.alpha = 0.2;
-
-                let base: Srgba = p.gray_2.clone().into();
-                let base = base.clone().into_linear().overlay(neutral_1_90);
-                let mut base_50 = base.clone().into_linear();
-                base_50.alpha = 0.5;
-
-                let mut on_20 = p.neutral_8.clone().into().into_linear();
-                let mut on_50 = on_20.clone();
-
-                on_20.alpha = 0.2;
-                on_50.alpha = 0.5;
-
-                Component {
-                    base: Srgba::from_linear(base.clone()).into(),
-                    hover: Srgba::from_linear(base.clone().overlay(neutral_1_10)).into(),
-                    pressed: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
-                    selected: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
-                    selected_text: p.blue.clone(),
-                    focus: p.blue.clone(),
-                    divider: Srgba::from_linear(on_20).into(),
-                    on: p.neutral_8.clone(),
-                    disabled: Srgba::from_linear(base_50).into(),
-                    on_disabled: Srgba::from_linear(on_50).into(),
-                }
+                Component::light_component(p.gray_3.clone(), p.neutral_1.clone(), p.blue.clone(), p.neutral_8)
             }
             (CosmicPalette::HighContrastLight(_), ComponentType::Background)
             | (CosmicPalette::HighContrastLight(_), ComponentType::Accent)

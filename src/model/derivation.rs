@@ -32,11 +32,7 @@ where
                 let divider: C = on_bg.into();
                 Self {
                     base: p.gray_1.clone(),
-                    component: (
-                        CosmicPalette::Dark(p.clone()),
-                        ComponentType::Background,
-                    )
-                        .into(),
+                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Background).into(),
                     divider,
                     on: p.neutral_7.clone(),
                 }
@@ -47,8 +43,7 @@ where
                 let divider: C = on.into();
                 Self {
                     base: p.gray_2.clone(),
-                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Primary)
-                        .into(),
+                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Primary).into(),
                     divider,
                     on: p.neutral_8.clone(),
                 }
@@ -59,8 +54,7 @@ where
                 let divider: C = on.into();
                 Self {
                     base: p.gray_3.clone(),
-                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Secondary)
-                        .into(),
+                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Secondary).into(),
                     divider,
                     on: p.neutral_8.clone(),
                 }
@@ -71,11 +65,7 @@ where
                 let divider: C = on.into();
                 Self {
                     base: p.gray_1.clone(),
-                    component: (
-                        CosmicPalette::Dark(p.clone()),
-                        ComponentType::Background,
-                    )
-                        .into(),
+                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Background).into(),
                     divider,
                     on: p.neutral_9.clone(),
                 }
@@ -86,8 +76,7 @@ where
                 let divider: C = on.into();
                 Self {
                     base: p.gray_2.clone(),
-                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Primary)
-                        .into(),
+                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Primary).into(),
                     divider,
                     on: p.neutral_8.clone(),
                 }
@@ -98,8 +87,7 @@ where
                 let divider: C = on.into();
                 Self {
                     base: p.gray_3.clone(),
-                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Secondary)
-                        .into(),
+                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Secondary).into(),
                     divider,
                     on: p.neutral_8.clone(),
                 }
@@ -220,7 +208,7 @@ where
         let mut base_50 = base.clone().into_linear();
         base_50.alpha = 0.5;
 
-        let mut on_20 = neutral.clone();
+        let on_20 = neutral.clone();
         let mut on_50 = on_20.clone();
 
         on_50.alpha = 0.5;
@@ -235,7 +223,7 @@ where
             on: Srgba::from_linear(neutral).into(),
             disabled: Srgba::from_linear(base_50).into(),
             on_disabled: Srgba::from_linear(on_50).into(),
-            focus: accent
+            focus: accent,
         }
     }
 }

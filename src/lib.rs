@@ -17,7 +17,6 @@ pub use model::*;
 pub use output::*;
 pub use theme_provider::*;
 #[cfg(feature = "contrast-derivation")]
-
 mod color_picker;
 mod config;
 #[cfg(feature = "hex-color")]

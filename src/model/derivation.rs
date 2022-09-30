@@ -213,7 +213,7 @@ where
         let mut neutral_05 = neutral.clone();
         let mut neutral_10 = neutral.clone();
         let mut neutral_20 = neutral.clone();
-        neutral_05.alpha = 0.1;
+        neutral_05.alpha = 0.05;
         neutral_10.alpha = 0.1;
         neutral_20.alpha = 0.2;
 

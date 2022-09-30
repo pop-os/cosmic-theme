@@ -115,7 +115,7 @@ impl ThemeWatcher {
                     } else {
                         Palette::DARK
                     },
-                    color_overrides,
+                    color_overrides.into_srgba(),
                 )
             })
             .unwrap_or_else(|_| {

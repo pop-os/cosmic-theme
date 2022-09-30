@@ -15,9 +15,21 @@ pub struct Container<C> {
     pub divider: C,
     /// the color of text in the container
     pub on: C,
-    // TODO remove this maybe and just have a function which generates it at runtime?
-    // the color of text with opacity 80 in the container
-    // pub on_container_opacity_80: C,
+}
+
+impl<C> Container<C> 
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
+{
+    /// convert to srgba
+    pub fn into_srgba(self) -> Container<Srgba> {
+        Container {
+            base: self.base.into(),
+            component: self.component.into_srgba(),
+            divider: self.divider.into(),
+            on: self.on.into(),
+        }
+    }
 }
 
 impl<C> From<(CosmicPalette<C>, ContainerType)> for Container<C>
@@ -179,6 +191,21 @@ where
     /// get @focus_color
     pub fn focus_color(&self) -> Srgba {
         self.focus.clone().into()
+    }
+    /// convert to srgba
+    pub fn into_srgba(self) -> Component<Srgba> {
+        Component {
+            base: self.base.into(),
+            hover: self.hover.into(),
+            pressed: self.pressed.into(),
+            selected: self.selected.into(),
+            selected_text: self.selected_text.into(),
+            focus: self.focus.into(),
+            divider: self.divider.into(),
+            on: self.on.into(),
+            disabled: self.disabled.into(),
+            on_disabled: self.on_disabled.into(),
+        }
     }
 }
 

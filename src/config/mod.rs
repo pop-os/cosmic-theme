@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0-only
 
-use crate::{Theme, NAME, THEME_DIR};
+use crate::{util::CssColor, Theme, NAME, THEME_DIR};
 use anyhow::{bail, Result};
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -109,10 +109,7 @@ impl Config {
     }
 
     /// get the active theme
-    pub fn get_active<C>(&self) -> anyhow::Result<Theme<C>>
-    where
-        C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
-    {
+    pub fn get_active(&self) -> anyhow::Result<Theme<CssColor>> {
         let active = match self.active_name() {
             Some(n) => n,
             _ => anyhow::bail!("No configured active overrides"),
@@ -123,11 +120,19 @@ impl Config {
             Some(p) => p,
             _ => anyhow::bail!("Could not find theme"),
         };
-        let active_theme_file = File::open(active_theme_path)?;
-        let reader = BufReader::new(active_theme_file);
-
-        let colors = ron::de::from_reader::<_, Theme<C>>(reader)?;
-        Ok(colors)
+        match File::open(active_theme_path) {
+            Ok(active_theme_file) => {
+                let reader = BufReader::new(active_theme_file);
+                Ok(ron::de::from_reader::<_, Theme<CssColor>>(reader)?)
+            }
+            Err(_) => {
+                if self.is_dark {
+                    Ok(Theme::dark_default())
+                } else {
+                    Ok(Theme::light_default())
+                }
+            }
+        }
     }
 
     /// set the name of the active light theme

@@ -258,6 +258,20 @@ impl Theme<CssColor> {
     pub fn dark_default() -> Self {
         DARK_PALETTE.clone().into()
     }
+
+    /// convert to srgba
+    pub fn into_srgba(self) -> Theme<Srgba> {
+        Theme {
+            name: self.name,
+            background: self.background.into_srgba(),
+            primary: self.primary.into_srgba(),
+            secondary: self.secondary.into_srgba(),
+            accent: self.accent.into_srgba(),
+            success: self.success.into_srgba(),
+            destructive: self.destructive.into_srgba(),
+            warning: self.warning.into_srgba(),
+        }
+    }
 }
 
 impl<C> From<CosmicPalette<C>> for Theme<C>

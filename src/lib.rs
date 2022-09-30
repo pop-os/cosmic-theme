@@ -8,17 +8,19 @@
 //! Provides utilities for creating custom cosmic themes.
 //!
 
+#[cfg(feature = "contrast-derivation")]
 pub use color_picker::*;
 pub use config::*;
-#[cfg(feature = "hex_color")]
+#[cfg(feature = "hex-color")]
 pub use hex_color::*;
 pub use model::*;
 pub use output::*;
 pub use theme_provider::*;
+#[cfg(feature = "contrast-derivation")]
 
 mod color_picker;
 mod config;
-#[cfg(feature = "hex_color")]
+#[cfg(feature = "hex-color")]
 mod hex_color;
 mod model;
 mod output;
@@ -33,7 +35,8 @@ pub const THEME_DIR: &str = "themes";
 /// name of the palette directory
 pub const PALETTE_DIR: &str = "palettes";
 
-#[cfg(feature = "theme_from_image")]
+/// theme derivation from an image
+#[cfg(feature = "theme-from-image")]
 pub mod theme_from_image {
     use image::EncodableLayout;
     use kmeans_colors::{get_kmeans_hamerly, Kmeans, Sort};

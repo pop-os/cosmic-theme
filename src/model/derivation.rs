@@ -278,7 +278,7 @@ where
                 neutral_1_10.alpha = 0.1;
                 neutral_1_20.alpha = 0.2;
                 let mut neutral_10_05 = p.neutral_10.clone().into().into_linear();
-                
+
                 neutral_10_05.alpha = 0.1;
                 let base: Srgba = p.gray_1.clone().into();
                 let base = base.clone().into_linear().overlay(neutral_10_05);

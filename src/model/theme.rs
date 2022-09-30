@@ -115,7 +115,137 @@ where
     }
 
     // TODO convenient getter functions for each named color variable
-    // return Srgba
+    /// get @accent_color
+    pub fn accent_color(&self) -> Srgba {
+        self.accent.base.clone().into()
+    }
+    /// get @success_color
+    pub fn success_color(&self) -> Srgba {
+        self.success.base.clone().into()
+    }
+    /// get @destructive_color
+    pub fn destructive_color(&self) -> Srgba {
+        self.destructive.base.clone().into()
+    }
+    /// get @warning_color
+    pub fn warning_color(&self) -> Srgba {
+        self.warning.base.clone().into()
+    }
+
+    // Containers
+    /// get @bg_color
+    pub fn bg_color(&self) -> Srgba {
+        self.background.base.clone().into()
+    }
+    /// get @bg_component_color
+    pub fn bg_component_color(&self) -> Srgba {
+        self.background.component.base.clone().into()
+    }
+    /// get @primary_container_color
+    pub fn primary_container_color(&self) -> Srgba {
+        self.primary.base.clone().into()
+    }
+    /// get @primary_component_color
+    pub fn primary_component_color(&self) -> Srgba {
+        self.primary.component.base.clone().into()
+    }
+    /// get @secondary_container_color
+    pub fn secondary_container_color(&self) -> Srgba {
+        self.secondary.base.clone().into()
+    }
+    /// get @secondary_component_color
+    pub fn secondary_component_color(&self) -> Srgba {
+        self.secondary.component.base.clone().into()
+    }
+
+    // Text
+    /// get @on_bg_color
+    pub fn on_bg_color(&self) -> Srgba {
+        self.background.on.clone().into()
+    }
+    /// get @on_bg_component_color
+    pub fn on_bg_component_color(&self) -> Srgba {
+        self.background.component.on.clone().into()
+    }
+    /// get @on_primary_color
+    pub fn on_primary_container_color(&self) -> Srgba {
+        self.primary.on.clone().into()
+    }
+    /// get @on_primary_component_color
+    pub fn on_primary_component_color(&self) -> Srgba {
+        self.primary.component.on.clone().into()
+    }
+    /// get @on_secondary_color
+    pub fn on_secondary_container_color(&self) -> Srgba {
+        self.secondary.on.clone().into()
+    }
+    /// get @on_secondary_component_color
+    pub fn on_secondary_component_color(&self) -> Srgba {
+        self.secondary.component.on.clone().into()
+    }
+    /// get @accent_text_color
+    pub fn accent_text_color(&self) -> Srgba {
+        self.accent.base.clone().into()
+    }
+    /// get @success_text_color
+    pub fn success_text_color(&self) -> Srgba {
+        self.success.base.clone().into()
+    }
+    /// get @warning_text_color
+    pub fn warning_text_color(&self) -> Srgba {
+        self.warning.base.clone().into()
+    }
+    /// get @destructive_text_color
+    pub fn destructive_text_color(&self) -> Srgba {
+        self.destructive.base.clone().into()
+    }
+    /// get @on_accent_color
+    pub fn on_accent_color(&self) -> Srgba {
+        self.accent.on.clone().into()
+    }
+    /// get @on_success_color
+    pub fn on_success_color(&self) -> Srgba {
+        self.success.on.clone().into()
+    }
+    /// get @oon_warning_color
+    pub fn oon_warning_color(&self) -> Srgba {
+        self.warning.on.clone().into()
+    }
+    /// get @on_destructive_color
+    pub fn on_destructive_color(&self) -> Srgba {
+        self.destructive.on.clone().into()
+    }
+
+    // Borders and Dividers
+    /// get @bg_divider
+    pub fn bg_divider(&self) -> Srgba {
+        self.background.divider.clone().into()
+    }
+    /// get @bg_component_divider
+    pub fn bg_component_divider(&self) -> Srgba {
+        self.background.component.divider.clone().into()
+    }
+    /// get @primary_container_divider
+    pub fn primary_container_divider(&self) -> Srgba {
+        self.primary.divider.clone().into()
+    }
+    /// get @primary_component_divider
+    pub fn primary_component_divider(&self) -> Srgba {
+        self.primary.component.divider.clone().into()
+    }
+    /// get @secondary_container_divider
+    pub fn secondary_container_divider(&self) -> Srgba {
+        self.secondary.divider.clone().into()
+    }
+    /// get @secondary_component_divider
+    pub fn secondary_component_divider(&self) -> Srgba {
+        self.secondary.component.divider.clone().into()
+    }
+
+    /// get @window_header_bg
+    pub fn window_header_bg(&self) -> Srgba {
+        self.background.base.clone().into()
+    }
 }
 
 impl Theme<CssColor> {

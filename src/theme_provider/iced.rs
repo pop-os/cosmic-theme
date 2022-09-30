@@ -133,16 +133,16 @@ impl ThemeWatcher {
 
         let bg = theme.background.clone();
         palette.background = Color::from_rgba(
-            bg.container.red as f32,
-            bg.container.green as f32,
-            bg.container.blue as f32,
-            bg.container.alpha as f32,
+            bg.base.red as f32,
+            bg.base.green as f32,
+            bg.base.blue as f32,
+            bg.base.alpha as f32,
         );
         palette.text = Color::from_rgba(
-            bg.on_container.red as f32,
-            bg.on_container.green as f32,
-            bg.on_container.blue as f32,
-            bg.on_container.alpha as f32,
+            bg.on.red as f32,
+            bg.on.green as f32,
+            bg.on.blue as f32,
+            bg.on.alpha as f32,
         );
 
         let accent = theme.accent.clone();

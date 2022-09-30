@@ -8,13 +8,13 @@ use crate::CosmicPalette;
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Container<C> {
     /// the color of the container
-    pub container: C,
+    pub base: C,
     /// the color of components in the container
-    pub container_component: Component<C>,
+    pub component: Component<C>,
     /// the color of dividers in the container
-    pub container_divider: C,
+    pub divider: C,
     /// the color of text in the container
-    pub on_container: C,
+    pub on: C,
     // TODO remove this maybe and just have a function which generates it at runtime?
     // the color of text with opacity 80 in the container
     // pub on_container_opacity_80: C,
@@ -31,14 +31,14 @@ where
                 on_bg.alpha = 0.2;
                 let divider: C = on_bg.into();
                 Self {
-                    container: p.gray_1.clone(),
-                    container_component: (
+                    base: p.gray_1.clone(),
+                    component: (
                         CosmicPalette::Dark(p.clone()),
                         ComponentType::Background,
                     )
                         .into(),
-                    container_divider: divider,
-                    on_container: p.neutral_7.clone(),
+                    divider,
+                    on: p.neutral_7.clone(),
                 }
             }
             (CosmicPalette::Dark(p), ContainerType::Primary) => {
@@ -46,11 +46,11 @@ where
                 on.alpha = 0.2;
                 let divider: C = on.into();
                 Self {
-                    container: p.gray_2.clone(),
-                    container_component: (CosmicPalette::Dark(p.clone()), ComponentType::Primary)
+                    base: p.gray_2.clone(),
+                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Primary)
                         .into(),
-                    container_divider: divider,
-                    on_container: p.neutral_8.clone(),
+                    divider,
+                    on: p.neutral_8.clone(),
                 }
             }
             (CosmicPalette::Dark(p), ContainerType::Secondary) => {
@@ -58,11 +58,11 @@ where
                 on.alpha = 0.2;
                 let divider: C = on.into();
                 Self {
-                    container: p.gray_3.clone(),
-                    container_component: (CosmicPalette::Dark(p.clone()), ComponentType::Secondary)
+                    base: p.gray_3.clone(),
+                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Secondary)
                         .into(),
-                    container_divider: divider,
-                    on_container: p.neutral_8.clone(),
+                    divider,
+                    on: p.neutral_8.clone(),
                 }
             }
             (CosmicPalette::Light(p), ContainerType::Background) => {
@@ -70,14 +70,14 @@ where
                 on.alpha = 0.2;
                 let divider: C = on.into();
                 Self {
-                    container: p.gray_1.clone(),
-                    container_component: (
+                    base: p.gray_1.clone(),
+                    component: (
                         CosmicPalette::Dark(p.clone()),
                         ComponentType::Background,
                     )
                         .into(),
-                    container_divider: divider,
-                    on_container: p.neutral_9.clone(),
+                    divider,
+                    on: p.neutral_9.clone(),
                 }
             }
             (CosmicPalette::Light(p), ContainerType::Primary) => {
@@ -85,11 +85,11 @@ where
                 on.alpha = 0.2;
                 let divider: C = on.into();
                 Self {
-                    container: p.gray_2.clone(),
-                    container_component: (CosmicPalette::Dark(p.clone()), ComponentType::Primary)
+                    base: p.gray_2.clone(),
+                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Primary)
                         .into(),
-                    container_divider: divider,
-                    on_container: p.neutral_8.clone(),
+                    divider,
+                    on: p.neutral_8.clone(),
                 }
             }
             (CosmicPalette::Light(p), ContainerType::Secondary) => {
@@ -97,11 +97,11 @@ where
                 on.alpha = 0.2;
                 let divider: C = on.into();
                 Self {
-                    container: p.gray_3.clone(),
-                    container_component: (CosmicPalette::Dark(p.clone()), ComponentType::Secondary)
+                    base: p.gray_3.clone(),
+                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Secondary)
                         .into(),
-                    container_divider: divider,
-                    on_container: p.neutral_8.clone(),
+                    divider,
+                    on: p.neutral_8.clone(),
                 }
             }
             (CosmicPalette::HighContrastLight(_), ContainerType::Background)

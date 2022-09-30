@@ -182,10 +182,10 @@ pub trait ColorPicker<
 
         Derivation {
             derived: Container {
-                container,
-                container_divider,
-                on_container: container_fg,
-                container_component,
+                base: container,
+                divider: container_divider,
+                on: container_fg,
+                component: container_component,
             },
             errors,
         }

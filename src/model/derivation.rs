@@ -1,4 +1,4 @@
-use palette::Srgba;
+use palette::{Srgba, Blend};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt;
 
@@ -242,9 +242,9 @@ where
 
         Component {
             base: base.clone().into(),
-            hover: Srgba::from_linear(base.clone().into_linear() + neutral_10).into(),
-            pressed: Srgba::from_linear(base.clone().into_linear() + neutral_20).into(),
-            selected: Srgba::from_linear(base.clone().into_linear() + neutral_20).into(),
+            hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_10)).into(),
+            pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_20)).into(),
+            selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_20)).into(),
             selected_text: accent.clone(),
             divider: Srgba::from_linear(on_20).into(),
             on: Srgba::from_linear(neutral).into(),
@@ -272,15 +272,21 @@ where
     fn from((p, t): (CosmicPalette<C>, ComponentType)) -> Self {
         match (p, t) {
             (CosmicPalette::Dark(p), ComponentType::Background) => {
-                let base: Srgba = p.gray_1.clone().into();
-                let mut base_50 = base.clone().into_linear();
-                base_50.alpha = 0.5;
                 let neutral_1 = p.neutral_1.clone().into().into_linear();
+                let mut neutral_1_05 = neutral_1.clone();
                 let mut neutral_1_10 = neutral_1.clone();
                 let mut neutral_1_20 = neutral_1.clone();
-
+                neutral_1_05.alpha = 0.1;
                 neutral_1_10.alpha = 0.1;
                 neutral_1_20.alpha = 0.2;
+
+                let base: Srgba = p.gray_1.clone().into();
+                let base = base.clone().into_linear().overlay(neutral_1_05);
+                let mut base_50 = base.clone().into_linear();
+                base_50.alpha = 0.5;
+
+
+
 
                 let mut on_20 = p.neutral_7.clone().into().into_linear();
                 let mut on_50 = on_20.clone();
@@ -289,10 +295,10 @@ where
                 on_50.alpha = 0.5;
 
                 Component {
-                    base: base.clone().into(),
-                    hover: Srgba::from_linear(base.clone().into_linear() + neutral_1_10).into(),
-                    pressed: Srgba::from_linear(base.clone().into_linear() + neutral_1_20).into(),
-                    selected: Srgba::from_linear(base.clone().into_linear() + neutral_1_20).into(),
+                    base: Srgba::from_linear(base.clone()).into(),
+                    hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_10)).into(),
+                    pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20)).into(),
+                    selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20)).into(),
                     selected_text: p.blue.clone(),
                     focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),
@@ -311,7 +317,7 @@ where
                 neutral_1_20.alpha = 0.2;
 
                 let base: Srgba = p.gray_1.clone().into();
-                let base = base.clone().into_linear() + neutral_1_05;
+                let base = base.clone().into_linear().overlay(neutral_1_05);
                 let mut base_50 = base.clone().into_linear();
                 base_50.alpha = 0.5;
 
@@ -323,9 +329,9 @@ where
 
                 Component {
                     base: Srgba::from_linear(base.clone()).into(),
-                    hover: Srgba::from_linear(base.clone() + neutral_1_10).into(),
-                    pressed: Srgba::from_linear(base.clone() + neutral_1_20).into(),
-                    selected: Srgba::from_linear(base.clone() + neutral_1_20).into(),
+                    hover: Srgba::from_linear(base.clone().overlay(neutral_1_10)).into(),
+                    pressed: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
+                    selected: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
                     selected_text: p.blue.clone(),
                     focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),
@@ -344,7 +350,7 @@ where
                 neutral_1_20.alpha = 0.2;
 
                 let base: Srgba = p.gray_2.clone().into();
-                let base = base.clone().into_linear() + neutral_1_05;
+                let base = base.clone().into_linear().overlay(neutral_1_05);
                 let mut base_50 = base.clone().into_linear();
                 base_50.alpha = 0.5;
 
@@ -356,9 +362,9 @@ where
 
                 Component {
                     base: Srgba::from_linear(base.clone()).into(),
-                    hover: Srgba::from_linear(base.clone() + neutral_1_10).into(),
-                    pressed: Srgba::from_linear(base.clone() + neutral_1_20).into(),
-                    selected: Srgba::from_linear(base.clone() + neutral_1_20).into(),
+                    hover: Srgba::from_linear(base.clone().overlay(neutral_1_10)).into(),
+                    pressed: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
+                    selected: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
                     selected_text: p.blue.clone(),
                     focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),
@@ -402,9 +408,9 @@ where
 
                 Component {
                     base: base.clone().into(),
-                    hover: Srgba::from_linear(base.clone().into_linear() + neutral_1_10).into(),
-                    pressed: Srgba::from_linear(base.clone().into_linear() + neutral_1_20).into(),
-                    selected: Srgba::from_linear(base.clone().into_linear() + neutral_1_20).into(),
+                    hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_10)).into(),
+                    pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20)).into(),
+                    selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_1_20)).into(),
                     selected_text: p.blue.clone(),
                     focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),
@@ -423,7 +429,7 @@ where
                 neutral_1_20.alpha = 0.2;
 
                 let base: Srgba = p.gray_1.clone().into();
-                let base = base.clone().into_linear() + neutral_1_75;
+                let base = base.clone().into_linear().overlay(neutral_1_75);
                 let mut base_50 = base.clone().into_linear();
                 base_50.alpha = 0.5;
 
@@ -435,9 +441,9 @@ where
 
                 Component {
                     base: Srgba::from_linear(base.clone()).into(),
-                    hover: Srgba::from_linear(base.clone() + neutral_1_10).into(),
-                    pressed: Srgba::from_linear(base.clone() + neutral_1_20).into(),
-                    selected: Srgba::from_linear(base.clone() + neutral_1_20).into(),
+                    hover: Srgba::from_linear(base.clone().overlay(neutral_1_10)).into(),
+                    pressed: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
+                    selected: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
                     selected_text: p.blue.clone(),
                     focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),
@@ -456,7 +462,7 @@ where
                 neutral_1_20.alpha = 0.2;
 
                 let base: Srgba = p.gray_2.clone().into();
-                let base = base.clone().into_linear() + neutral_1_90;
+                let base = base.clone().into_linear().overlay(neutral_1_90);
                 let mut base_50 = base.clone().into_linear();
                 base_50.alpha = 0.5;
 
@@ -468,9 +474,9 @@ where
 
                 Component {
                     base: Srgba::from_linear(base.clone()).into(),
-                    hover: Srgba::from_linear(base.clone() + neutral_1_10).into(),
-                    pressed: Srgba::from_linear(base.clone() + neutral_1_20).into(),
-                    selected: Srgba::from_linear(base.clone() + neutral_1_20).into(),
+                    hover: Srgba::from_linear(base.clone().overlay(neutral_1_10)).into(),
+                    pressed: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
+                    selected: Srgba::from_linear(base.clone().overlay(neutral_1_20)).into(),
                     selected_text: p.blue.clone(),
                     focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),

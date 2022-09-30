@@ -154,6 +154,8 @@ pub struct Component<C> {
     pub selected: C,
     /// the color of the widget when it is selected
     pub selected_text: C,
+    /// the color of the widget when it is focused
+    pub focus: C,
     /// the color of dividers for this widget
     pub divider: C,
     /// the color of text for this widget
@@ -166,6 +168,32 @@ pub struct Component<C> {
     pub on_disabled: C,
 }
 
+impl<C> Component<C>
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
+{
+    /// get @hover_state_color
+    pub fn hover_state_color(&self) -> Srgba {
+        self.hover.clone().into()
+    }
+    /// get @pressed_state_color
+    pub fn pressed_state_color(&self) -> Srgba {
+        self.pressed.clone().into()
+    }
+    /// get @selected_state_color
+    pub fn selected_state_color(&self) -> Srgba {
+        self.selected.clone().into()
+    }
+    /// get @selected_state_text_color
+    pub fn selected_state_text_color(&self) -> Srgba {
+        self.selected_text.clone().into()
+    }
+    /// get @focus_color
+    pub fn focus_color(&self) -> Srgba {
+        self.focus.clone().into()
+    }
+}
+
 /// Derived theme element from a palette and constraints
 #[derive(Debug)]
 pub struct Derivation<E> {
@@ -175,11 +203,11 @@ pub struct Derivation<E> {
     pub errors: Vec<anyhow::Error>,
 }
 
-impl<C> From<(C, C)> for Component<C>
+impl<C> From<(C, C, C)> for Component<C>
 where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
-    fn from((base, neutral): (C, C)) -> Self {
+    fn from((base, neutral, accent): (C, C, C)) -> Self {
         let neutral = neutral.clone().into().into_linear();
         let mut neutral_05 = neutral.clone();
         let mut neutral_10 = neutral.clone();
@@ -195,7 +223,6 @@ where
         let mut on_20 = neutral.clone();
         let mut on_50 = on_20.clone();
 
-        on_20.alpha = 0.2;
         on_50.alpha = 0.5;
 
         Component {
@@ -203,11 +230,12 @@ where
             hover: Srgba::from_linear(base.clone().into_linear() + neutral_10).into(),
             pressed: Srgba::from_linear(base.clone().into_linear() + neutral_20).into(),
             selected: Srgba::from_linear(base.clone().into_linear() + neutral_20).into(),
-            selected_text: Srgba::from_linear(on_20.clone()).into(),
+            selected_text: accent.clone(),
             divider: Srgba::from_linear(on_20).into(),
             on: Srgba::from_linear(neutral).into(),
             disabled: Srgba::from_linear(base_50).into(),
             on_disabled: Srgba::from_linear(on_50).into(),
+            focus: accent
         }
     }
 }
@@ -250,7 +278,8 @@ where
                     hover: Srgba::from_linear(base.clone().into_linear() + neutral_1_10).into(),
                     pressed: Srgba::from_linear(base.clone().into_linear() + neutral_1_20).into(),
                     selected: Srgba::from_linear(base.clone().into_linear() + neutral_1_20).into(),
-                    selected_text: Srgba::from_linear(on_20.clone()).into(),
+                    selected_text: p.blue.clone(),
+                    focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),
                     on: p.neutral_7.clone(),
                     disabled: Srgba::from_linear(base_50).into(),
@@ -282,7 +311,8 @@ where
                     hover: Srgba::from_linear(base.clone() + neutral_1_10).into(),
                     pressed: Srgba::from_linear(base.clone() + neutral_1_20).into(),
                     selected: Srgba::from_linear(base.clone() + neutral_1_20).into(),
-                    selected_text: Srgba::from_linear(on_20.clone()).into(),
+                    selected_text: p.blue.clone(),
+                    focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),
                     on: p.neutral_8.clone(),
                     disabled: Srgba::from_linear(base_50).into(),
@@ -314,7 +344,8 @@ where
                     hover: Srgba::from_linear(base.clone() + neutral_1_10).into(),
                     pressed: Srgba::from_linear(base.clone() + neutral_1_20).into(),
                     selected: Srgba::from_linear(base.clone() + neutral_1_20).into(),
-                    selected_text: Srgba::from_linear(on_20.clone()).into(),
+                    selected_text: p.blue.clone(),
+                    focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),
                     on: p.neutral_8.clone(),
                     disabled: Srgba::from_linear(base_50).into(),
@@ -323,19 +354,19 @@ where
             }
             (CosmicPalette::Dark(p), ComponentType::Destructive)
             | (CosmicPalette::Light(p), ComponentType::Destructive) => {
-                (p.red.clone(), p.neutral_1.clone()).into()
+                (p.red.clone(), p.neutral_1.clone(), p.blue.clone()).into()
             }
             (CosmicPalette::Dark(p), ComponentType::Warning)
             | (CosmicPalette::Light(p), ComponentType::Warning) => {
-                (p.yellow.clone(), p.neutral_1).into()
+                (p.yellow.clone(), p.neutral_1, p.blue.clone()).into()
             }
             (CosmicPalette::Dark(p), ComponentType::Success)
             | (CosmicPalette::Light(p), ComponentType::Success) => {
-                (p.green.clone(), p.neutral_1).into()
+                (p.green.clone(), p.neutral_1, p.blue.clone()).into()
             }
             (CosmicPalette::Dark(p), ComponentType::Accent)
             | (CosmicPalette::Light(p), ComponentType::Accent) => {
-                (p.blue.clone(), p.neutral_1).into()
+                (p.blue.clone(), p.neutral_1, p.blue.clone()).into()
             }
             (CosmicPalette::Light(p), ComponentType::Background) => {
                 let base: Srgba = p.gray_1.clone().into();
@@ -359,7 +390,8 @@ where
                     hover: Srgba::from_linear(base.clone().into_linear() + neutral_1_10).into(),
                     pressed: Srgba::from_linear(base.clone().into_linear() + neutral_1_20).into(),
                     selected: Srgba::from_linear(base.clone().into_linear() + neutral_1_20).into(),
-                    selected_text: Srgba::from_linear(on_20.clone()).into(),
+                    selected_text: p.blue.clone(),
+                    focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),
                     on: p.neutral_8.clone(),
                     disabled: Srgba::from_linear(base_50).into(),
@@ -391,7 +423,8 @@ where
                     hover: Srgba::from_linear(base.clone() + neutral_1_10).into(),
                     pressed: Srgba::from_linear(base.clone() + neutral_1_20).into(),
                     selected: Srgba::from_linear(base.clone() + neutral_1_20).into(),
-                    selected_text: Srgba::from_linear(on_20.clone()).into(),
+                    selected_text: p.blue.clone(),
+                    focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),
                     on: p.neutral_8.clone(),
                     disabled: Srgba::from_linear(base_50).into(),
@@ -423,7 +456,8 @@ where
                     hover: Srgba::from_linear(base.clone() + neutral_1_10).into(),
                     pressed: Srgba::from_linear(base.clone() + neutral_1_20).into(),
                     selected: Srgba::from_linear(base.clone() + neutral_1_20).into(),
-                    selected_text: Srgba::from_linear(on_20.clone()).into(),
+                    selected_text: p.blue.clone(),
+                    focus: p.blue.clone(),
                     divider: Srgba::from_linear(on_20).into(),
                     on: p.neutral_8.clone(),
                     disabled: Srgba::from_linear(base_50).into(),

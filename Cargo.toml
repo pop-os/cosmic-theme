@@ -10,16 +10,17 @@ features = ["test_all_features"]
 rustdoc-args = ["--cfg", "docsrs"]
 
 [features]
-default = ["iced-theme", "ron-serialization"]
+default = ["iced-theme"]
 no-default = []
 iced-theme = ["iced"]
-ron-serialization = []
+theme_from_image = ["kmeans_colors"]
+hex_color = ["hex"]
 
 [dependencies]
 palette = {version = "0.6", features = ["serializing"] }
 anyhow = "1.0"
-hex = "0.4.3"
-kmeans_colors = { git = "https://github.com/okaneco/kmeans-colors", features = ["palette_color"], default-features = false }
+hex = {version = "0.4.3", optional = true}
+kmeans_colors = { git = "https://github.com/okaneco/kmeans-colors", features = ["palette_color"], default-features = false, optional = true }
 float-cmp = "0.9.0"
 notify = "5.0.0" 
 serde = { version = "1.0.129", features = ["derive"] }

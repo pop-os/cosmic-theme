@@ -139,18 +139,18 @@ impl ThemeWatcher {
             bg.container.alpha as f32,
         );
         palette.text = Color::from_rgba(
-            bg.container_fg.red as f32,
-            bg.container_fg.green as f32,
-            bg.container_fg.blue as f32,
-            bg.container_fg.alpha as f32,
+            bg.on_container.red as f32,
+            bg.on_container.green as f32,
+            bg.on_container.blue as f32,
+            bg.on_container.alpha as f32,
         );
 
         let accent = theme.accent.clone();
         palette.primary = Color::from_rgba(
-            accent.accent.red as f32,
-            accent.accent.green as f32,
-            accent.accent.blue as f32,
-            accent.accent.alpha as f32,
+            accent.base.red as f32,
+            accent.base.green as f32,
+            accent.base.blue as f32,
+            accent.base.alpha,
         );
 
         let success = theme.success.clone();

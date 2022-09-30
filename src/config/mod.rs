@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0-only
 
-use crate::{Hex, Theme, NAME, THEME_DIR};
+use crate::{Theme, NAME, THEME_DIR};
 use anyhow::{bail, Result};
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -111,14 +111,7 @@ impl Config {
     /// get the active theme
     pub fn get_active<C>(&self) -> anyhow::Result<Theme<C>>
     where
-        C: Clone
-            + fmt::Debug
-            + Default
-            + Into<Hex>
-            + Into<Srgba>
-            + From<Srgba>
-            + Serialize
-            + DeserializeOwned,
+        C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
     {
         let active = match self.active_name() {
             Some(n) => n,
@@ -158,14 +151,7 @@ impl Config {
 
 impl<C> From<(Theme<C>, Theme<C>)> for Config
 where
-    C: Clone
-        + fmt::Debug
-        + Default
-        + Into<Hex>
-        + Into<Srgba>
-        + From<Srgba>
-        + Serialize
-        + DeserializeOwned,
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
     fn from((light, dark): (Theme<C>, Theme<C>)) -> Self {
         Self {
@@ -179,14 +165,7 @@ where
 
 impl<C> From<Theme<C>> for Config
 where
-    C: Clone
-        + fmt::Debug
-        + Default
-        + Into<Hex>
-        + Into<Srgba>
-        + From<Srgba>
-        + Serialize
-        + DeserializeOwned,
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
     fn from(t: Theme<C>) -> Self {
         Self {

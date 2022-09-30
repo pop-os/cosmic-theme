@@ -29,3 +29,9 @@ impl fmt::Display for Hex {
         write!(f, "#{}", self)
     }
 }
+
+/// Create a hex String from an Srgba
+pub fn hex_from_rgba(rgba: &Srgba) -> String {
+    let hex = encode::<[u8; 4]>(Srgba::into_raw(rgba.into_format()));
+    format!("#{hex}")
+}

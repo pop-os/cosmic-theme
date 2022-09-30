@@ -7,18 +7,17 @@ use crate::CosmicPalette;
 /// Theme Container colors of a theme, can be a theme background container, primary container, or secondary container
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Container<C> {
-    /// type of the container, background, primary, or secondary
-    pub prefix: ContainerType,
     /// the color of the container
     pub container: C,
     /// the color of components in the container
-    pub container_component: Widget<C>,
+    pub container_component: Component<C>,
     /// the color of dividers in the container
     pub container_divider: C,
     /// the color of text in the container
-    pub container_fg: C,
-    /// the color of text with opacity 80 in the container
-    pub container_fg_opacity_80: C,
+    pub on_container: C,
+    // TODO remove this maybe and just have a function which generates it at runtime?
+    // the color of text with opacity 80 in the container
+    // pub on_container_opacity_80: C,
 }
 
 impl<C> From<(CosmicPalette<C>, ContainerType)> for Container<C>
@@ -27,12 +26,84 @@ where
 {
     fn from((p, t): (CosmicPalette<C>, ContainerType)) -> Self {
         match (p, t) {
-            (CosmicPalette::Dark(p), ContainerType::Background) => todo!(),
-            (CosmicPalette::Dark(p), ContainerType::Primary) => todo!(),
-            (CosmicPalette::Dark(p), ContainerType::Secondary) => todo!(),
-            (CosmicPalette::Light(p), ContainerType::Background) => todo!(),
-            (CosmicPalette::Light(p), ContainerType::Primary) => todo!(),
-            (CosmicPalette::Light(p), ContainerType::Secondary) => todo!(),
+            (CosmicPalette::Dark(p), ContainerType::Background) => {
+                let mut on_bg: Srgba = p.neutral_7.clone().into();
+                on_bg.alpha = 0.2;
+                let divider: C = on_bg.into();
+                Self {
+                    container: p.gray_1.clone(),
+                    container_component: (
+                        CosmicPalette::Dark(p.clone()),
+                        ComponentType::Background,
+                    )
+                        .into(),
+                    container_divider: divider,
+                    on_container: p.neutral_7.clone(),
+                }
+            }
+            (CosmicPalette::Dark(p), ContainerType::Primary) => {
+                let mut on: Srgba = p.neutral_8.clone().into();
+                on.alpha = 0.2;
+                let divider: C = on.into();
+                Self {
+                    container: p.gray_2.clone(),
+                    container_component: (CosmicPalette::Dark(p.clone()), ComponentType::Primary)
+                        .into(),
+                    container_divider: divider,
+                    on_container: p.neutral_8.clone(),
+                }
+            }
+            (CosmicPalette::Dark(p), ContainerType::Secondary) => {
+                let mut on: Srgba = p.neutral_8.clone().into();
+                on.alpha = 0.2;
+                let divider: C = on.into();
+                Self {
+                    container: p.gray_3.clone(),
+                    container_component: (CosmicPalette::Dark(p.clone()), ComponentType::Secondary)
+                        .into(),
+                    container_divider: divider,
+                    on_container: p.neutral_8.clone(),
+                }
+            }
+            (CosmicPalette::Light(p), ContainerType::Background) => {
+                let mut on: Srgba = p.neutral_9.clone().into();
+                on.alpha = 0.2;
+                let divider: C = on.into();
+                Self {
+                    container: p.gray_1.clone(),
+                    container_component: (
+                        CosmicPalette::Dark(p.clone()),
+                        ComponentType::Background,
+                    )
+                        .into(),
+                    container_divider: divider,
+                    on_container: p.neutral_9.clone(),
+                }
+            }
+            (CosmicPalette::Light(p), ContainerType::Primary) => {
+                let mut on: Srgba = p.neutral_8.clone().into();
+                on.alpha = 0.2;
+                let divider: C = on.into();
+                Self {
+                    container: p.gray_2.clone(),
+                    container_component: (CosmicPalette::Dark(p.clone()), ComponentType::Primary)
+                        .into(),
+                    container_divider: divider,
+                    on_container: p.neutral_8.clone(),
+                }
+            }
+            (CosmicPalette::Light(p), ContainerType::Secondary) => {
+                let mut on: Srgba = p.neutral_8.clone().into();
+                on.alpha = 0.2;
+                let divider: C = on.into();
+                Self {
+                    container: p.gray_3.clone(),
+                    container_component: (CosmicPalette::Dark(p.clone()), ComponentType::Secondary)
+                        .into(),
+                    container_divider: divider,
+                    on_container: p.neutral_8.clone(),
+                }
+            }
             (CosmicPalette::HighContrastLight(_), ContainerType::Background)
             | (CosmicPalette::HighContrastLight(_), ContainerType::Primary)
             | (CosmicPalette::HighContrastLight(_), ContainerType::Secondary)
@@ -70,35 +141,9 @@ impl fmt::Display for ContainerType {
     }
 }
 
-/// The accent colors of a theme
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct Accent<C> {
-    /// Base accent color
-    pub accent: C,
-    /// Accent text color
-    pub accent_fg: C,
-    /// Accent nav handle text color
-    pub accent_nav_handle_fg: C,
-    /// Accent Widget colors
-    pub suggested: Widget<C>,
-}
-
-impl<C> From<CosmicPalette<C>> for Accent<C>
-where
-    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
-{
-    fn from(p: CosmicPalette<C>) -> Self {
-        match p {
-            CosmicPalette::Dark(_) => todo!(),
-            CosmicPalette::Light(_) => todo!(),
-            CosmicPalette::HighContrastLight(_) | CosmicPalette::HighContrastDark(_) => todo!(),
-        }
-    }
-}
-
 /// The colors for a widget of the Cosmic theme
 #[derive(Clone, PartialEq, Debug, Default, Deserialize, Serialize)]
-pub struct Widget<C> {
+pub struct Component<C> {
     /// The base color of the widget
     pub base: C,
     /// The color of the widget when it is hovered
@@ -107,16 +152,18 @@ pub struct Widget<C> {
     pub pressed: C,
     /// the color of the widget when it is selected
     pub selected: C,
+    /// the color of the widget when it is selected
+    pub selected_text: C,
     /// the color of dividers for this widget
     pub divider: C,
     /// the color of text for this widget
-    pub text: C,
-    /// the color of text with opacity 80 for this widget
-    pub text_opacity_80: C,
+    pub on: C,
+    // the color of text with opacity 80 for this widget
+    // pub text_opacity_80: C,
     /// the color of the widget when it is disabled
     pub disabled: C,
     /// the color of text in the widget when it is disabled
-    pub disabled_fg: C,
+    pub on_disabled: C,
 }
 
 /// Derived theme element from a palette and constraints
@@ -128,6 +175,43 @@ pub struct Derivation<E> {
     pub errors: Vec<anyhow::Error>,
 }
 
+impl<C> From<(C, C)> for Component<C>
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
+{
+    fn from((base, neutral): (C, C)) -> Self {
+        let neutral = neutral.clone().into().into_linear();
+        let mut neutral_05 = neutral.clone();
+        let mut neutral_10 = neutral.clone();
+        let mut neutral_20 = neutral.clone();
+        neutral_05.alpha = 0.1;
+        neutral_10.alpha = 0.1;
+        neutral_20.alpha = 0.2;
+
+        let base: Srgba = base.into();
+        let mut base_50 = base.clone().into_linear();
+        base_50.alpha = 0.5;
+
+        let mut on_20 = neutral.clone();
+        let mut on_50 = on_20.clone();
+
+        on_20.alpha = 0.2;
+        on_50.alpha = 0.5;
+
+        Component {
+            base: base.clone().into(),
+            hover: Srgba::from_linear(base.clone().into_linear() + neutral_10).into(),
+            pressed: Srgba::from_linear(base.clone().into_linear() + neutral_20).into(),
+            selected: Srgba::from_linear(base.clone().into_linear() + neutral_20).into(),
+            selected_text: Srgba::from_linear(on_20.clone()).into(),
+            divider: Srgba::from_linear(on_20).into(),
+            on: Srgba::from_linear(neutral).into(),
+            disabled: Srgba::from_linear(base_50).into(),
+            on_disabled: Srgba::from_linear(on_50).into(),
+        }
+    }
+}
+
 pub(crate) enum ComponentType {
     Background,
     Primary,
@@ -135,32 +219,225 @@ pub(crate) enum ComponentType {
     Destructive,
     Warning,
     Success,
+    Accent,
 }
 
-impl<C> From<(CosmicPalette<C>, ComponentType)> for Widget<C>
+impl<C> From<(CosmicPalette<C>, ComponentType)> for Component<C>
 where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
     fn from((p, t): (CosmicPalette<C>, ComponentType)) -> Self {
         match (p, t) {
-            (CosmicPalette::Dark(p), ComponentType::Background) => todo!(),
-            (CosmicPalette::Dark(p), ComponentType::Primary) => todo!(),
-            (CosmicPalette::Dark(p), ComponentType::Secondary) => todo!(),
-            (CosmicPalette::Dark(p), ComponentType::Destructive) => todo!(),
-            (CosmicPalette::Dark(p), ComponentType::Warning) => todo!(),
-            (CosmicPalette::Dark(p), ComponentType::Success) => todo!(),
-            (CosmicPalette::Light(p), ComponentType::Background) => todo!(),
-            (CosmicPalette::Light(p), ComponentType::Primary) => todo!(),
-            (CosmicPalette::Light(p), ComponentType::Secondary) => todo!(),
-            (CosmicPalette::Light(p), ComponentType::Destructive) => todo!(),
-            (CosmicPalette::Light(p), ComponentType::Warning) => todo!(),
-            (CosmicPalette::Light(p), ComponentType::Success) => todo!(),
+            (CosmicPalette::Dark(p), ComponentType::Background) => {
+                let base: Srgba = p.gray_1.clone().into();
+                let mut base_50 = base.clone().into_linear();
+                base_50.alpha = 0.5;
+                let neutral_1 = p.neutral_1.clone().into().into_linear();
+                let mut neutral_1_10 = neutral_1.clone();
+                let mut neutral_1_20 = neutral_1.clone();
+
+                neutral_1_10.alpha = 0.1;
+                neutral_1_20.alpha = 0.2;
+
+                let mut on_20 = p.neutral_7.clone().into().into_linear();
+                let mut on_50 = on_20.clone();
+
+                on_20.alpha = 0.2;
+                on_50.alpha = 0.5;
+
+                Component {
+                    base: base.clone().into(),
+                    hover: Srgba::from_linear(base.clone().into_linear() + neutral_1_10).into(),
+                    pressed: Srgba::from_linear(base.clone().into_linear() + neutral_1_20).into(),
+                    selected: Srgba::from_linear(base.clone().into_linear() + neutral_1_20).into(),
+                    selected_text: Srgba::from_linear(on_20.clone()).into(),
+                    divider: Srgba::from_linear(on_20).into(),
+                    on: p.neutral_7.clone(),
+                    disabled: Srgba::from_linear(base_50).into(),
+                    on_disabled: Srgba::from_linear(on_50).into(),
+                }
+            }
+            (CosmicPalette::Dark(p), ComponentType::Primary) => {
+                let neutral_1 = p.neutral_1.clone().into().into_linear();
+                let mut neutral_1_05 = neutral_1.clone();
+                let mut neutral_1_10 = neutral_1.clone();
+                let mut neutral_1_20 = neutral_1.clone();
+                neutral_1_05.alpha = 0.1;
+                neutral_1_10.alpha = 0.1;
+                neutral_1_20.alpha = 0.2;
+
+                let base: Srgba = p.gray_1.clone().into();
+                let base = base.clone().into_linear() + neutral_1_05;
+                let mut base_50 = base.clone().into_linear();
+                base_50.alpha = 0.5;
+
+                let mut on_20 = p.neutral_8.clone().into().into_linear();
+                let mut on_50 = on_20.clone();
+
+                on_20.alpha = 0.2;
+                on_50.alpha = 0.5;
+
+                Component {
+                    base: Srgba::from_linear(base.clone()).into(),
+                    hover: Srgba::from_linear(base.clone() + neutral_1_10).into(),
+                    pressed: Srgba::from_linear(base.clone() + neutral_1_20).into(),
+                    selected: Srgba::from_linear(base.clone() + neutral_1_20).into(),
+                    selected_text: Srgba::from_linear(on_20.clone()).into(),
+                    divider: Srgba::from_linear(on_20).into(),
+                    on: p.neutral_8.clone(),
+                    disabled: Srgba::from_linear(base_50).into(),
+                    on_disabled: Srgba::from_linear(on_50).into(),
+                }
+            }
+            (CosmicPalette::Dark(p), ComponentType::Secondary) => {
+                let neutral_1 = p.neutral_1.clone().into().into_linear();
+                let mut neutral_1_05 = neutral_1.clone();
+                let mut neutral_1_10 = neutral_1.clone();
+                let mut neutral_1_20 = neutral_1.clone();
+                neutral_1_05.alpha = 0.1;
+                neutral_1_10.alpha = 0.1;
+                neutral_1_20.alpha = 0.2;
+
+                let base: Srgba = p.gray_2.clone().into();
+                let base = base.clone().into_linear() + neutral_1_05;
+                let mut base_50 = base.clone().into_linear();
+                base_50.alpha = 0.5;
+
+                let mut on_20 = p.neutral_8.clone().into().into_linear();
+                let mut on_50 = on_20.clone();
+
+                on_20.alpha = 0.2;
+                on_50.alpha = 0.5;
+
+                Component {
+                    base: Srgba::from_linear(base.clone()).into(),
+                    hover: Srgba::from_linear(base.clone() + neutral_1_10).into(),
+                    pressed: Srgba::from_linear(base.clone() + neutral_1_20).into(),
+                    selected: Srgba::from_linear(base.clone() + neutral_1_20).into(),
+                    selected_text: Srgba::from_linear(on_20.clone()).into(),
+                    divider: Srgba::from_linear(on_20).into(),
+                    on: p.neutral_8.clone(),
+                    disabled: Srgba::from_linear(base_50).into(),
+                    on_disabled: Srgba::from_linear(on_50).into(),
+                }
+            }
+            (CosmicPalette::Dark(p), ComponentType::Destructive)
+            | (CosmicPalette::Light(p), ComponentType::Destructive) => {
+                (p.red.clone(), p.neutral_1.clone()).into()
+            }
+            (CosmicPalette::Dark(p), ComponentType::Warning)
+            | (CosmicPalette::Light(p), ComponentType::Warning) => {
+                (p.yellow.clone(), p.neutral_1).into()
+            }
+            (CosmicPalette::Dark(p), ComponentType::Success)
+            | (CosmicPalette::Light(p), ComponentType::Success) => {
+                (p.green.clone(), p.neutral_1).into()
+            }
+            (CosmicPalette::Dark(p), ComponentType::Accent)
+            | (CosmicPalette::Light(p), ComponentType::Accent) => {
+                (p.blue.clone(), p.neutral_1).into()
+            }
+            (CosmicPalette::Light(p), ComponentType::Background) => {
+                let base: Srgba = p.gray_1.clone().into();
+                let mut base_50 = base.clone().into_linear();
+                base_50.alpha = 0.5;
+                let neutral_1 = p.neutral_1.clone().into().into_linear();
+                let mut neutral_1_10 = neutral_1.clone();
+                let mut neutral_1_20 = neutral_1.clone();
+
+                neutral_1_10.alpha = 0.1;
+                neutral_1_20.alpha = 0.2;
+
+                let mut on_20 = p.neutral_8.clone().into().into_linear();
+                let mut on_50 = on_20.clone();
+
+                on_20.alpha = 0.2;
+                on_50.alpha = 0.5;
+
+                Component {
+                    base: base.clone().into(),
+                    hover: Srgba::from_linear(base.clone().into_linear() + neutral_1_10).into(),
+                    pressed: Srgba::from_linear(base.clone().into_linear() + neutral_1_20).into(),
+                    selected: Srgba::from_linear(base.clone().into_linear() + neutral_1_20).into(),
+                    selected_text: Srgba::from_linear(on_20.clone()).into(),
+                    divider: Srgba::from_linear(on_20).into(),
+                    on: p.neutral_8.clone(),
+                    disabled: Srgba::from_linear(base_50).into(),
+                    on_disabled: Srgba::from_linear(on_50).into(),
+                }
+            }
+            (CosmicPalette::Light(p), ComponentType::Primary) => {
+                let neutral_1 = p.neutral_1.clone().into().into_linear();
+                let mut neutral_1_75 = neutral_1.clone();
+                let mut neutral_1_10 = neutral_1.clone();
+                let mut neutral_1_20 = neutral_1.clone();
+                neutral_1_75.alpha = 0.75;
+                neutral_1_10.alpha = 0.1;
+                neutral_1_20.alpha = 0.2;
+
+                let base: Srgba = p.gray_1.clone().into();
+                let base = base.clone().into_linear() + neutral_1_75;
+                let mut base_50 = base.clone().into_linear();
+                base_50.alpha = 0.5;
+
+                let mut on_20 = p.neutral_8.clone().into().into_linear();
+                let mut on_50 = on_20.clone();
+
+                on_20.alpha = 0.2;
+                on_50.alpha = 0.5;
+
+                Component {
+                    base: Srgba::from_linear(base.clone()).into(),
+                    hover: Srgba::from_linear(base.clone() + neutral_1_10).into(),
+                    pressed: Srgba::from_linear(base.clone() + neutral_1_20).into(),
+                    selected: Srgba::from_linear(base.clone() + neutral_1_20).into(),
+                    selected_text: Srgba::from_linear(on_20.clone()).into(),
+                    divider: Srgba::from_linear(on_20).into(),
+                    on: p.neutral_8.clone(),
+                    disabled: Srgba::from_linear(base_50).into(),
+                    on_disabled: Srgba::from_linear(on_50).into(),
+                }
+            }
+            (CosmicPalette::Light(p), ComponentType::Secondary) => {
+                let neutral_1 = p.neutral_1.clone().into().into_linear();
+                let mut neutral_1_90 = neutral_1.clone();
+                let mut neutral_1_10 = neutral_1.clone();
+                let mut neutral_1_20 = neutral_1.clone();
+                neutral_1_90.alpha = 0.9;
+                neutral_1_10.alpha = 0.1;
+                neutral_1_20.alpha = 0.2;
+
+                let base: Srgba = p.gray_2.clone().into();
+                let base = base.clone().into_linear() + neutral_1_90;
+                let mut base_50 = base.clone().into_linear();
+                base_50.alpha = 0.5;
+
+                let mut on_20 = p.neutral_8.clone().into().into_linear();
+                let mut on_50 = on_20.clone();
+
+                on_20.alpha = 0.2;
+                on_50.alpha = 0.5;
+
+                Component {
+                    base: Srgba::from_linear(base.clone()).into(),
+                    hover: Srgba::from_linear(base.clone() + neutral_1_10).into(),
+                    pressed: Srgba::from_linear(base.clone() + neutral_1_20).into(),
+                    selected: Srgba::from_linear(base.clone() + neutral_1_20).into(),
+                    selected_text: Srgba::from_linear(on_20.clone()).into(),
+                    divider: Srgba::from_linear(on_20).into(),
+                    on: p.neutral_8.clone(),
+                    disabled: Srgba::from_linear(base_50).into(),
+                    on_disabled: Srgba::from_linear(on_50).into(),
+                }
+            }
             (CosmicPalette::HighContrastLight(_), ComponentType::Background)
+            | (CosmicPalette::HighContrastLight(_), ComponentType::Accent)
             | (CosmicPalette::HighContrastLight(_), ComponentType::Primary)
             | (CosmicPalette::HighContrastLight(_), ComponentType::Secondary)
             | (CosmicPalette::HighContrastLight(_), ComponentType::Destructive)
             | (CosmicPalette::HighContrastLight(_), ComponentType::Warning)
             | (CosmicPalette::HighContrastLight(_), ComponentType::Success)
+            | (CosmicPalette::HighContrastDark(_), ComponentType::Accent)
             | (CosmicPalette::HighContrastDark(_), ComponentType::Background)
             | (CosmicPalette::HighContrastDark(_), ComponentType::Primary)
             | (CosmicPalette::HighContrastDark(_), ComponentType::Secondary)

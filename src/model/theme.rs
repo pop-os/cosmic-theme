@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use crate::{
-    util::CssColor, Accent, ComponentType, Container, ContainerType, CosmicPalette, Widget,
+    util::CssColor, Component, ComponentType, Container, ContainerType, CosmicPalette,
     DARK_PALETTE, LIGHT_PALETTE, NAME, THEME_DIR,
 };
 use palette::Srgba;
@@ -25,13 +25,13 @@ pub struct Theme<C> {
     /// secondary element colors
     pub secondary: Container<C>,
     /// accent element colors
-    pub accent: Accent<C>,
+    pub accent: Component<C>,
     /// suggested element colors
-    pub success: Widget<C>,
+    pub success: Component<C>,
     /// destructive element colors
-    pub destructive: Widget<C>,
+    pub destructive: Component<C>,
     /// warning element colors
-    pub warning: Widget<C>,
+    pub warning: Component<C>,
 }
 
 // TODO better eq check
@@ -50,10 +50,10 @@ where
         background: Container<C>,
         primary: Container<C>,
         secondary: Container<C>,
-        accent: Accent<C>,
-        destructive: Widget<C>,
-        warning: Widget<C>,
-        success: Widget<C>,
+        accent: Component<C>,
+        destructive: Component<C>,
+        warning: Component<C>,
+        success: Component<C>,
     ) -> Self {
         Self {
             background,
@@ -113,6 +113,9 @@ where
         let f = File::open(p)?;
         Ok(ron::de::from_reader(f)?)
     }
+
+    // TODO convenient getter functions for each named color variable
+    // return Srgba
 }
 
 impl Theme<CssColor> {
@@ -135,27 +138,9 @@ where
         Self {
             name: p.name().to_string(),
             background: (p.clone(), ContainerType::Background).into(),
-            // background: match &p {
-            //     CosmicPalette::Dark(p) => {
-            //         let mut neutral_1_05: Srgba = p.neutral_1.into();
-            //         let mut gray_1: Srgba = p.gray_1.clone().into();
-            //         neutral_1_05.alpha = 0.05;
-            //         let container_component: Srgba = Srgba::from_linear(gray_1.into_linear() * neutral_1_05.into_linear());
-            //         Container::<C> {
-            //             prefix: ContainerType::Background,
-            //             container: p.gray_1.clone(),
-            //             container_component: container_component.into(),
-            //             container_divider: todo!(),
-            //             container_fg: todo!(),
-            //             container_fg_opacity_80: todo!(),
-            //         }
-            //     },
-            //     CosmicPalette::Light(p) => todo!(),
-            //     CosmicPalette::HighContrastLight(_) | CosmicPalette::HighContrastDark(_) => todo!(),
-            // },
             primary: (p.clone(), ContainerType::Background).into(),
             secondary: (p.clone(), ContainerType::Background).into(),
-            accent: p.clone().into(),
+            accent: (p.clone(), ComponentType::Accent).into(),
             success: (p.clone(), ComponentType::Success).into(),
             destructive: (p.clone(), ComponentType::Destructive).into(),
             warning: (p.clone(), ComponentType::Warning).into(),

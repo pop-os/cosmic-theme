@@ -1,6 +1,4 @@
-use crate::{
-    Accent, Container, ContainerType, Derivation, Selection, Theme, ThemeConstraints, Widget,
-};
+use crate::{Component, Container, ContainerType, Derivation, Selection, Theme, ThemeConstraints};
 use anyhow::{anyhow, Result};
 use palette::{IntoColor, Lcha, Shade, Srgba};
 use serde::{de::DeserializeOwned, Serialize};
@@ -72,7 +70,7 @@ pub trait ColorPicker<
         let Derivation {
             derived: accent,
             mut errors,
-        } = self.accent_derivation();
+        } = self.widget_derivation(self.get_selection().accent);
         theme_errors.append(&mut errors);
 
         let Derivation {
@@ -184,11 +182,9 @@ pub trait ColorPicker<
 
         Derivation {
             derived: Container {
-                prefix: container_type,
                 container,
                 container_divider,
-                container_fg,
-                container_fg_opacity_80: container_fg_opacity_80.into(),
+                on_container: container_fg,
                 container_component,
             },
             errors,
@@ -196,7 +192,7 @@ pub trait ColorPicker<
     }
 
     /// derive a widget
-    fn widget_derivation(&self, default: C) -> Derivation<Widget<C>> {
+    fn widget_derivation(&self, default: C) -> Derivation<Component<C>> {
         let ThemeConstraints {
             divider_contrast_ratio,
             divider_gray_scale,
@@ -251,6 +247,11 @@ pub trait ColorPicker<
             errors.push(error);
         }
 
+        let (selected_text, error) = self.pick_color_text(focused.clone(), true, None);
+        if let Some(error) = error {
+            errors.push(error);
+        }
+
         let mut text_opacity_80: Srgba = text.clone().into();
         text_opacity_80.alpha = 0.8;
 
@@ -258,7 +259,7 @@ pub trait ColorPicker<
         disabled_fg.alpha = 0.5;
 
         Derivation {
-            derived: Widget {
+            derived: Component {
                 base: default,
                 hover: C::from(Srgba {
                     color: hover.color.into_color(),
@@ -266,42 +267,11 @@ pub trait ColorPicker<
                 }),
                 pressed,
                 selected: focused,
+                selected_text: selected_text,
                 divider,
-                text,
-                text_opacity_80: text_opacity_80.into(),
+                on: text,
                 disabled: disabled.into(),
-                disabled_fg: disabled_fg.into(),
-            },
-            errors,
-        }
-    }
-
-    /// derive an accent
-    fn accent_derivation(&self) -> Derivation<Accent<C>> {
-        let Selection {
-            accent,
-            accent_fg,
-            accent_nav_handle_fg,
-            ..
-        } = self.get_selection();
-        let mut errors = Vec::<anyhow::Error>::new();
-
-        let Derivation {
-            derived: suggested,
-            errors: errs,
-        } = self.widget_derivation(accent.clone());
-        for e in errs {
-            errors.push(anyhow!("\"Accent component derivation\" failed: {}", e));
-        }
-        let accent_fg = accent_fg.unwrap_or(accent.clone());
-        let accent_nav_handle_fg = accent_nav_handle_fg.unwrap_or(accent.clone());
-
-        Derivation {
-            derived: Accent {
-                accent,
-                accent_fg,
-                accent_nav_handle_fg,
-                suggested,
+                on_disabled: disabled_fg.into(),
             },
             errors,
         }

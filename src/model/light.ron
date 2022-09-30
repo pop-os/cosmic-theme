@@ -1,6 +1,6 @@
 Light (
     (
-        name: "Cosmic Light",
+        name: "cosmic-light",
         blue: (
             c: "#00496D",
         ),

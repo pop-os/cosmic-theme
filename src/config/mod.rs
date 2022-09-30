@@ -67,6 +67,8 @@ impl Config {
     pub fn init() -> anyhow::Result<PathBuf> {
         let base_dirs = xdg::BaseDirectories::new()?;
         let res = Ok(base_dirs.create_config_directory(NAME)?);
+        Theme::<Srgba>::init()?;
+
         if Self::load().is_ok() {
             res
         } else {

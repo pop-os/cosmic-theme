@@ -282,8 +282,8 @@ where
         Self {
             name: p.name().to_string(),
             background: (p.clone(), ContainerType::Background).into(),
-            primary: (p.clone(), ContainerType::Background).into(),
-            secondary: (p.clone(), ContainerType::Background).into(),
+            primary: (p.clone(), ContainerType::Primary).into(),
+            secondary: (p.clone(), ContainerType::Secondary).into(),
             accent: (p.clone(), ComponentType::Accent).into(),
             success: (p.clone(), ComponentType::Success).into(),
             destructive: (p.clone(), ComponentType::Destructive).into(),

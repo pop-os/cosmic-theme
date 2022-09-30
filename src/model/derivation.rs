@@ -273,15 +273,15 @@ where
         match (p, t) {
             (CosmicPalette::Dark(p), ComponentType::Background) => {
                 let neutral_1 = p.neutral_1.clone().into().into_linear();
-                let mut neutral_1_05 = neutral_1.clone();
                 let mut neutral_1_10 = neutral_1.clone();
                 let mut neutral_1_20 = neutral_1.clone();
-                neutral_1_05.alpha = 0.1;
                 neutral_1_10.alpha = 0.1;
                 neutral_1_20.alpha = 0.2;
-
+                let mut neutral_10_05 = p.neutral_10.clone().into().into_linear();
+                
+                neutral_10_05.alpha = 0.1;
                 let base: Srgba = p.gray_1.clone().into();
-                let base = base.clone().into_linear().overlay(neutral_1_05);
+                let base = base.clone().into_linear().overlay(neutral_10_05);
                 let mut base_50 = base.clone().into_linear();
                 base_50.alpha = 0.5;
 
@@ -309,15 +309,15 @@ where
             }
             (CosmicPalette::Dark(p), ComponentType::Primary) => {
                 let neutral_1 = p.neutral_1.clone().into().into_linear();
-                let mut neutral_1_05 = neutral_1.clone();
                 let mut neutral_1_10 = neutral_1.clone();
                 let mut neutral_1_20 = neutral_1.clone();
-                neutral_1_05.alpha = 0.1;
                 neutral_1_10.alpha = 0.1;
                 neutral_1_20.alpha = 0.2;
+                let mut neutral_10_05 = p.neutral_10.clone().into().into_linear();
+                neutral_10_05.alpha = 0.1;
 
                 let base: Srgba = p.gray_2.clone().into();
-                let base = base.clone().into_linear().overlay(neutral_1_05);
+                let base = base.clone().into_linear().overlay(neutral_10_05);
                 let mut base_50 = base.clone().into_linear();
                 base_50.alpha = 0.5;
 
@@ -342,15 +342,15 @@ where
             }
             (CosmicPalette::Dark(p), ComponentType::Secondary) => {
                 let neutral_1 = p.neutral_1.clone().into().into_linear();
-                let mut neutral_1_05 = neutral_1.clone();
                 let mut neutral_1_10 = neutral_1.clone();
                 let mut neutral_1_20 = neutral_1.clone();
-                neutral_1_05.alpha = 0.1;
                 neutral_1_10.alpha = 0.1;
                 neutral_1_20.alpha = 0.2;
+                let mut neutral_10_05 = p.neutral_10.clone().into().into_linear();
+                neutral_10_05.alpha = 0.1;
 
                 let base: Srgba = p.gray_3.clone().into();
-                let base = base.clone().into_linear().overlay(neutral_1_05);
+                let base = base.clone().into_linear().overlay(neutral_10_05);
                 let mut base_50 = base.clone().into_linear();
                 base_50.alpha = 0.5;
 

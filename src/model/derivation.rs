@@ -2,7 +2,7 @@ use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt;
 
-use crate::{CosmicPalette, util::over};
+use crate::{util::over, CosmicPalette};
 
 /// Theme Container colors of a theme, can be a theme background container, primary container, or secondary container
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
@@ -240,7 +240,13 @@ where
         }
     }
 
-    pub(crate) fn dark_component(base: C, component_state_overlay: C, base_overlay: C, accent : C, on_component: C) -> Self {
+    pub(crate) fn dark_component(
+        base: C,
+        component_state_overlay: C,
+        base_overlay: C,
+        accent: C,
+        on_component: C,
+    ) -> Self {
         let component_state_overlay = component_state_overlay.clone().into();
         let mut component_state_overlay_10 = component_state_overlay.clone();
         let mut component_state_overlay_20 = component_state_overlay.clone();
@@ -274,7 +280,7 @@ where
         }
     }
 
-    pub(crate) fn light_component(base: C, overlay: C, accent : C, on_component: C)-> Self {
+    pub(crate) fn light_component(base: C, overlay: C, accent: C, on_component: C) -> Self {
         let base: Srgba = base.into();
         let mut base_50 = base.clone();
         base_50.alpha = 0.5;
@@ -356,15 +362,24 @@ where
             | (CosmicPalette::Light(p), ComponentType::Accent) => {
                 Component::colored_component(p.blue.clone(), p.neutral_1, p.blue.clone())
             }
-            (CosmicPalette::Light(p), ComponentType::Background) => {
-                Component::light_component(p.gray_1.clone(), p.neutral_1.clone(),  p.blue.clone(), p.neutral_8)
-            }
-            (CosmicPalette::Light(p), ComponentType::Primary) => {
-                Component::light_component(p.gray_2.clone(), p.neutral_1.clone(),  p.blue.clone(), p.neutral_8)
-            }
-            (CosmicPalette::Light(p), ComponentType::Secondary) => {
-                Component::light_component(p.gray_3.clone(), p.neutral_1.clone(), p.blue.clone(), p.neutral_8)
-            }
+            (CosmicPalette::Light(p), ComponentType::Background) => Component::light_component(
+                p.gray_1.clone(),
+                p.neutral_1.clone(),
+                p.blue.clone(),
+                p.neutral_8,
+            ),
+            (CosmicPalette::Light(p), ComponentType::Primary) => Component::light_component(
+                p.gray_2.clone(),
+                p.neutral_1.clone(),
+                p.blue.clone(),
+                p.neutral_8,
+            ),
+            (CosmicPalette::Light(p), ComponentType::Secondary) => Component::light_component(
+                p.gray_3.clone(),
+                p.neutral_1.clone(),
+                p.blue.clone(),
+                p.neutral_8,
+            ),
             (CosmicPalette::HighContrastLight(_), ComponentType::Background)
             | (CosmicPalette::HighContrastLight(_), ComponentType::Accent)
             | (CosmicPalette::HighContrastLight(_), ComponentType::Primary)

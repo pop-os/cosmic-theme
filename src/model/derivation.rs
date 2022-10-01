@@ -1,8 +1,8 @@
-use palette::{Blend, Srgba};
+use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::fmt;
 
-use crate::CosmicPalette;
+use crate::{CosmicPalette, util::over};
 
 /// Theme Container colors of a theme, can be a theme background container, primary container, or secondary container
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
@@ -209,7 +209,7 @@ where
     }
 
     pub(crate) fn colored_component(base: C, neutral: C, accent: C) -> Self {
-        let neutral = neutral.clone().into().into_linear();
+        let neutral = neutral.clone().into();
         let mut neutral_05 = neutral.clone();
         let mut neutral_10 = neutral.clone();
         let mut neutral_20 = neutral.clone();
@@ -218,7 +218,7 @@ where
         neutral_20.alpha = 0.2;
 
         let base: Srgba = base.into();
-        let mut base_50 = base.clone().into_linear();
+        let mut base_50 = base.clone();
         base_50.alpha = 0.5;
 
         let on_20 = neutral.clone();
@@ -228,14 +228,14 @@ where
 
         Component {
             base: base.clone().into(),
-            hover: Srgba::from_linear(base.clone().into_linear().overlay(neutral_10)).into(),
-            pressed: Srgba::from_linear(base.clone().into_linear().overlay(neutral_20)).into(),
-            selected: Srgba::from_linear(base.clone().into_linear().overlay(neutral_20)).into(),
+            hover: over(neutral_10, base).into(),
+            pressed: over(neutral_20, base).into(),
+            selected: over(neutral_20, base).into(),
             selected_text: accent.clone(),
-            divider: Srgba::from_linear(on_20).into(),
-            on: Srgba::from_linear(neutral).into(),
-            disabled: Srgba::from_linear(base_50).into(),
-            on_disabled: Srgba::from_linear(on_50).into(),
+            divider: on_20.into(),
+            on: neutral.into(),
+            disabled: base_50.into(),
+            on_disabled: on_50.into(),
             focus: accent,
         }
     }
@@ -250,45 +250,11 @@ where
         base_overlay_05.alpha = 0.05;
 
         let base = base.into();
-        let base = base.clone().into_linear().overlay(base_overlay_05.into_linear());
-        let mut base_50 = Srgba::from_linear(base.clone());
+        let base = over(base_overlay_05, base);
+        let mut base_50 = base.clone();
         base_50.alpha = 0.5;
 
-        let mut on_20 = on_component.clone().into().into_linear();
-        let mut on_50 = on_20.clone();
-
-        on_20.alpha = 0.2;
-        on_50.alpha = 0.5;
-
-        Component {
-            base: Srgba::from_linear(base.clone()).into(),
-            hover: Srgba::from_linear(base.clone().into_linear().overlay(component_state_overlay_10.into_linear()))
-                .into(),
-            pressed: Srgba::from_linear(base.clone().into_linear().overlay(component_state_overlay_20.into_linear()))
-                .into(),
-            selected: Srgba::from_linear(base.clone().into_linear().overlay(component_state_overlay_20.into_linear()))
-                .into(),
-            selected_text: accent.clone(),
-            focus: accent.clone(),
-            divider: Srgba::from_linear(on_20).into(),
-            on: on_component.clone(),
-            disabled: Srgba::from_linear(base_50.into_linear()).into(),
-            on_disabled: Srgba::from_linear(on_50).into(),
-        }
-    }
-
-    pub(crate) fn light_component(base: C, overlay: C, accent : C, on_component: C)-> Self {
-        let base: Srgba = base.into();
-        let mut base_50 = base.clone().into_linear();
-        base_50.alpha = 0.5;
-        let overlay = overlay.into().into_linear();
-        let mut overlay_10 = overlay.clone();
-        let mut overlay_20 = overlay.clone();
-
-        overlay_10.alpha = 0.1;
-        overlay_20.alpha = 0.2;
-
-        let mut on_20 = on_component.clone().into().into_linear();
+        let mut on_20 = on_component.clone().into();
         let mut on_50 = on_20.clone();
 
         on_20.alpha = 0.2;
@@ -296,18 +262,46 @@ where
 
         Component {
             base: base.clone().into(),
-            hover: Srgba::from_linear(base.clone().into_linear().overlay(overlay_10))
-                .into(),
-            pressed: Srgba::from_linear(base.clone().into_linear().overlay(overlay_20))
-                .into(),
-            selected: Srgba::from_linear(base.clone().into_linear().overlay(overlay_20))
-                .into(),
+            hover: over(component_state_overlay_10, base).into(),
+            pressed: over(component_state_overlay_20, base).into(),
+            selected: over(component_state_overlay_20, base).into(),
             selected_text: accent.clone(),
             focus: accent.clone(),
-            divider: Srgba::from_linear(on_20).into(),
+            divider: on_20.into(),
             on: on_component.clone(),
-            disabled: Srgba::from_linear(base_50).into(),
-            on_disabled: Srgba::from_linear(on_50).into(),
+            disabled: base_50.into(),
+            on_disabled: on_50.into(),
+        }
+    }
+
+    pub(crate) fn light_component(base: C, overlay: C, accent : C, on_component: C)-> Self {
+        let base: Srgba = base.into();
+        let mut base_50 = base.clone();
+        base_50.alpha = 0.5;
+        let overlay = overlay.into();
+        let mut overlay_10 = overlay.clone();
+        let mut overlay_20 = overlay.clone();
+
+        overlay_10.alpha = 0.1;
+        overlay_20.alpha = 0.2;
+
+        let mut on_20 = on_component.clone().into();
+        let mut on_50 = on_20.clone();
+
+        on_20.alpha = 0.2;
+        on_50.alpha = 0.5;
+
+        Component {
+            base: base.clone().into(),
+            hover: over(overlay_10, base).into(),
+            pressed: over(overlay_20, base).into(),
+            selected: over(overlay_20, base).into(),
+            selected_text: accent.clone(),
+            focus: accent.clone(),
+            divider: on_20.into(),
+            on: on_component.clone(),
+            disabled: base_50.into(),
+            on_disabled: on_50.into(),
         }
     }
 }

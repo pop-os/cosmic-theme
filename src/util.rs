@@ -31,3 +31,15 @@ impl Into<Srgba> for CssColor {
         )
     }
 }
+
+/// blend colors in the Srgb space
+pub fn over(a: Srgba, b: Srgba) -> Srgba {
+    // A over B example
+    // TODO is the new alpha correct?
+    let c_a = 1.0 - (1.0 - a.alpha) * (1.0 - b.alpha);
+    let c_r = a.alpha * a.red + (1.0 - a.alpha) *b.red;
+    let c_g = a.alpha * a.green +(1.0 - a.alpha) * b.green;
+    let c_b = a.alpha * a.blue + (1.0 - a.alpha) *b.blue;
+    
+    Srgba::new(c_r, c_g, c_b, c_a)
+}

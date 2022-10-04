@@ -259,12 +259,12 @@ impl Theme<CssColor> {
         DARK_PALETTE.clone().into()
     }
 
-    /// get the built in dark theme
+    /// get the built in high contrast dark theme
     pub fn high_contrast_dark_default() -> Self {
         CosmicPalette::HighContrastDark(DARK_PALETTE.as_ref().clone()).into()
     }
 
-    /// get the built in dark theme
+    /// get the built in high contrast light theme
     pub fn high_contrast_light_default() -> Self {
         CosmicPalette::HighContrastLight(LIGHT_PALETTE.as_ref().clone()).into()
     }

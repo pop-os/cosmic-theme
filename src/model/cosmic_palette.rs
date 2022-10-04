@@ -33,6 +33,33 @@ pub enum CosmicPalette<C> {
     HighContrastDark(CosmicPaletteInner<C>),
 }
 
+impl<C> AsRef<CosmicPaletteInner<C>> for CosmicPalette<C>
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
+{
+    fn as_ref(&self) -> &CosmicPaletteInner<C> {
+        match self {
+            CosmicPalette::Dark(p) => p,
+            CosmicPalette::Light(p) => p,
+            CosmicPalette::HighContrastLight(p) => p,
+            CosmicPalette::HighContrastDark(p) => p,
+        }
+    }
+}
+
+impl<C> CosmicPalette<C>
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
+{
+    /// check if the palette is dark
+    pub fn is_dark(&self) -> bool {
+        match self {
+            CosmicPalette::Dark(_) | CosmicPalette::HighContrastDark(_) => true,
+            CosmicPalette::Light(_) | CosmicPalette::HighContrastLight(_) => false,
+        }
+    }
+}
+
 impl<C> Default for CosmicPalette<C>
 where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,

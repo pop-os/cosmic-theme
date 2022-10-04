@@ -33,7 +33,9 @@ impl Into<Srgba> for CssColor {
 }
 
 /// straight alpha "A over B" operator on non-linear srgba
-pub fn over(a: Srgba, b: Srgba) -> Srgba {
+pub fn over<A: Into<Srgba>, B: Into<Srgba>>(a: A, b: B) -> Srgba {
+    let a = a.into();
+    let b = b.into();
     let o_a = (alpha_over(a.alpha, b.alpha)).max(0.0).min(1.0);
     let o_r = (c_over(a.red, b.red, a.alpha, b.alpha, o_a))
         .max(0.0)

@@ -30,6 +30,24 @@ where
             on: self.on.into(),
         }
     }
+
+    pub(crate) fn new(
+        palette: CosmicPalette<C>,
+        container_type: ComponentType,
+        bg: C,
+        on_bg: C,
+    ) -> Self {
+        let mut divider_c: Srgba = on_bg.clone().into();
+        divider_c.alpha = 0.2;
+
+        let divider = over(divider_c.clone(), bg.clone());
+        Self {
+            base: bg,
+            component: (palette, container_type).into(),
+            divider: divider.into(),
+            on: on_bg,
+        }
+    }
 }
 
 impl<C> From<(CosmicPalette<C>, ContainerType)> for Container<C>
@@ -38,78 +56,78 @@ where
 {
     fn from((p, t): (CosmicPalette<C>, ContainerType)) -> Self {
         match (p, t) {
-            (CosmicPalette::Dark(p), ContainerType::Background) => {
-                let mut on_bg: Srgba = p.neutral_7.clone().into();
-                on_bg.alpha = 0.2;
-                let divider: C = on_bg.into();
-                Self {
-                    base: p.gray_1.clone(),
-                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Background).into(),
-                    divider,
-                    on: p.neutral_7.clone(),
-                }
-            }
-            (CosmicPalette::Dark(p), ContainerType::Primary) => {
-                let mut on: Srgba = p.neutral_8.clone().into();
-                on.alpha = 0.2;
-                let divider: C = on.into();
-                Self {
-                    base: p.gray_2.clone(),
-                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Primary).into(),
-                    divider,
-                    on: p.neutral_8.clone(),
-                }
-            }
-            (CosmicPalette::Dark(p), ContainerType::Secondary) => {
-                let mut on: Srgba = p.neutral_8.clone().into();
-                on.alpha = 0.2;
-                let divider: C = on.into();
-                Self {
-                    base: p.gray_3.clone(),
-                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Secondary).into(),
-                    divider,
-                    on: p.neutral_8.clone(),
-                }
-            }
-            (CosmicPalette::Light(p), ContainerType::Background) => {
-                let mut on: Srgba = p.neutral_9.clone().into();
-                on.alpha = 0.2;
-                let divider: C = on.into();
-                Self {
-                    base: p.gray_1.clone(),
-                    component: (CosmicPalette::Light(p.clone()), ComponentType::Background).into(),
-                    divider,
-                    on: p.neutral_9.clone(),
-                }
-            }
-            (CosmicPalette::Light(p), ContainerType::Primary) => {
-                let mut on: Srgba = p.neutral_8.clone().into();
-                on.alpha = 0.2;
-                let divider: C = on.into();
-                Self {
-                    base: p.gray_2.clone(),
-                    component: (CosmicPalette::Light(p.clone()), ComponentType::Primary).into(),
-                    divider,
-                    on: p.neutral_8.clone(),
-                }
-            }
-            (CosmicPalette::Light(p), ContainerType::Secondary) => {
-                let mut on: Srgba = p.neutral_8.clone().into();
-                on.alpha = 0.2;
-                let divider: C = on.into();
-                Self {
-                    base: p.gray_3.clone(),
-                    component: (CosmicPalette::Light(p.clone()), ComponentType::Secondary).into(),
-                    divider,
-                    on: p.neutral_8.clone(),
-                }
-            }
-            (CosmicPalette::HighContrastLight(_), ContainerType::Background)
-            | (CosmicPalette::HighContrastLight(_), ContainerType::Primary)
-            | (CosmicPalette::HighContrastLight(_), ContainerType::Secondary)
-            | (CosmicPalette::HighContrastDark(_), ContainerType::Background)
-            | (CosmicPalette::HighContrastDark(_), ContainerType::Primary)
-            | (CosmicPalette::HighContrastDark(_), ContainerType::Secondary) => todo!(),
+            (CosmicPalette::Dark(p), ContainerType::Background) => Self::new(
+                CosmicPalette::Dark(p.clone()),
+                ComponentType::Background,
+                p.gray_1.clone(),
+                p.neutral_7.clone(),
+            ),
+            (CosmicPalette::Dark(p), ContainerType::Primary) => Self::new(
+                CosmicPalette::Dark(p.clone()),
+                ComponentType::Primary,
+                p.gray_2.clone(),
+                p.neutral_8.clone(),
+            ),
+            (CosmicPalette::Dark(p), ContainerType::Secondary) => Self::new(
+                CosmicPalette::Dark(p.clone()),
+                ComponentType::Secondary,
+                p.gray_3.clone(),
+                p.neutral_8.clone(),
+            ),
+            (CosmicPalette::HighContrastDark(p), ContainerType::Background) => Self::new(
+                CosmicPalette::HighContrastDark(p.clone()),
+                ComponentType::Background,
+                p.gray_1.clone(),
+                p.neutral_8.clone(),
+            ),
+            (CosmicPalette::HighContrastDark(p), ContainerType::Primary) => Self::new(
+                CosmicPalette::HighContrastDark(p.clone()),
+                ComponentType::Primary,
+                p.gray_2.clone(),
+                p.neutral_9.clone(),
+            ),
+            (CosmicPalette::HighContrastDark(p), ContainerType::Secondary) => Self::new(
+                CosmicPalette::HighContrastDark(p.clone()),
+                ComponentType::Secondary,
+                p.gray_3.clone(),
+                p.neutral_9.clone(),
+            ),
+            (CosmicPalette::Light(p), ContainerType::Background) => Self::new(
+                CosmicPalette::Light(p.clone()),
+                ComponentType::Background,
+                p.gray_1.clone(),
+                p.neutral_9.clone(),
+            ),
+            (CosmicPalette::Light(p), ContainerType::Primary) => Self::new(
+                CosmicPalette::Light(p.clone()),
+                ComponentType::Primary,
+                p.gray_2.clone(),
+                p.neutral_8.clone(),
+            ),
+            (CosmicPalette::Light(p), ContainerType::Secondary) => Self::new(
+                CosmicPalette::Light(p.clone()),
+                ComponentType::Secondary,
+                p.gray_3.clone(),
+                p.neutral_8.clone(),
+            ),
+            (CosmicPalette::HighContrastLight(p), ContainerType::Background) => Self::new(
+                CosmicPalette::HighContrastLight(p.clone()),
+                ComponentType::Background,
+                p.gray_1.clone(),
+                p.neutral_10.clone(),
+            ),
+            (CosmicPalette::HighContrastLight(p), ContainerType::Primary) => Self::new(
+                CosmicPalette::HighContrastLight(p.clone()),
+                ComponentType::Primary,
+                p.gray_2.clone(),
+                p.neutral_9.clone(),
+            ),
+            (CosmicPalette::HighContrastLight(p), ContainerType::Secondary) => Self::new(
+                CosmicPalette::HighContrastLight(p.clone()),
+                ComponentType::Secondary,
+                p.gray_3.clone(),
+                p.neutral_9.clone(),
+            ),
         }
     }
 }
@@ -246,6 +264,7 @@ where
         base_overlay: C,
         accent: C,
         on_component: C,
+        is_high_contrast: bool,
     ) -> Self {
         let component_state_overlay = component_state_overlay.clone().into();
         let mut component_state_overlay_10 = component_state_overlay.clone();
@@ -273,14 +292,24 @@ where
             selected: over(component_state_overlay_20, base).into(),
             selected_text: accent.clone(),
             focus: accent.clone(),
-            divider: on_20.into(),
+            divider: if is_high_contrast {
+                on_50.clone().into()
+            } else {
+                on_20.into()
+            },
             on: on_component.clone(),
             disabled: base_50.into(),
             on_disabled: on_50.into(),
         }
     }
 
-    pub(crate) fn light_component(base: C, overlay: C, accent: C, on_component: C) -> Self {
+    pub(crate) fn light_component(
+        base: C,
+        overlay: C,
+        accent: C,
+        on_component: C,
+        is_high_contrast: bool,
+    ) -> Self {
         let base: Srgba = base.into();
         let mut base_50 = base.clone();
         base_50.alpha = 0.5;
@@ -304,7 +333,11 @@ where
             selected: over(overlay_20, base).into(),
             selected_text: accent.clone(),
             focus: accent.clone(),
-            divider: on_20.into(),
+            divider: if is_high_contrast {
+                on_50.clone().into()
+            } else {
+                on_20.into()
+            },
             on: on_component.clone(),
             disabled: base_50.into(),
             on_disabled: on_50.into(),
@@ -337,63 +370,135 @@ where
 {
     fn from((p, t): (CosmicPalette<C>, ComponentType)) -> Self {
         match (p, t) {
-            (CosmicPalette::Dark(p), ComponentType::Background) => {
-                Self::dark_component(p.gray_1, p.neutral_1, p.neutral_10, p.blue, p.neutral_8)
+            (CosmicPalette::Dark(p), ComponentType::Background) => Self::dark_component(
+                p.gray_1,
+                p.neutral_1,
+                p.neutral_10,
+                p.blue,
+                p.neutral_8,
+                false,
+            ),
+
+            (CosmicPalette::Dark(p), ComponentType::Primary) => Self::dark_component(
+                p.gray_2,
+                p.neutral_1,
+                p.neutral_10,
+                p.blue,
+                p.neutral_8,
+                false,
+            ),
+
+            (CosmicPalette::Dark(p), ComponentType::Secondary) => Self::dark_component(
+                p.gray_3,
+                p.neutral_1,
+                p.neutral_10,
+                p.blue,
+                p.neutral_9,
+                false,
+            ),
+            (CosmicPalette::HighContrastDark(p), ComponentType::Background) => {
+                Self::dark_component(
+                    p.gray_1,
+                    p.neutral_1,
+                    p.neutral_10,
+                    p.blue,
+                    p.neutral_9,
+                    true,
+                )
             }
-            (CosmicPalette::Dark(p), ComponentType::Primary) => {
-                Self::dark_component(p.gray_2, p.neutral_1, p.neutral_10, p.blue, p.neutral_8)
-            }
-            (CosmicPalette::Dark(p), ComponentType::Secondary) => {
-                Self::dark_component(p.gray_3, p.neutral_1, p.neutral_10, p.blue, p.neutral_9)
-            }
-            (CosmicPalette::Dark(p), ComponentType::Destructive)
-            | (CosmicPalette::Light(p), ComponentType::Destructive) => {
-                Component::colored_component(p.red.clone(), p.neutral_1.clone(), p.blue.clone())
-            }
-            (CosmicPalette::Dark(p), ComponentType::Warning)
-            | (CosmicPalette::Light(p), ComponentType::Warning) => {
-                Component::colored_component(p.yellow.clone(), p.neutral_1, p.blue.clone())
-            }
-            (CosmicPalette::Dark(p), ComponentType::Success)
-            | (CosmicPalette::Light(p), ComponentType::Success) => {
-                Component::colored_component(p.green.clone(), p.neutral_1, p.blue.clone())
-            }
-            (CosmicPalette::Dark(p), ComponentType::Accent)
-            | (CosmicPalette::Light(p), ComponentType::Accent) => {
-                Component::colored_component(p.blue.clone(), p.neutral_1, p.blue.clone())
-            }
+            (CosmicPalette::HighContrastDark(p), ComponentType::Primary) => Self::dark_component(
+                p.gray_2,
+                p.neutral_1,
+                p.neutral_10,
+                p.blue,
+                p.neutral_9,
+                true,
+            ),
+            (CosmicPalette::HighContrastDark(p), ComponentType::Secondary) => Self::dark_component(
+                p.gray_3,
+                p.neutral_1,
+                p.neutral_10.clone(),
+                p.blue,
+                p.neutral_10,
+                true,
+            ),
+
             (CosmicPalette::Light(p), ComponentType::Background) => Component::light_component(
                 p.gray_1.clone(),
                 p.neutral_1.clone(),
                 p.blue.clone(),
                 p.neutral_8,
+                false,
             ),
             (CosmicPalette::Light(p), ComponentType::Primary) => Component::light_component(
                 p.gray_2.clone(),
                 p.neutral_1.clone(),
                 p.blue.clone(),
                 p.neutral_8,
+                false,
             ),
             (CosmicPalette::Light(p), ComponentType::Secondary) => Component::light_component(
                 p.gray_3.clone(),
                 p.neutral_1.clone(),
                 p.blue.clone(),
                 p.neutral_8,
+                false,
             ),
-            (CosmicPalette::HighContrastLight(_), ComponentType::Background)
-            | (CosmicPalette::HighContrastLight(_), ComponentType::Accent)
-            | (CosmicPalette::HighContrastLight(_), ComponentType::Primary)
-            | (CosmicPalette::HighContrastLight(_), ComponentType::Secondary)
-            | (CosmicPalette::HighContrastLight(_), ComponentType::Destructive)
-            | (CosmicPalette::HighContrastLight(_), ComponentType::Warning)
-            | (CosmicPalette::HighContrastLight(_), ComponentType::Success)
-            | (CosmicPalette::HighContrastDark(_), ComponentType::Accent)
-            | (CosmicPalette::HighContrastDark(_), ComponentType::Background)
-            | (CosmicPalette::HighContrastDark(_), ComponentType::Primary)
-            | (CosmicPalette::HighContrastDark(_), ComponentType::Secondary)
-            | (CosmicPalette::HighContrastDark(_), ComponentType::Destructive)
-            | (CosmicPalette::HighContrastDark(_), ComponentType::Warning)
-            | (CosmicPalette::HighContrastDark(_), ComponentType::Success) => todo!(),
+            (CosmicPalette::HighContrastLight(p), ComponentType::Background) => {
+                Component::light_component(
+                    p.gray_1.clone(),
+                    p.neutral_1.clone(),
+                    p.blue.clone(),
+                    p.neutral_9,
+                    true,
+                )
+            }
+            (CosmicPalette::HighContrastLight(p), ComponentType::Primary) => {
+                Component::light_component(
+                    p.gray_2.clone(),
+                    p.neutral_1.clone(),
+                    p.blue.clone(),
+                    p.neutral_9,
+                    true,
+                )
+            }
+            (CosmicPalette::HighContrastLight(p), ComponentType::Secondary) => {
+                Component::light_component(
+                    p.gray_3.clone(),
+                    p.neutral_1.clone(),
+                    p.blue.clone(),
+                    p.neutral_9,
+                    true,
+                )
+            }
+
+            (CosmicPalette::Dark(p), ComponentType::Destructive)
+            | (CosmicPalette::Light(p), ComponentType::Destructive)
+            | (CosmicPalette::HighContrastLight(p), ComponentType::Destructive)
+            | (CosmicPalette::HighContrastDark(p), ComponentType::Destructive) => {
+                Component::colored_component(p.red.clone(), p.neutral_1.clone(), p.blue.clone())
+            }
+
+            (CosmicPalette::Dark(p), ComponentType::Warning)
+            | (CosmicPalette::Light(p), ComponentType::Warning)
+            | (CosmicPalette::HighContrastLight(p), ComponentType::Warning)
+            | (CosmicPalette::HighContrastDark(p), ComponentType::Warning) => {
+                Component::colored_component(p.yellow.clone(), p.neutral_1, p.blue.clone())
+            }
+
+            (CosmicPalette::Dark(p), ComponentType::Success)
+            | (CosmicPalette::Light(p), ComponentType::Success)
+            | (CosmicPalette::HighContrastLight(p), ComponentType::Success)
+            | (CosmicPalette::HighContrastDark(p), ComponentType::Success) => {
+                Component::colored_component(p.green.clone(), p.neutral_1, p.blue.clone())
+            }
+
+            (CosmicPalette::Dark(p), ComponentType::Accent)
+            | (CosmicPalette::Light(p), ComponentType::Accent)
+            | (CosmicPalette::HighContrastDark(p), ComponentType::Accent)
+            | (CosmicPalette::HighContrastLight(p), ComponentType::Accent) => {
+                Component::colored_component(p.blue.clone(), p.neutral_1, p.blue.clone())
+            }
         }
     }
 }

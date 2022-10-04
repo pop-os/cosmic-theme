@@ -259,6 +259,16 @@ impl Theme<CssColor> {
         DARK_PALETTE.clone().into()
     }
 
+    /// get the built in dark theme
+    pub fn high_contrast_dark_default() -> Self {
+        CosmicPalette::HighContrastDark(DARK_PALETTE.as_ref().clone()).into()
+    }
+
+    /// get the built in dark theme
+    pub fn high_contrast_light_default() -> Self {
+        CosmicPalette::HighContrastLight(LIGHT_PALETTE.as_ref().clone()).into()
+    }
+
     /// convert to srgba
     pub fn into_srgba(self) -> Theme<Srgba> {
         Theme {

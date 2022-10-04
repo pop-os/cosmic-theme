@@ -77,7 +77,7 @@ where
                 let divider: C = on.into();
                 Self {
                     base: p.gray_1.clone(),
-                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Background).into(),
+                    component: (CosmicPalette::Light(p.clone()), ComponentType::Background).into(),
                     divider,
                     on: p.neutral_9.clone(),
                 }
@@ -88,7 +88,7 @@ where
                 let divider: C = on.into();
                 Self {
                     base: p.gray_2.clone(),
-                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Primary).into(),
+                    component: (CosmicPalette::Light(p.clone()), ComponentType::Primary).into(),
                     divider,
                     on: p.neutral_8.clone(),
                 }
@@ -99,7 +99,7 @@ where
                 let divider: C = on.into();
                 Self {
                     base: p.gray_3.clone(),
-                    component: (CosmicPalette::Dark(p.clone()), ComponentType::Secondary).into(),
+                    component: (CosmicPalette::Light(p.clone()), ComponentType::Secondary).into(),
                     divider,
                     on: p.neutral_8.clone(),
                 }

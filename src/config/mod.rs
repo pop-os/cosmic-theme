@@ -10,7 +10,7 @@ use std::{
     io::{prelude::*, BufReader},
     path::PathBuf,
 };
-use directories::ext::{ProjectDirsExt, BaseDirsExt};
+use directories::{ProjectDirsExt, BaseDirsExt};
 
 /// Cosmic Theme config
 #[derive(Debug, Deserialize, Serialize, Clone)]

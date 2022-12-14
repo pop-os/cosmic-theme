@@ -5,9 +5,11 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use anyhow::Context;
 use lazy_static::lazy_static;
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use directories::{BaseDirsExt, ProjectDirsExt};
 
 use crate::{util::CssColor, NAME, PALETTE_DIR};
 
@@ -161,7 +163,7 @@ where
     /// save the theme to the theme directory
     pub fn save(&self) -> anyhow::Result<()> {
         let ron_path: PathBuf = [NAME, PALETTE_DIR].iter().collect();
-        let ron_dirs = xdg::BaseDirectories::with_prefix(ron_path)?;
+        let ron_dirs = directories::ProjectDirs::from_path(ron_path).context("Failed to get project directories.")?;
         let ron_name = format!("{}.ron", self.name());
 
         if let Ok(p) = ron_dirs.place_config_file(ron_name) {
@@ -176,14 +178,14 @@ where
     /// init the theme directory
     pub fn init() -> anyhow::Result<PathBuf> {
         let ron_path: PathBuf = [NAME, PALETTE_DIR].iter().collect();
-        let base_dirs = xdg::BaseDirectories::new()?;
+        let base_dirs = directories::BaseDirs::new().context("Failed to get base directories.")?;
         Ok(base_dirs.create_config_directory(ron_path)?)
     }
 
     /// load a theme by name
     pub fn load_from_name(name: &str) -> anyhow::Result<Self> {
         let ron_path: PathBuf = [NAME, PALETTE_DIR].iter().collect();
-        let ron_dirs = xdg::BaseDirectories::with_prefix(ron_path)?;
+        let ron_dirs = directories::ProjectDirs::from_path(ron_path).context("Failed to get project directories.")?;
 
         let ron_name = format!("{}.ron", name);
         if let Some(p) = ron_dirs.find_config_file(ron_name) {

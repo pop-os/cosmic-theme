@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0-only
 
 use crate::{util::CssColor, Theme, NAME, THEME_DIR};
-use anyhow::{bail, Result};
+use anyhow::{bail, Result, Context};
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::{
@@ -10,6 +10,7 @@ use std::{
     io::{prelude::*, BufReader},
     path::PathBuf,
 };
+use directories::{ProjectDirsExt, BaseDirsExt};
 
 /// Cosmic Theme config
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -52,7 +53,7 @@ impl Config {
 
     /// save the cosmic theme config
     pub fn save(&self) -> Result<()> {
-        let xdg_dirs = xdg::BaseDirectories::with_prefix(NAME)?;
+        let xdg_dirs = directories::ProjectDirs::from_path(PathBuf::from(NAME)).context("Failed to find project directory.")?;
         if let Ok(path) = xdg_dirs.place_config_file(PathBuf::from(format!("{CONFIG_NAME}.ron"))) {
             let mut f = File::create(path)?;
             let ron = ron::ser::to_string_pretty(&self, Default::default())?;
@@ -65,7 +66,7 @@ impl Config {
 
     /// init the config directory
     pub fn init() -> anyhow::Result<PathBuf> {
-        let base_dirs = xdg::BaseDirectories::new()?;
+        let base_dirs = directories::BaseDirs::new().context("Failed to get base directories.")?;
         let res = Ok(base_dirs.create_config_directory(NAME)?);
         Theme::<Srgba>::init()?;
 
@@ -81,8 +82,8 @@ impl Config {
 
     /// load the cosmic theme config
     pub fn load() -> Result<Self> {
-        let xdg_dirs = xdg::BaseDirectories::with_prefix(NAME)?;
-        let path = xdg_dirs.get_config_home();
+        let xdg_dirs = directories::ProjectDirs::from_path(PathBuf::from(NAME)).context("Failed to find project directory.")?;
+        let path = xdg_dirs.config_dir();
         std::fs::create_dir_all(&path)?;
         let path = xdg_dirs.find_config_file(PathBuf::from(format!("{CONFIG_NAME}.ron")));
         if path.is_none() {
@@ -124,7 +125,7 @@ impl Config {
             _ => anyhow::bail!("No configured active overrides"),
         };
         let css_path: PathBuf = [NAME, THEME_DIR].iter().collect();
-        let css_dirs = xdg::BaseDirectories::with_prefix(css_path)?;
+        let css_dirs = directories::ProjectDirs::from_path(PathBuf::from(css_path)).context("Failed to find project directory.")?;
         let active_theme_path = match css_dirs.find_data_file(format!("{active}.ron")) {
             Some(p) => p,
             _ => anyhow::bail!("Could not find theme"),

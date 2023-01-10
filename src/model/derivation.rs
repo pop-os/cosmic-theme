@@ -248,7 +248,7 @@ where
             base: base.clone().into(),
             hover: over(neutral_10, base).into(),
             pressed: over(neutral_20, base).into(),
-            selected: over(neutral_20, base).into(),
+            selected: over(neutral_10, base).into(),
             selected_text: accent.clone(),
             divider: on_20.into(),
             on: neutral.into(),
@@ -289,7 +289,7 @@ where
             base: base.clone().into(),
             hover: over(component_state_overlay_10, base).into(),
             pressed: over(component_state_overlay_20, base).into(),
-            selected: over(component_state_overlay_20, base).into(),
+            selected: over(component_state_overlay_10, base).into(),
             selected_text: accent.clone(),
             focus: accent.clone(),
             divider: if is_high_contrast {
@@ -330,7 +330,7 @@ where
             base: base.clone().into(),
             hover: over(overlay_10, base).into(),
             pressed: over(overlay_20, base).into(),
-            selected: over(overlay_20, base).into(),
+            selected: over(overlay_10, base).into(),
             selected_text: accent.clone(),
             focus: accent.clone(),
             divider: if is_high_contrast {

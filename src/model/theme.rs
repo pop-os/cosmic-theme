@@ -5,6 +5,7 @@ use crate::{
     DARK_PALETTE, LIGHT_PALETTE, NAME, THEME_DIR,
 };
 use anyhow::Context;
+use directories::{BaseDirsExt, ProjectDirsExt};
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::{
@@ -13,7 +14,6 @@ use std::{
     io::Write,
     path::{Path, PathBuf},
 };
-use directories::{BaseDirsExt, ProjectDirsExt};
 
 /// Cosmic Theme data structure with all colors and its name
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
@@ -77,7 +77,8 @@ where
     /// save the theme to the theme directory
     pub fn save(&self) -> anyhow::Result<()> {
         let ron_path: PathBuf = [NAME, THEME_DIR].iter().collect();
-        let ron_dirs = directories::ProjectDirs::from_path(ron_path).context("Failed to get project directories.")?;
+        let ron_dirs = directories::ProjectDirs::from_path(ron_path)
+            .context("Failed to get project directories.")?;
         let ron_name = format!("{}.ron", &self.name);
 
         if let Ok(p) = ron_dirs.place_config_file(ron_name) {
@@ -99,7 +100,8 @@ where
     /// load a theme by name
     pub fn load_from_name(name: &str) -> anyhow::Result<Self> {
         let ron_path: PathBuf = [NAME, THEME_DIR].iter().collect();
-        let ron_dirs = directories::ProjectDirs::from_path(ron_path).context("Failed to get project directories.")?;
+        let ron_dirs = directories::ProjectDirs::from_path(ron_path)
+            .context("Failed to get project directories.")?;
 
         let ron_name = format!("{}.ron", name);
         if let Some(p) = ron_dirs.find_config_file(ron_name) {
@@ -210,7 +212,7 @@ where
         self.success.on.clone().into()
     }
     /// get @oon_warning_color
-    pub fn oon_warning_color(&self) -> Srgba {
+    pub fn on_warning_color(&self) -> Srgba {
         self.warning.on.clone().into()
     }
     /// get @on_destructive_color

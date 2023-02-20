@@ -26,6 +26,8 @@ pub struct Theme<C> {
     pub primary: Container<C>,
     /// secondary element colors
     pub secondary: Container<C>,
+    /// default element
+    pub basic: Component<C>,
     /// accent element colors
     pub accent: Component<C>,
     /// suggested element colors
@@ -34,6 +36,20 @@ pub struct Theme<C> {
     pub destructive: Component<C>,
     /// warning element colors
     pub warning: Component<C>,
+    /// generic text color
+    pub on: C,
+    /// generic divider color
+    pub divider: C,
+    /// on disabled
+    pub on_disabled: C,
+    /// on accent
+    pub on_accent: C,
+    /// on success
+    pub on_success: C,
+    /// on destructive
+    pub on_destructive: C,
+    /// on warning
+    pub on_warning: C,
 }
 
 // TODO better eq check
@@ -141,52 +157,32 @@ where
     pub fn bg_color(&self) -> Srgba {
         self.background.base.clone().into()
     }
-    /// get @bg_component_color
-    pub fn bg_component_color(&self) -> Srgba {
-        self.background.component.base.clone().into()
-    }
+
     /// get @primary_container_color
     pub fn primary_container_color(&self) -> Srgba {
         self.primary.base.clone().into()
-    }
-    /// get @primary_component_color
-    pub fn primary_component_color(&self) -> Srgba {
-        self.primary.component.base.clone().into()
     }
     /// get @secondary_container_color
     pub fn secondary_container_color(&self) -> Srgba {
         self.secondary.base.clone().into()
     }
-    /// get @secondary_component_color
-    pub fn secondary_component_color(&self) -> Srgba {
-        self.secondary.component.base.clone().into()
+
+    /// get @divider_color
+    pub fn divider_color(&self) -> Srgba {
+        self.divider.clone().into()
     }
 
     // Text
-    /// get @on_bg_color
-    pub fn on_bg_color(&self) -> Srgba {
-        self.background.on.clone().into()
+    /// get @on_color for all regular widgets and containers
+    pub fn on_color(&self) -> Srgba {
+        self.on.clone().into()
     }
-    /// get @on_bg_component_color
-    pub fn on_bg_component_color(&self) -> Srgba {
-        self.background.component.on.clone().into()
+
+    /// get @on_disabled_color for all widgets that can be disabled
+    pub fn on_disabled_color(&self) -> Srgba {
+        self.on_disabled.clone().into()
     }
-    /// get @on_primary_color
-    pub fn on_primary_container_color(&self) -> Srgba {
-        self.primary.on.clone().into()
-    }
-    /// get @on_primary_component_color
-    pub fn on_primary_component_color(&self) -> Srgba {
-        self.primary.component.on.clone().into()
-    }
-    /// get @on_secondary_color
-    pub fn on_secondary_container_color(&self) -> Srgba {
-        self.secondary.on.clone().into()
-    }
-    /// get @on_secondary_component_color
-    pub fn on_secondary_component_color(&self) -> Srgba {
-        self.secondary.component.on.clone().into()
-    }
+
     /// get @accent_text_color
     pub fn accent_text_color(&self) -> Srgba {
         self.accent.base.clone().into()
@@ -205,45 +201,19 @@ where
     }
     /// get @on_accent_color
     pub fn on_accent_color(&self) -> Srgba {
-        self.accent.on.clone().into()
+        self.on_accent.clone().into()
     }
     /// get @on_success_color
     pub fn on_success_color(&self) -> Srgba {
-        self.success.on.clone().into()
+        self.on_success.clone().into()
     }
     /// get @oon_warning_color
     pub fn on_warning_color(&self) -> Srgba {
-        self.warning.on.clone().into()
+        self.on_warning.clone().into()
     }
     /// get @on_destructive_color
     pub fn on_destructive_color(&self) -> Srgba {
-        self.destructive.on.clone().into()
-    }
-
-    // Borders and Dividers
-    /// get @bg_divider
-    pub fn bg_divider(&self) -> Srgba {
-        self.background.divider.clone().into()
-    }
-    /// get @bg_component_divider
-    pub fn bg_component_divider(&self) -> Srgba {
-        self.background.component.divider.clone().into()
-    }
-    /// get @primary_container_divider
-    pub fn primary_container_divider(&self) -> Srgba {
-        self.primary.divider.clone().into()
-    }
-    /// get @primary_component_divider
-    pub fn primary_component_divider(&self) -> Srgba {
-        self.primary.component.divider.clone().into()
-    }
-    /// get @secondary_container_divider
-    pub fn secondary_container_divider(&self) -> Srgba {
-        self.secondary.divider.clone().into()
-    }
-    /// get @secondary_component_divider
-    pub fn secondary_component_divider(&self) -> Srgba {
-        self.secondary.component.divider.clone().into()
+        self.on_destructive.clone().into()
     }
 
     /// get @window_header_bg
@@ -284,6 +254,14 @@ impl Theme<CssColor> {
             success: self.success.into_srgba(),
             destructive: self.destructive.into_srgba(),
             warning: self.warning.into_srgba(),
+            on: self.on.into(),
+            divider: self.divider.into(),
+            on_disabled: self.on_disabled.into(),
+            on_accent: self.on_accent.into(),
+            on_success: self.on_success.into(),
+            on_destructive: self.on_destructive.into(),
+            on_warning: self.on_warning.into(),
+            basic: self.basic.into_srgba(),
         }
     }
 }
@@ -293,6 +271,30 @@ where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
     fn from(p: CosmicPalette<C>) -> Self {
+        let neutral_10 = match &p {
+            CosmicPalette::Dark(p) => p.neutral_10.clone(),
+            CosmicPalette::Light(p) => p.neutral_10.clone(),
+            CosmicPalette::HighContrastLight(p) => p.neutral_10.clone(),
+            CosmicPalette::HighContrastDark(p) => p.neutral_10.clone(),
+        };
+        let neutral_1 = match &p {
+            CosmicPalette::Dark(p) => p.neutral_1.clone(),
+            CosmicPalette::Light(p) => p.neutral_1.clone(),
+            CosmicPalette::HighContrastLight(p) => p.neutral_1.clone(),
+            CosmicPalette::HighContrastDark(p) => p.neutral_1.clone(),
+        };
+        let (on, divider) = if p.is_high_contrast() {
+            let mut divider: Srgba = neutral_10.clone().into();
+            divider.alpha = 0.5;
+            (neutral_10.clone(), divider.into())
+        } else {
+            let mut divider: Srgba = neutral_10.clone().into();
+            divider.alpha = 0.2;
+            (neutral_10.clone(), divider.into())
+        };
+        // TODO Ashley does this change for the high contrast variants?
+        let mut on_disabled: Srgba = neutral_10.clone().into();
+        on_disabled.alpha = 0.5;
         Self {
             name: p.name().to_string(),
             background: (p.clone(), ContainerType::Background).into(),
@@ -302,6 +304,14 @@ where
             success: (p.clone(), ComponentType::Success).into(),
             destructive: (p.clone(), ComponentType::Destructive).into(),
             warning: (p.clone(), ComponentType::Warning).into(),
+            basic: (p.clone(), ComponentType::Basic).into(),
+            on,
+            divider,
+            on_disabled: on_disabled.into(),
+            on_accent: neutral_1.clone(),
+            on_success: neutral_1.clone(),
+            on_destructive: neutral_1.clone(),
+            on_warning: neutral_1,
         }
     }
 }

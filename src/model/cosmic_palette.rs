@@ -6,10 +6,10 @@ use std::{
 };
 
 use anyhow::Context;
+use directories::{BaseDirsExt, ProjectDirsExt};
 use lazy_static::lazy_static;
 use palette::Srgba;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
-use directories::{BaseDirsExt, ProjectDirsExt};
 
 use crate::{util::CssColor, NAME, PALETTE_DIR};
 
@@ -58,6 +58,14 @@ where
         match self {
             CosmicPalette::Dark(_) | CosmicPalette::HighContrastDark(_) => true,
             CosmicPalette::Light(_) | CosmicPalette::HighContrastLight(_) => false,
+        }
+    }
+
+    /// check if the palette is dark
+    pub fn is_high_contrast(&self) -> bool {
+        match self {
+            CosmicPalette::Dark(_) | CosmicPalette::Light(_) => false,
+            CosmicPalette::HighContrastDark(_) | CosmicPalette::HighContrastLight(_) => true,
         }
     }
 }
@@ -163,7 +171,8 @@ where
     /// save the theme to the theme directory
     pub fn save(&self) -> anyhow::Result<()> {
         let ron_path: PathBuf = [NAME, PALETTE_DIR].iter().collect();
-        let ron_dirs = directories::ProjectDirs::from_path(ron_path).context("Failed to get project directories.")?;
+        let ron_dirs = directories::ProjectDirs::from_path(ron_path)
+            .context("Failed to get project directories.")?;
         let ron_name = format!("{}.ron", self.name());
 
         if let Ok(p) = ron_dirs.place_config_file(ron_name) {
@@ -185,7 +194,8 @@ where
     /// load a theme by name
     pub fn load_from_name(name: &str) -> anyhow::Result<Self> {
         let ron_path: PathBuf = [NAME, PALETTE_DIR].iter().collect();
-        let ron_dirs = directories::ProjectDirs::from_path(ron_path).context("Failed to get project directories.")?;
+        let ron_dirs = directories::ProjectDirs::from_path(ron_path)
+            .context("Failed to get project directories.")?;
 
         let ron_name = format!("{}.ron", name);
         if let Some(p) = ron_dirs.find_config_file(ron_name) {

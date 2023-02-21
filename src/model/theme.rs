@@ -42,14 +42,6 @@ pub struct Theme<C> {
     pub divider: C,
     /// on disabled
     pub on_disabled: C,
-    /// on accent
-    pub on_accent: C,
-    /// on success
-    pub on_success: C,
-    /// on destructive
-    pub on_destructive: C,
-    /// on warning
-    pub on_warning: C,
 }
 
 // TODO better eq check
@@ -199,23 +191,6 @@ where
     pub fn destructive_text_color(&self) -> Srgba {
         self.destructive.base.clone().into()
     }
-    /// get @on_accent_color
-    pub fn on_accent_color(&self) -> Srgba {
-        self.on_accent.clone().into()
-    }
-    /// get @on_success_color
-    pub fn on_success_color(&self) -> Srgba {
-        self.on_success.clone().into()
-    }
-    /// get @oon_warning_color
-    pub fn on_warning_color(&self) -> Srgba {
-        self.on_warning.clone().into()
-    }
-    /// get @on_destructive_color
-    pub fn on_destructive_color(&self) -> Srgba {
-        self.on_destructive.clone().into()
-    }
-
     /// get @window_header_bg
     pub fn window_header_bg(&self) -> Srgba {
         self.background.base.clone().into()
@@ -257,10 +232,6 @@ impl Theme<CssColor> {
             on: self.on.into(),
             divider: self.divider.into(),
             on_disabled: self.on_disabled.into(),
-            on_accent: self.on_accent.into(),
-            on_success: self.on_success.into(),
-            on_destructive: self.on_destructive.into(),
-            on_warning: self.on_warning.into(),
             basic: self.basic.into_srgba(),
         }
     }
@@ -277,12 +248,7 @@ where
             CosmicPalette::HighContrastLight(p) => p.neutral_10.clone(),
             CosmicPalette::HighContrastDark(p) => p.neutral_10.clone(),
         };
-        let neutral_1 = match &p {
-            CosmicPalette::Dark(p) => p.neutral_1.clone(),
-            CosmicPalette::Light(p) => p.neutral_1.clone(),
-            CosmicPalette::HighContrastLight(p) => p.neutral_1.clone(),
-            CosmicPalette::HighContrastDark(p) => p.neutral_1.clone(),
-        };
+
         let (on, divider) = if p.is_high_contrast() {
             let mut divider: Srgba = neutral_10.clone().into();
             divider.alpha = 0.5;
@@ -308,10 +274,6 @@ where
             on,
             divider,
             on_disabled: on_disabled.into(),
-            on_accent: neutral_1.clone(),
-            on_success: neutral_1.clone(),
-            on_destructive: neutral_1.clone(),
-            on_warning: neutral_1,
         }
     }
 }

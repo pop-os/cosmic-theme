@@ -109,6 +109,10 @@ pub struct Component<C> {
     // pub text_opacity_80: C,
     /// the color of the widget when it is disabled
     pub disabled: C,
+    /// the color of text on the widget
+    pub on: C,
+    /// the color of text on a disabled widget
+    pub on_disabled: C,
 }
 
 impl<C> Component<C>
@@ -145,6 +149,8 @@ where
             selected_text: self.selected_text.into(),
             focus: self.focus.into(),
             disabled: self.disabled.into(),
+            on: self.on.into(),
+            on_disabled: self.on_disabled.into(),
         }
     }
 
@@ -174,6 +180,8 @@ where
             selected_text: accent.clone(),
             disabled: base_50.into(),
             focus: accent,
+            on: neutral.into(),
+            on_disabled: on_50.into(),
         }
     }
 
@@ -183,7 +191,7 @@ where
         base_overlay: C,
         accent: C,
         on_component: C,
-        is_high_contrast: bool,
+        _is_high_contrast: bool,
     ) -> Self {
         let component_state_overlay = component_state_overlay.clone().into();
         let mut component_state_overlay_10 = component_state_overlay.clone();
@@ -212,6 +220,8 @@ where
             selected_text: accent.clone(),
             focus: accent.clone(),
             disabled: base_50.into(),
+            on: on_component,
+            on_disabled: on_50.into(),
         }
     }
 
@@ -246,6 +256,8 @@ where
             selected_text: accent.clone(),
             focus: accent.clone(),
             disabled: base_50.into(),
+            on: on_component,
+            on_disabled: on_50.into(),
         }
     }
 }
@@ -272,25 +284,27 @@ where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
     fn from((p, t): (CosmicPalette<C>, ComponentType)) -> Self {
-        let base_overlay = match &p {
+        let (base_overlay, mut on_basic): (_, Srgba) = match &p {
             CosmicPalette::Dark(p) | CosmicPalette::HighContrastDark(p) => {
                 let mut c: Srgba = p.neutral_10.clone().into();
                 c.alpha = 0.05;
-                c.into()
+                (c.into(), p.neutral_10.clone().into())
             }
             CosmicPalette::Light(p) | CosmicPalette::HighContrastLight(p) => {
                 let mut c: Srgba = p.neutral_1.clone().into();
                 c.alpha = 0.8;
-                c.into()
+                (c.into(), p.neutral_10.clone().into())
             }
         };
+        // TODO maybe different value depending on light / dark / high contrast theme?
+        on_basic.alpha = 0.9;
         match (p, t) {
             (CosmicPalette::Dark(p), ComponentType::Basic) => Self::dark_component(
                 base_overlay,
                 p.neutral_1,
                 p.neutral_10,
                 p.blue,
-                p.neutral_8,
+                on_basic.into(),
                 false,
             ),
             (CosmicPalette::HighContrastDark(p), ComponentType::Basic) => Self::dark_component(
@@ -298,7 +312,7 @@ where
                 p.neutral_1,
                 p.neutral_10,
                 p.blue,
-                p.neutral_9,
+                on_basic.into(),
                 true,
             ),
 
@@ -306,7 +320,7 @@ where
                 base_overlay,
                 p.neutral_1.clone(),
                 p.blue.clone(),
-                p.neutral_8,
+                on_basic.into(),
                 false,
             ),
 
@@ -315,7 +329,7 @@ where
                     base_overlay,
                     p.neutral_1.clone(),
                     p.blue.clone(),
-                    p.neutral_9,
+                    on_basic.into(),
                     true,
                 )
             }

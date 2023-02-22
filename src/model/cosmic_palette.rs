@@ -155,6 +155,44 @@ pub struct CosmicPaletteInner<C> {
     pub accent_indigo: C,
 }
 
+impl From<CosmicPaletteInner<CssColor>> for CosmicPaletteInner<Srgba> {
+    fn from(p: CosmicPaletteInner<CssColor>) -> Self {
+        CosmicPaletteInner {
+            name: p.name,
+            blue: p.blue.into(),
+            red: p.red.into(),
+            green: p.green.into(),
+            yellow: p.yellow.into(),
+            gray_1: p.gray_1.into(),
+            gray_2: p.gray_2.into(),
+            gray_3: p.gray_3.into(),
+            neutral_1: p.neutral_1.into(),
+            neutral_2: p.neutral_2.into(),
+            neutral_3: p.neutral_3.into(),
+            neutral_4: p.neutral_4.into(),
+            neutral_5: p.neutral_5.into(),
+            neutral_6: p.neutral_6.into(),
+            neutral_7: p.neutral_7.into(),
+            neutral_8: p.neutral_8.into(),
+            neutral_9: p.neutral_9.into(),
+            neutral_10: p.neutral_10.into(),
+            ext_warm_grey: p.ext_warm_grey.into(),
+            ext_orange: p.ext_orange.into(),
+            ext_yellow: p.ext_yellow.into(),
+            ext_blue: p.ext_blue.into(),
+            ext_purple: p.ext_purple.into(),
+            ext_pink: p.ext_pink.into(),
+            ext_indigo: p.ext_indigo.into(),
+            accent_warm_grey: p.accent_warm_grey.into(),
+            accent_orange: p.accent_orange.into(),
+            accent_yellow: p.accent_yellow.into(),
+            accent_purple: p.accent_purple.into(),
+            accent_pink: p.accent_pink.into(),
+            accent_indigo: p.accent_indigo.into(),
+        }
+    }
+}
+
 impl<C> CosmicPalette<C>
 where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,

@@ -2,7 +2,7 @@
 
 use crate::{
     util::CssColor, Component, ComponentType, Container, ContainerType, CosmicPalette,
-    DARK_PALETTE, LIGHT_PALETTE, NAME, THEME_DIR,
+    CosmicPaletteInner, DARK_PALETTE, LIGHT_PALETTE, NAME, THEME_DIR,
 };
 use anyhow::Context;
 use directories::{BaseDirsExt, ProjectDirsExt};
@@ -16,7 +16,7 @@ use std::{
 };
 
 /// Cosmic Theme data structure with all colors and its name
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Theme<C> {
     /// name of the theme
     pub name: String,
@@ -42,10 +42,15 @@ pub struct Theme<C> {
     pub divider: C,
     /// on disabled
     pub on_disabled: C,
+    /// palette
+    pub palette: CosmicPaletteInner<C>,
 }
 
 // TODO better eq check
-impl<C> PartialEq for Theme<C> {
+impl<C> PartialEq for Theme<C>
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
+{
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name
     }
@@ -233,6 +238,7 @@ impl Theme<CssColor> {
             divider: self.divider.into(),
             on_disabled: self.on_disabled.into(),
             basic: self.basic.into_srgba(),
+            palette: self.palette.into(),
         }
     }
 }
@@ -274,6 +280,12 @@ where
             on,
             divider,
             on_disabled: on_disabled.into(),
+            palette: match p {
+                CosmicPalette::Dark(p) => p.into(),
+                CosmicPalette::Light(p) => p.into(),
+                CosmicPalette::HighContrastLight(p) => p.into(),
+                CosmicPalette::HighContrastDark(p) => p.into(),
+            },
         }
     }
 }

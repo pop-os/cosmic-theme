@@ -44,6 +44,10 @@ pub struct Theme<C> {
     pub on_disabled: C,
     /// palette
     pub palette: CosmicPaletteInner<C>,
+    /// is dark
+    pub is_dark: bool,
+    /// is high contrast
+    pub is_high_contrast: bool,
 }
 
 // TODO better eq check
@@ -239,6 +243,8 @@ impl Theme<CssColor> {
             on_disabled: self.on_disabled.into(),
             basic: self.basic.into_srgba(),
             palette: self.palette.into(),
+            is_dark: self.is_dark,
+            is_high_contrast: self.is_high_contrast,
         }
     }
 }
@@ -267,6 +273,12 @@ where
         // TODO Ashley does this change for the high contrast variants?
         let mut on_disabled: Srgba = neutral_10.clone().into();
         on_disabled.alpha = 0.5;
+        let (is_dark, is_high_contrast) = match p {
+            CosmicPalette::Dark(_) => (true, false),
+            CosmicPalette::Light(_) => (false, false),
+            CosmicPalette::HighContrastLight(_) => (false, true),
+            CosmicPalette::HighContrastDark(_) => (true, true),
+        };
         Self {
             name: p.name().to_string(),
             background: (p.clone(), ContainerType::Background).into(),
@@ -286,6 +298,8 @@ where
                 CosmicPalette::HighContrastLight(p) => p.into(),
                 CosmicPalette::HighContrastDark(p) => p.into(),
             },
+            is_dark,
+            is_high_contrast,
         }
     }
 }

@@ -185,74 +185,26 @@ where
         }
     }
 
-    pub(crate) fn dark_component(
-        base: C,
-        component_state_overlay: C,
-        base_overlay: C,
-        accent: C,
-        on_component: C,
-        _is_high_contrast: bool,
-    ) -> Self {
-        let component_state_overlay = component_state_overlay.clone().into();
-        let mut component_state_overlay_10 = component_state_overlay.clone();
-        let mut component_state_overlay_20 = component_state_overlay.clone();
-        component_state_overlay_10.alpha = 0.1;
-        component_state_overlay_20.alpha = 0.2;
-        let mut base_overlay_05 = base_overlay.clone().into();
-        base_overlay_05.alpha = 0.05;
-
-        let base = base.into();
-        let base = over(base_overlay_05, base);
-        let mut base_50 = base.clone();
-        base_50.alpha = 0.5;
-
-        let mut on_20 = on_component.clone().into();
-        let mut on_50 = on_20.clone();
-
-        on_20.alpha = 0.2;
-        on_50.alpha = 0.5;
-
-        Component {
-            base: base.clone().into(),
-            hover: over(component_state_overlay_10, base).into(),
-            pressed: over(component_state_overlay_20, base).into(),
-            selected: over(component_state_overlay_10, base).into(),
-            selected_text: accent.clone(),
-            focus: accent.clone(),
-            disabled: base_50.into(),
-            on: on_component,
-            on_disabled: on_50.into(),
-        }
-    }
-
-    pub(crate) fn light_component(
-        base: C,
-        overlay: C,
-        accent: C,
-        on_component: C,
-        _is_high_contrast: bool,
-    ) -> Self {
-        let base: Srgba = base.into();
-        let mut base_50 = base.clone();
-        base_50.alpha = 0.5;
-        let overlay = overlay.into();
+    pub(crate) fn component(base: C, accent: C, on_component: C, _is_high_contrast: bool) -> Self {
+        let overlay = base.clone().into();
         let mut overlay_10 = overlay.clone();
         let mut overlay_20 = overlay.clone();
+        overlay_10.alpha = 0.10;
+        overlay_20.alpha = 0.20;
 
-        overlay_10.alpha = 0.1;
-        overlay_20.alpha = 0.2;
+        let base = base.into();
+        let mut base_50 = base.clone();
+        base_50.alpha = 0.5;
 
-        let mut on_20 = on_component.clone().into();
-        let mut on_50 = on_20.clone();
+        let mut on_50 = on_component.clone().into();
 
-        on_20.alpha = 0.2;
         on_50.alpha = 0.5;
 
         Component {
             base: base.clone().into(),
-            hover: over(overlay_10, base).into(),
-            pressed: over(overlay_20, base).into(),
-            selected: over(overlay_10, base).into(),
+            hover: overlay_10.clone().into(),
+            pressed: overlay_20.clone().into(),
+            selected: overlay_10.clone().into(),
             selected_text: accent.clone(),
             focus: accent.clone(),
             disabled: base_50.into(),
@@ -291,47 +243,21 @@ where
                 (c.into(), p.neutral_10.clone().into())
             }
             CosmicPalette::Light(p) | CosmicPalette::HighContrastLight(p) => {
-                let mut c: Srgba = p.neutral_1.clone().into();
-                c.alpha = 0.8;
+                let mut c: Srgba = p.neutral_10.clone().into();
+                c.alpha = 0.09;
                 (c.into(), p.neutral_10.clone().into())
             }
         };
         // TODO maybe different value depending on light / dark / high contrast theme?
         on_basic.alpha = 0.9;
         match (p, t) {
-            (CosmicPalette::Dark(p), ComponentType::Basic) => Self::dark_component(
-                base_overlay,
-                p.neutral_1,
-                p.neutral_10,
-                p.blue,
-                on_basic.into(),
-                false,
-            ),
-            (CosmicPalette::HighContrastDark(p), ComponentType::Basic) => Self::dark_component(
-                base_overlay,
-                p.neutral_1,
-                p.neutral_10,
-                p.blue,
-                on_basic.into(),
-                true,
-            ),
-
-            (CosmicPalette::Light(p), ComponentType::Basic) => Component::light_component(
-                base_overlay,
-                p.neutral_1.clone(),
-                p.blue.clone(),
-                on_basic.into(),
-                false,
-            ),
-
-            (CosmicPalette::HighContrastLight(p), ComponentType::Basic) => {
-                Component::light_component(
-                    base_overlay,
-                    p.neutral_1.clone(),
-                    p.blue.clone(),
-                    on_basic.into(),
-                    true,
-                )
+            (CosmicPalette::Dark(p), ComponentType::Basic)
+            | (CosmicPalette::Light(p), ComponentType::Basic) => {
+                Self::component(base_overlay, p.blue, on_basic.into(), false)
+            }
+            (CosmicPalette::HighContrastDark(p), ComponentType::Basic)
+            | (CosmicPalette::HighContrastLight(p), ComponentType::Basic) => {
+                Self::component(base_overlay, p.blue, on_basic.into(), true)
             }
 
             (CosmicPalette::Dark(p), ComponentType::Destructive)

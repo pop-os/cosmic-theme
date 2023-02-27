@@ -15,7 +15,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
 /// Theme layer type
 pub enum Layer {
     /// Background layer
@@ -79,6 +79,11 @@ where
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name
     }
+}
+
+impl<C> Eq for Theme<C> where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned
+{
 }
 
 impl<C> Theme<C>

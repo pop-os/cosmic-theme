@@ -56,6 +56,21 @@ pub struct Theme<C> {
     pub is_high_contrast: bool,
 }
 
+/// Trait for layered themes
+pub trait LayeredTheme {
+    /// Set the layer of the theme
+    fn set_layer(&mut self, layer: Layer);
+}
+
+impl<C> LayeredTheme for Theme<C>
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
+{
+    fn set_layer(&mut self, layer: Layer) {
+        self.layer = layer;
+    }
+}
+
 // TODO better eq check
 impl<C> PartialEq for Theme<C>
 where

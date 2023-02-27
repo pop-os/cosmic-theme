@@ -2,7 +2,7 @@
 
 use crate::{
     util::CssColor, Component, ComponentType, Container, ContainerType, CosmicPalette,
-    DARK_PALETTE, LIGHT_PALETTE, NAME, THEME_DIR,
+    CosmicPaletteInner, DARK_PALETTE, LIGHT_PALETTE, NAME, THEME_DIR,
 };
 use anyhow::Context;
 use directories::{BaseDirsExt, ProjectDirsExt};
@@ -14,6 +14,18 @@ use std::{
     io::Write,
     path::{Path, PathBuf},
 };
+
+#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize)]
+/// Theme layer type
+pub enum Layer {
+    /// Background layer
+    #[default]
+    Background,
+    /// Primary Layer
+    Primary,
+    /// Secondary Layer
+    Secondary,
+}
 
 /// Cosmic Theme data structure with all colors and its name
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
@@ -34,10 +46,21 @@ pub struct Theme<C> {
     pub destructive: Component<C>,
     /// warning element colors
     pub warning: Component<C>,
+    /// layer
+    pub layer: Layer,
+    /// palette
+    pub palette: CosmicPaletteInner<C>,
+    /// is dark
+    pub is_dark: bool,
+    /// is high contrast
+    pub is_high_contrast: bool,
 }
 
 // TODO better eq check
-impl<C> PartialEq for Theme<C> {
+impl<C> PartialEq for Theme<C>
+where
+    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
+{
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name
     }
@@ -47,28 +70,6 @@ impl<C> Theme<C>
 where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
-    /// create a new theme from its elements
-    pub fn new(
-        background: Container<C>,
-        primary: Container<C>,
-        secondary: Container<C>,
-        accent: Component<C>,
-        destructive: Component<C>,
-        warning: Component<C>,
-        success: Component<C>,
-    ) -> Self {
-        Self {
-            background,
-            primary,
-            secondary,
-            accent,
-            destructive,
-            warning,
-            success,
-            ..Default::default()
-        }
-    }
-
     /// Convert the theme to a high-contrast variant
     pub fn to_high_contrast(&self) -> Self {
         todo!();
@@ -116,6 +117,16 @@ where
     pub fn load(p: &dyn AsRef<Path>) -> anyhow::Result<Self> {
         let f = File::open(p)?;
         Ok(ron::de::from_reader(f)?)
+    }
+
+    /// get current_container
+    /// can be used in a component that is intended to be a child of a `CosmicContainer`
+    pub fn current_container(&self) -> &Container<C> {
+        match self.layer {
+            Layer::Background => &self.background,
+            Layer::Primary => &self.primary,
+            Layer::Secondary => &self.secondary,
+        }
     }
 
     // TODO convenient getter functions for each named color variable
@@ -284,6 +295,10 @@ impl Theme<CssColor> {
             success: self.success.into_srgba(),
             destructive: self.destructive.into_srgba(),
             warning: self.warning.into_srgba(),
+            palette: self.palette.into(),
+            layer: self.layer,
+            is_dark: self.is_dark,
+            is_high_contrast: self.is_high_contrast,
         }
     }
 }
@@ -293,6 +308,8 @@ where
     C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
 {
     fn from(p: CosmicPalette<C>) -> Self {
+        let is_dark = p.is_dark();
+        let is_high_contrast = p.is_high_contrast();
         Self {
             name: p.name().to_string(),
             background: (p.clone(), ContainerType::Background).into(),
@@ -302,6 +319,15 @@ where
             success: (p.clone(), ComponentType::Success).into(),
             destructive: (p.clone(), ComponentType::Destructive).into(),
             warning: (p.clone(), ComponentType::Warning).into(),
+            palette: match p {
+                CosmicPalette::Dark(p) => p.into(),
+                CosmicPalette::Light(p) => p.into(),
+                CosmicPalette::HighContrastLight(p) => p.into(),
+                CosmicPalette::HighContrastDark(p) => p.into(),
+            },
+            layer: Layer::Background,
+            is_dark,
+            is_high_contrast,
         }
     }
 }

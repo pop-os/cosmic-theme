@@ -258,10 +258,11 @@ where
         }
     }
 
-    pub(crate) fn dark_component(
+    pub(crate) fn component(
         base: C,
         component_state_overlay: C,
         base_overlay: C,
+        base_overlay_alpha: f32,
         accent: C,
         on_component: C,
         is_high_contrast: bool,
@@ -271,11 +272,11 @@ where
         let mut component_state_overlay_20 = component_state_overlay.clone();
         component_state_overlay_10.alpha = 0.1;
         component_state_overlay_20.alpha = 0.2;
-        let mut base_overlay_05 = base_overlay.clone().into();
-        base_overlay_05.alpha = 0.05;
 
         let base = base.into();
-        let base = over(base_overlay_05, base);
+        let mut base_overlay = base_overlay.into();
+        base_overlay.alpha = base_overlay_alpha;
+        let base = over(base_overlay, base);
         let mut base_50 = base.clone();
         base_50.alpha = 0.5;
 
@@ -290,47 +291,6 @@ where
             hover: over(component_state_overlay_10, base).into(),
             pressed: over(component_state_overlay_20, base).into(),
             selected: over(component_state_overlay_10, base).into(),
-            selected_text: accent.clone(),
-            focus: accent.clone(),
-            divider: if is_high_contrast {
-                on_50.clone().into()
-            } else {
-                on_20.into()
-            },
-            on: on_component.clone(),
-            disabled: base_50.into(),
-            on_disabled: on_50.into(),
-        }
-    }
-
-    pub(crate) fn light_component(
-        base: C,
-        overlay: C,
-        accent: C,
-        on_component: C,
-        is_high_contrast: bool,
-    ) -> Self {
-        let base: Srgba = base.into();
-        let mut base_50 = base.clone();
-        base_50.alpha = 0.5;
-        let overlay = overlay.into();
-        let mut overlay_10 = overlay.clone();
-        let mut overlay_20 = overlay.clone();
-
-        overlay_10.alpha = 0.1;
-        overlay_20.alpha = 0.2;
-
-        let mut on_20 = on_component.clone().into();
-        let mut on_50 = on_20.clone();
-
-        on_20.alpha = 0.2;
-        on_50.alpha = 0.5;
-
-        Component {
-            base: base.clone().into(),
-            hover: over(overlay_10, base).into(),
-            pressed: over(overlay_20, base).into(),
-            selected: over(overlay_10, base).into(),
             selected_text: accent.clone(),
             focus: accent.clone(),
             divider: if is_high_contrast {
@@ -370,102 +330,116 @@ where
 {
     fn from((p, t): (CosmicPalette<C>, ComponentType)) -> Self {
         match (p, t) {
-            (CosmicPalette::Dark(p), ComponentType::Background) => Self::dark_component(
+            (CosmicPalette::Dark(p), ComponentType::Background) => Self::component(
                 p.gray_1,
                 p.neutral_1,
                 p.neutral_10,
+                0.05,
                 p.blue,
                 p.neutral_8,
                 false,
             ),
 
-            (CosmicPalette::Dark(p), ComponentType::Primary) => Self::dark_component(
+            (CosmicPalette::Dark(p), ComponentType::Primary) => Self::component(
                 p.gray_2,
                 p.neutral_1,
                 p.neutral_10,
+                0.05,
                 p.blue,
                 p.neutral_8,
                 false,
             ),
 
-            (CosmicPalette::Dark(p), ComponentType::Secondary) => Self::dark_component(
+            (CosmicPalette::Dark(p), ComponentType::Secondary) => Self::component(
                 p.gray_3,
                 p.neutral_1,
                 p.neutral_10,
+                0.05,
                 p.blue,
                 p.neutral_9,
                 false,
             ),
-            (CosmicPalette::HighContrastDark(p), ComponentType::Background) => {
-                Self::dark_component(
-                    p.gray_1,
-                    p.neutral_1,
-                    p.neutral_10,
-                    p.blue,
-                    p.neutral_9,
-                    true,
-                )
-            }
-            (CosmicPalette::HighContrastDark(p), ComponentType::Primary) => Self::dark_component(
-                p.gray_2,
+            (CosmicPalette::HighContrastDark(p), ComponentType::Background) => Self::component(
+                p.gray_1,
                 p.neutral_1,
                 p.neutral_10,
+                0.05,
                 p.blue,
                 p.neutral_9,
                 true,
             ),
-            (CosmicPalette::HighContrastDark(p), ComponentType::Secondary) => Self::dark_component(
+            (CosmicPalette::HighContrastDark(p), ComponentType::Primary) => Self::component(
+                p.gray_2,
+                p.neutral_1,
+                p.neutral_10,
+                0.05,
+                p.blue,
+                p.neutral_9,
+                true,
+            ),
+            (CosmicPalette::HighContrastDark(p), ComponentType::Secondary) => Self::component(
                 p.gray_3,
                 p.neutral_1,
                 p.neutral_10.clone(),
+                0.05,
                 p.blue,
                 p.neutral_10,
                 true,
             ),
 
-            (CosmicPalette::Light(p), ComponentType::Background) => Component::light_component(
+            (CosmicPalette::Light(p), ComponentType::Background) => Component::component(
                 p.gray_1.clone(),
                 p.neutral_1.clone(),
+                p.neutral_1,
+                0.75,
                 p.blue.clone(),
                 p.neutral_8,
                 false,
             ),
-            (CosmicPalette::Light(p), ComponentType::Primary) => Component::light_component(
+            (CosmicPalette::Light(p), ComponentType::Primary) => Component::component(
                 p.gray_2.clone(),
                 p.neutral_1.clone(),
+                p.neutral_1,
+                0.9,
                 p.blue.clone(),
                 p.neutral_8,
                 false,
             ),
-            (CosmicPalette::Light(p), ComponentType::Secondary) => Component::light_component(
+            (CosmicPalette::Light(p), ComponentType::Secondary) => Component::component(
                 p.gray_3.clone(),
                 p.neutral_1.clone(),
+                p.neutral_1,
+                1.0,
                 p.blue.clone(),
                 p.neutral_8,
                 false,
             ),
             (CosmicPalette::HighContrastLight(p), ComponentType::Background) => {
-                Component::light_component(
+                Component::component(
                     p.gray_1.clone(),
                     p.neutral_1.clone(),
+                    p.neutral_1,
+                    0.75,
                     p.blue.clone(),
                     p.neutral_9,
                     true,
                 )
             }
-            (CosmicPalette::HighContrastLight(p), ComponentType::Primary) => {
-                Component::light_component(
-                    p.gray_2.clone(),
-                    p.neutral_1.clone(),
-                    p.blue.clone(),
-                    p.neutral_9,
-                    true,
-                )
-            }
+            (CosmicPalette::HighContrastLight(p), ComponentType::Primary) => Component::component(
+                p.gray_2.clone(),
+                p.neutral_1.clone(),
+                p.neutral_1,
+                0.9,
+                p.blue.clone(),
+                p.neutral_9,
+                true,
+            ),
             (CosmicPalette::HighContrastLight(p), ComponentType::Secondary) => {
-                Component::light_component(
+                Component::component(
                     p.gray_3.clone(),
                     p.neutral_1.clone(),
+                    p.neutral_1,
+                    1.0,
                     p.blue.clone(),
                     p.neutral_9,
                     true,

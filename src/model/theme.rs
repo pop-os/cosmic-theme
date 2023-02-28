@@ -46,8 +46,6 @@ pub struct Theme<C> {
     pub destructive: Component<C>,
     /// warning element colors
     pub warning: Component<C>,
-    /// layer
-    pub layer: Layer,
     /// palette
     pub palette: CosmicPaletteInner<C>,
     /// is dark
@@ -60,15 +58,6 @@ pub struct Theme<C> {
 pub trait LayeredTheme {
     /// Set the layer of the theme
     fn set_layer(&mut self, layer: Layer);
-}
-
-impl<C> LayeredTheme for Theme<C>
-where
-    C: Clone + fmt::Debug + Default + Into<Srgba> + From<Srgba> + Serialize + DeserializeOwned,
-{
-    fn set_layer(&mut self, layer: Layer) {
-        self.layer = layer;
-    }
 }
 
 // TODO better eq check
@@ -137,16 +126,6 @@ where
     pub fn load(p: &dyn AsRef<Path>) -> anyhow::Result<Self> {
         let f = File::open(p)?;
         Ok(ron::de::from_reader(f)?)
-    }
-
-    /// get current_container
-    /// can be used in a component that is intended to be a child of a `CosmicContainer`
-    pub fn current_container(&self) -> &Container<C> {
-        match self.layer {
-            Layer::Background => &self.background,
-            Layer::Primary => &self.primary,
-            Layer::Secondary => &self.secondary,
-        }
     }
 
     // TODO convenient getter functions for each named color variable
@@ -316,7 +295,6 @@ impl Theme<CssColor> {
             destructive: self.destructive.into_srgba(),
             warning: self.warning.into_srgba(),
             palette: self.palette.into(),
-            layer: self.layer,
             is_dark: self.is_dark,
             is_high_contrast: self.is_high_contrast,
         }
@@ -345,7 +323,6 @@ where
                 CosmicPalette::HighContrastLight(p) => p.into(),
                 CosmicPalette::HighContrastDark(p) => p.into(),
             },
-            layer: Layer::Background,
             is_dark,
             is_high_contrast,
         }

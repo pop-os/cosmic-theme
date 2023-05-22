@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-3.0-only
 use crate::{
     model::{Accent, Container, ContainerType, Destructive, Widget},
     Hex, Theme, NAME,

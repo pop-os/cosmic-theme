@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: GPL-3.0-only
-
 use hex::encode;
 use palette::{Pixel, Srgba};
 use std::fmt;

@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-3.0-only
 #[cfg(feature = "contrast-derivation")]
 pub use constraint::*;
 pub use cosmic_palette::*;

@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: GPL-3.0-only
-
 /// Cosmic theme custom constraints which are used to pick colors
 #[derive(Copy, Clone, Debug)]
 pub struct ThemeConstraints {

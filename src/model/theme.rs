@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: GPL-3.0-only
-
 use crate::{
     util::CssColor, Component, ComponentType, Container, ContainerType, CosmicPalette,
     CosmicPaletteInner, DARK_PALETTE, LIGHT_PALETTE, NAME, THEME_DIR,
